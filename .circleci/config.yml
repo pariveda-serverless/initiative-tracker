@@ -8,8 +8,8 @@ anchors:
 
         cat > ~/.aws/credentials << EOL
         [default]
-        aws_access_key_id = ${!KEY}
-        aws_secret_access_key = ${!SECRET}
+        aws_access_key_id = ${ACCESS_KEY_ID}
+        aws_secret_access_key = ${SECRET_ACCESS_KEY}
         EOL
   load-cache: &load-cache
     restore_cache:
