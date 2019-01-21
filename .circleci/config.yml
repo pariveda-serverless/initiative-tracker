@@ -11,20 +11,30 @@ anchors:
         aws_access_key_id = ${!KEY}
         aws_secret_access_key = ${!SECRET}
         EOL
+  load-cache: &load-cache
+    restore_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+      
 jobs:
   install:
       docker:
         - image: circleci/node:10.15.0
       steps:
         - checkout
+        - *load-cache
         - run:
             name: Install dependencies
             command: npm install
+        - save_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+            paths:
+              - node_modules
   deploy:
     docker:
       - image: circleci/node:10.15.0
     steps:
       - checkout
+      - *load-cache
       - *configure-aws-access
       - run:
           name: Deploy application
