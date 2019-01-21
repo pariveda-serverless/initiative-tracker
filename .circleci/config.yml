@@ -1,0 +1,40 @@
+version: 2
+anchors:
+  configure-aws-access: &configure-aws-access
+    run:
+      name: Configure AWS access
+      command: |
+        mkdir -p ~/.aws
+
+        cat > ~/.aws/credentials << EOL
+        [default]
+        aws_access_key_id = ${!KEY}
+        aws_secret_access_key = ${!SECRET}
+        EOL
+jobs:
+  install:
+      docker:
+        - image: circleci/node:10.15.0
+      steps:
+        - checkout
+        - run:
+            name: Install dependencies
+            command: npm install
+  deploy:
+    docker:
+      - image: circleci/node:10.15.0
+    steps:
+      - checkout
+      - *configure-aws-access
+      - run:
+          name: Deploy application
+          command: |
+            npm run deploy
+workflows:
+  version: 2
+  install_and_deploy:
+    jobs:
+      - install
+      - deploy:
+          requires:
+            - install
