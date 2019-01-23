@@ -15,7 +15,7 @@ provider:
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
-    SLACK_REDIRECT_URL: https://u4l5g9su7i.execute-api.us-east-1.amazonaws.com/local/auth/redirect
+    SLACK_REDIRECT_URI: https://u4l5g9su7i.execute-api.us-east-1.amazonaws.com/local/auth/redirect
 
 custom: {}
 
