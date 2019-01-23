@@ -30,6 +30,8 @@ export const handler = apiWrapper(async (body, success, error) => {
         }
       ]
     };
+    console.log('Message is', message);
+    console.log('Stringified message is', JSON.stringify(message));
     const params = {
       url: body.response_url,
       body: JSON.stringify(message),
@@ -37,6 +39,7 @@ export const handler = apiWrapper(async (body, success, error) => {
       headers: { 'Content-type': 'application/json' },
       simple: false
     };
+    console.log('Responding with params', params);
     const response = await post(params);
     success(response);
   } catch (err) {
