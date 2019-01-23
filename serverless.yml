@@ -9,7 +9,7 @@ plugins:
 
 provider:
   name: aws
-  stage: prod
+  stage: local
   runtime: nodejs8.10
   environment:
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
