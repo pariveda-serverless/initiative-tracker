@@ -8,7 +8,7 @@
   "dependencies": {
     "@iopipe/iopipe": "^1.12.1",
     "@iopipe/logger": "^1.2.0",
-    "@manwaring/lambda-wrapper": "^0.1.14",
+    "@manwaring/lambda-wrapper": "^0.1.15",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
