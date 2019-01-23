@@ -6,11 +6,17 @@
   "scripts": {
     "deploy": "sls deploy"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@manwaring/lambda-wrapper": "^0.1.13",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^8.0.57",
+    "@types/request-promise": "^4.1.42",
     "serverless": "^1.36.2",
+    "serverless-plugin-iam-checker": "0.0.43",
     "serverless-webpack": "^5.1.1",
     "source-map-support": "^0.5.6",
     "ts-loader": "^4.2.0",

@@ -21,3 +21,10 @@ functions:
       - http:
           method: get
           path: hello
+
+  auth-redirect:
+    handler: app/auth-redirect.handler
+    events:
+      - http:
+          method: post
+          path: /auth/redirect
