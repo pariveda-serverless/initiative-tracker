@@ -26,5 +26,5 @@ functions:
     handler: app/auth-redirect.handler
     events:
       - http:
-          method: post
+          method: get
           path: /auth/redirect
