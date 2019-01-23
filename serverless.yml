@@ -1,9 +1,12 @@
 service:
   name: intiative-tracker
 
-# Add the serverless-webpack plugin
 plugins:
+  - serverless-plugin-iopipe
   - serverless-webpack
+  - serverless-plugin-iam-checker
+  - serverless-cloudformation-resource-counter
+  - serverless-stack-output
 
 provider:
   name: aws
