@@ -13,7 +13,7 @@ export const handler = apiWrapper(async (body, success, error) => {
         }
       ]
     };
-    console.log('Message is', message);
+    console.log('Message is: ', message);
     console.log('Stringified message is', JSON.stringify(message));
     const params = {
       url: body.response_url,
