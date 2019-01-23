@@ -15,7 +15,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
           color: '#3AA3E3'
         }
       ],
-      response_type: 'ephemeral'
+      response_type: 'in_channel'
     };
     console.log('Message is: ', message);
     console.log('Stringified message is', JSON.stringify(message));
@@ -29,6 +29,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     };
     console.log('Responding with params', params);
     const response = await post(params);
+    console.log('response', response);
     success(response);
   } catch (err) {
     console.log('Error')
