@@ -1,6 +1,6 @@
-import { apiWrapper } from '@manwaring/lambda-wrapper';
+import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 
-export const handler = apiWrapper(async (body, success, error) => {
+export const handler = apiWrapper(async ({body, success, error} : ApiSignature) => {
   try {
     console.log('Body', body);
     console.log('Response url', body.response_url);
@@ -11,10 +11,12 @@ export const handler = apiWrapper(async (body, success, error) => {
           text: 'This message is ephemeral and is only visible to you.',
           color: '#3AA3E3'
         }
-      ]
+      ],
+      response_type: 'ephemeral'
     };
     console.log('Message is: ', message);
     console.log('Stringified message is', JSON.stringify(message));
+    console.log('body.response_url = ', body.response_url);
     const params = {
       url: body.response_url,
       body: JSON.stringify(message),
