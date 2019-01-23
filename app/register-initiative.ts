@@ -3,6 +3,7 @@ import { post } from 'request-promise';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    console.log('Jorge');
     console.log('Body', body);
     console.log('Response url', body.response_url);
     const message = {
