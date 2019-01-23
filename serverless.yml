@@ -20,12 +20,12 @@ provider:
 custom: {}
 
 functions:
-  hello:
-    handler: app/hello.handler
+  action-endpoint:
+    handler: app/action-endpoint.handler
     events:
       - http:
-          method: get
-          path: hello
+          method: post
+          path: actions
 
   auth-redirect:
     handler: app/auth-redirect.handler
