@@ -20,6 +20,13 @@ provider:
 custom: {}
 
 functions:
+  register-initiative:
+    handler: app/register-initiative.handler
+    events:
+      - http:
+          method: post
+          path: initiatives
+
   action-endpoint:
     handler: app/action-endpoint.handler
     events:
