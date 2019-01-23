@@ -1,7 +1,7 @@
-import { apiWrapper } from '@manwaring/lambda-wrapper';
+import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { post } from 'request-promise';
 
-export const handler = apiWrapper(async (body, success, error) => {
+export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     console.log('Body', body);
     console.log('Response url', body.response_url);
