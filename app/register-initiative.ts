@@ -31,8 +31,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         }
       ]
     };
-    console.log('Message is', message);
-    console.log('Stringified message is', JSON.stringify(message));
+    console.log('Message is ', message);
+    console.log('Stringified message is ', JSON.stringify(message));
     const params = {
       url: body.response_url,
       body: JSON.stringify(message),
