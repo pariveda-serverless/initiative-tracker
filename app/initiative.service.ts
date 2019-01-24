@@ -15,7 +15,12 @@ export function getInitiativeById(initiativeId: string): Promise<any> {
   }
 
   export function saveInitiative(Item: Initiative): Promise<Initiative> {
-    const params = { TableName: process.env.INITIATIVES_TABLE, Item };
+    console.log('env = ', process.env)
+    console.log('TABLE NAME = ', process.env.INITIATIVES_TABLE)
+    const params = { 
+        TableName: process.env.INITIATIVES_TABLE, 
+        Item 
+    };
     return initiatives
       .put(params)
       .promise()
