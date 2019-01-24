@@ -52,7 +52,7 @@ anchors:
     <<: *container-config
     steps:
       - checkout
-      - *load-cache
+      - *load-dependency-cache
       - *configure-aws-access
       - run:
           name: Deploy stack
