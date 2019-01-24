@@ -1,8 +1,8 @@
 service:
-  name: intiative-tracker
+  name: initiative-tracker
 
 plugins:
-  - serverless-plugin-iopipe
+  - serverless-plugin-epsagon
   - serverless-webpack
   - serverless-plugin-iam-checker
   - serverless-cloudformation-resource-counter
@@ -12,12 +12,26 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
+    REVISION: ${file(infrastructure/helper.js):revision}
+    STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
-    SLACK_REDIRECT_URI: https://u4l5g9su7i.execute-api.us-east-1.amazonaws.com/local/auth/redirect
+    SLACK_REDIRECT_URI:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - { Ref: ApiGatewayRestApi }
+          - '.execute-api.'
+          - { Ref: AWS::Region }
+          - '.'
+          - { Ref: AWS::URLSuffix }
+          - '/${opt:stage, self:provider.stage}/redirect'
 
-custom: {}
+custom:
+  epsagon:
+    token: ${env:EPSAGON_TOKEN}
+    appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
   register-initiative:

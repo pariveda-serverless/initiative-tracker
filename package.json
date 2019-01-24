@@ -6,9 +6,8 @@
     "deploy": "sls deploy"
   },
   "dependencies": {
-    "@iopipe/iopipe": "^1.12.1",
-    "@iopipe/logger": "^1.2.0",
-    "@manwaring/lambda-wrapper": "^0.1.15",
+    "@manwaring/lambda-wrapper": "^0.2.1",
+    "epsagon": "^1.7.13",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
@@ -16,25 +15,16 @@
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^8.0.57",
     "@types/request-promise": "^4.1.42",
+    "git-rev-sync": "^1.12.0",
     "serverless": "^1.36.2",
     "serverless-cloudformation-resource-counter": "^0.2.0",
+    "serverless-plugin-epsagon": "^1.4.10",
     "serverless-plugin-iam-checker": "0.0.43",
-    "serverless-plugin-iopipe": "^1.6.2",
     "serverless-stack-output": "^0.2.3",
     "serverless-webpack": "^5.1.1",
     "source-map-support": "^0.5.6",
     "ts-loader": "^4.2.0",
     "typescript": "^2.9.2",
     "webpack": "^4.5.0"
-  },
-  "iopipe": {
-    "plugins": [
-      [
-        "@iopipe/logger",
-        {
-          "enabled": true
-        }
-      ]
-    ]
   }
 }

@@ -1,51 +1,102 @@
-version: 2
+# Note: YAML anchors allow an object to be re-used, reducing duplication. The ampersand
+# declares an alias for an object, then later the `<<: *alias` syntax dereferences it.
+#
+# See http://blog.daemonl.com/2016/02/yaml.html and
+# https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd
+# for more information about how to use anchors.
+#
+# To validate changes use an online parser, eg. http://yaml-online-parser.appspot.com/
 anchors:
+  container-config: &container-config
+    docker:
+      - image: circleci/node:10.15
+        environment:
+          TERM: dumb
+
+  cache-dependencies: &cache-dependencies
+    save_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+      paths:
+        - node_modules
+
+  load-dependency-cache: &load-dependency-cache
+    restore_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+
   configure-aws-access: &configure-aws-access
     run:
       name: Configure AWS access
       command: |
         mkdir -p ~/.aws
-
         cat > ~/.aws/credentials << EOL
         [default]
         aws_access_key_id = ${ACCESS_KEY_ID}
         aws_secret_access_key = ${SECRET_ACCESS_KEY}
         EOL
-  load-cache: &load-cache
-    restore_cache:
-      key: dependency-cache-{{ checksum "package.json" }}
 
-jobs:
-  install:
-    docker:
-      - image: circleci/node:10.15.0
+  filter-feature-branches: &filter-feature-branches
+    filters:
+      branches:
+        ignore: master
+
+  filter-prod: &filter-prod
+    filters:
+      branches:
+        only: master
+
+  prod-config: &prod-config
+    environment:
+      - STAGE: prod
+
+  deploy: &deploy
+    <<: *container-config
     steps:
       - checkout
-      - *load-cache
-      - run:
-          name: Install dependencies
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-  deploy:
-    docker:
-      - image: circleci/node:10.15.0
-    steps:
-      - checkout
-      - *load-cache
+      - *load-dependency-cache
       - *configure-aws-access
       - run:
-          name: Deploy application
+          name: Deploy stack
           command: |
-            npm run deploy
+            [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
+            echo Deploying for stage $STAGE
+            npm run deploy -- --stage $STAGE
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #       - infrastructure
+
+version: 2
+jobs:
+  install:
+    <<: *container-config
+    steps:
+      - checkout
+      # - *load-dependency-cache
+      - run:
+          name: Install dependencies
+          command: npm i
+      - *cache-dependencies
+
+  deploy-branch:
+    <<: *deploy
+
+  deploy-prod:
+    <<: *deploy
+    <<: *prod-config
+
 workflows:
   version: 2
-  install_and_deploy:
+
+  deploy-pipeline:
     jobs:
       - install
-      - deploy:
+      - deploy-branch:
+          <<: *filter-feature-branches
+          context: initiative-tracker
+          requires:
+            - install
+      - deploy-prod:
+          <<: *filter-prod
           context: initiative-tracker
           requires:
             - install
