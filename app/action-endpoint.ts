@@ -11,7 +11,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     console.log('Response url', payload.response_url);
 
     const initiative = new Initiative({
-      'owner': 'Jorge',
+      'creator': 'Jorge',
       'name': 'Test',
       'description': 'This is only a test.',
     });
