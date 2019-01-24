@@ -20,6 +20,7 @@ provider:
 custom:
   epsagon:
     token: ${env:EPSAGON_TOKEN}
+    appName: ${self:service.name}
 
 functions:
   register-initiative:
