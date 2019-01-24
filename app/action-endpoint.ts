@@ -17,17 +17,17 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
       response_type: 'in_channel'
     };
     console.log('Message is: ', message);
-    console.log('Stringified message is', JSON.stringify(message));
-    const params = {
-      url: payload.response_url,
-      body: JSON.stringify(message),
-      method: 'POST',
-      headers: { 'Content-type': 'application/json' },
-      simple: false
-    };
-    console.log('Responding with params', params);
-    const response = await post(params);
-    console.log('response', response);
+    // console.log('Stringified message is', JSON.stringify(message));
+    // const params = {
+    //   url: payload.response_url,
+    //   body: JSON.stringify(message),
+    //   method: 'POST',
+    //   headers: { 'Content-type': 'application/json' },
+    //   simple: false
+    // };
+    // console.log('Responding with params', params);
+    // const response = await post(params);
+    // console.log('response', response);
     success(message);
   } catch (err) {
     console.log('Error')
