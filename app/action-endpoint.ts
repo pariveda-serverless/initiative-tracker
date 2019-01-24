@@ -11,7 +11,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     console.log('Response url', payload.response_url);
 
     const userId = payload.user.id
-    const name = payload.text || '';
+    const name = payload.actions[0].value || 'Test-Initiative-Name';
 
     const initiative = new Initiative({
       'creator': userId,
