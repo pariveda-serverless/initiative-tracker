@@ -6,8 +6,6 @@ Resources:
       AttributeDefinitions:
         - AttributeName: name
           AttributeType: S
-        - AttributeName: description
-          AttributeType: S
         - AttributeName: creator
           AttributeType: S
       KeySchema:
