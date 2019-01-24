@@ -28,7 +28,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     console.log('Responding with params', params);
     const response = await post(params);
     console.log('response', response);
-    success(response);
+    success(message);
   } catch (err) {
     console.log('Error')
     error(err);
