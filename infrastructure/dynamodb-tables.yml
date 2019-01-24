@@ -1,0 +1,21 @@
+Resources:
+  InitiativesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.properties.initiativesTable.${self:provider.stage}}
+      AttributeDefinitions:
+        - AttributeName: name
+          AttributeType: S
+        - AttributeName: description
+          AttributeType: S
+        - AttributeName: creator
+          AttributeType: S
+      KeySchema:
+        - AttributeName: name
+          KeyType: HASH
+        - AttributeName: creator
+          KeyType: RANGE
+      # Set the capacity based on the stage
+      ProvisionedThroughput:
+        ReadCapacityUnits: ${self:custom.config.table.min}
+        WriteCapacityUnits: ${self:custom.config.table.min}

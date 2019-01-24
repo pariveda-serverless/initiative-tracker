@@ -14,6 +14,7 @@ provider:
   environment:
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
+    REGION: ${self:custom.config.region}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
@@ -27,8 +28,26 @@ provider:
           - '.'
           - { Ref: AWS::URLSuffix }
           - '/${opt:stage, self:provider.stage}/redirect'
+    INITIATIVES_TABLE: ${self:custom.properties.initiativesTable.${self:provider.stage}}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+        - "Fn::GetAtt": [ InitiativesTable, Arn ]
 
 custom:
+  config: ${file(infrastructure/configurations.yml)}
+  properties: ${file(infrastructure/properties.yml)}
   epsagon:
     token: ${env:EPSAGON_TOKEN}
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
@@ -54,3 +73,7 @@ functions:
       - http:
           method: get
           path: /auth/redirect
+
+
+resources:
+  - ${file(infrastructure/dynamodb-table.yml)}

@@ -1,0 +1,7 @@
+# Properties in this folder include dependencies/references to all resources and endpoints
+# needed by this application in order to run.  For each dependency/reference there are two
+# available values - typically a default value which uses CloudFormation references for AWS
+# resources and an offline value which uses Serverless Framework deployment outputs
+
+initiativesTable:
+  default: { Ref: InitiativesTable }
