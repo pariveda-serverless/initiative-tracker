@@ -1,5 +1,5 @@
 service:
-  name: intiative-tracker
+  name: initiative-tracker
 
 plugins:
   - serverless-plugin-epsagon
