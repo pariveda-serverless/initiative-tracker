@@ -6,12 +6,13 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log('Body', body);
     console.log('Response url', body.response_url);
     const message = {
-      text: 'This is a test message',
+      text: 'Initiative registration',
       attachments: [
         {
-          text: 'Are you still working on your initiative?',
+          title: 'Confirmation', 
+          text: '${body.user_name} Are you sure you want to create the initiative?',
           fallback: 'This is a fallback message, something must have gone wrong...',
-          callback_id: 'INITIATIVE_STATUS',
+          callback_id: 'INITIATIVE_REGISTRATION',
           color: '#3AA3E3',
           attachment_type: 'default',
           actions: [
