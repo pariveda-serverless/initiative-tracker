@@ -31,7 +31,7 @@ provider:
 custom:
   epsagon:
     token: ${env:EPSAGON_TOKEN}
-    appName: ${self:service.name}
+    appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
   register-initiative:
