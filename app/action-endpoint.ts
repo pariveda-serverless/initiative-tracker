@@ -10,10 +10,13 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     console.log('Payload', payload);
     console.log('Response url', payload.response_url);
 
+    const userId = payload.user.id
+    const name = payload.text || '';
+
     const initiative = new Initiative({
-      'creator': 'Jorge',
-      'name': 'Test',
-      'description': 'This is only a test.',
+      'creator': userId,
+      'name': name,
+      'status': 'WIP'
     });
 
     await saveInitiative(initiative);
