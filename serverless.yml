@@ -12,6 +12,7 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
+    INITIATIVES_TABLE: ${self:custom.properties.initiativesTable.${self:provider.stage}}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     REGION: ${self:custom.config.region}
@@ -28,7 +29,6 @@ provider:
           - '.'
           - { Ref: AWS::URLSuffix }
           - '/${opt:stage, self:provider.stage}/redirect'
-    INITIATIVES_TABLE: ${self:custom.properties.initiativesTable.${self:provider.stage}}
 
   iamRoleStatements:
     - Effect: Allow
