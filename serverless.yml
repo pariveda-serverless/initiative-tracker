@@ -2,7 +2,7 @@ service:
   name: intiative-tracker
 
 plugins:
-  - serverless-plugin-iopipe
+  - serverless-plugin-epsagon
   - serverless-webpack
   - serverless-plugin-iam-checker
   - serverless-cloudformation-resource-counter
@@ -17,7 +17,9 @@ provider:
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
     SLACK_REDIRECT_URI: https://u4l5g9su7i.execute-api.us-east-1.amazonaws.com/local/auth/redirect
 
-custom: {}
+custom:
+  epsagon:
+    token: ${env:EPSAGON_TOKEN}
 
 functions:
   register-initiative:
