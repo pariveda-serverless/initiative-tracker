@@ -76,4 +76,4 @@ functions:
 
 
 resources:
-  - ${file(infrastructure/dynamodb-table.yml)}
+  - ${file(infrastructure/dynamodb-tables.yml)}
