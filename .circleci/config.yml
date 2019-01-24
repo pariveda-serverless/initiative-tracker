@@ -7,7 +7,7 @@
 #
 # To validate changes use an online parser, eg. http://yaml-online-parser.appspot.com/
 anchors:
-  node-container-config: &node-container-config
+  container-config: &container-config
     docker:
       - image: circleci/node:10.15
         environment:
@@ -68,7 +68,7 @@ anchors:
 version: 2
 jobs:
   install:
-    <<: *node-container-config
+    <<: *container-config
     steps:
       - checkout
       # - *load-dependency-cache
