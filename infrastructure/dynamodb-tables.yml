@@ -2,7 +2,7 @@ Resources:
   InitiativesTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ${self:custom.properties.initiativesTable.${self:provider.stage}}
+      TableName: ${self:custom.initiativesTableName}
       AttributeDefinitions:
         - AttributeName: name
           AttributeType: S

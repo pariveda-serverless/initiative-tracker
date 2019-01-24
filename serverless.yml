@@ -12,7 +12,7 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
-    INITIATIVES_TABLE: ${self:custom.properties.initiativesTable.${self:provider.stage}}
+    INITIATIVES_TABLE: ${self:custom.initiativesTableName}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     REGION: ${self:custom.config.region}
@@ -46,6 +46,8 @@ provider:
         - "Fn::GetAtt": [ InitiativesTable, Arn ]
 
 custom:
+  stage: ${opt:stage, self:provider.stage}
+  initiativesTableName: ${self:custom.stage}-initiatives
   config: ${file(infrastructure/configurations.yml)}
   properties: ${file(infrastructure/properties.yml)}
   epsagon:
