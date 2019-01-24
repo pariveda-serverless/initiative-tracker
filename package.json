@@ -6,7 +6,7 @@
     "deploy": "sls deploy"
   },
   "dependencies": {
-    "@manwaring/lambda-wrapper": "^0.2.0",
+    "@manwaring/lambda-wrapper": "^0.2.1",
     "epsagon": "^1.7.13",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
@@ -15,6 +15,7 @@
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^8.0.57",
     "@types/request-promise": "^4.1.42",
+    "git-rev-sync": "^1.12.0",
     "serverless": "^1.36.2",
     "serverless-cloudformation-resource-counter": "^0.2.0",
     "serverless-plugin-epsagon": "^1.4.10",

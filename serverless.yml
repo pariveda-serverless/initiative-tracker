@@ -12,6 +12,8 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
+    REVISION: ${file(infrastructure/helper.js):revision}
+    STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
