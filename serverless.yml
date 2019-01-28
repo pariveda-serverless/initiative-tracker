@@ -47,7 +47,7 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  initiativesTableName: ${self:custom.stage}-initiatives
+  initiativesTableName: ${self:custom.stage}-initiatives-2
   config: ${file(infrastructure/configurations.yml)}
   properties: ${file(infrastructure/properties.yml)}
   epsagon:
