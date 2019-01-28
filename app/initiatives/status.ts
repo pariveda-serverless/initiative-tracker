@@ -1,0 +1,6 @@
+export enum Status {
+  CREATED = 'CREATED',
+  WIP = 'WORK_IN_PROGRESS',
+  CLOSED = 'CLOSED',
+  FINISHED = 'FINISHED'
+}

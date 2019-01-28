@@ -4,14 +4,14 @@ Resources:
     Properties:
       TableName: ${self:custom.initiativesTableName}
       AttributeDefinitions:
-        - AttributeName: name
+        - AttributeName: partitionKey
           AttributeType: S
-        - AttributeName: creator
+        - AttributeName: sortKey
           AttributeType: S
       KeySchema:
-        - AttributeName: name
+        - AttributeName: partitionKey
           KeyType: HASH
-        - AttributeName: creator
+        - AttributeName: sortKey
           KeyType: RANGE
       # Set the capacity based on the stage
       ProvisionedThroughput:

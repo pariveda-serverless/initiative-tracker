@@ -2,20 +2,20 @@
 // import { IsNotEmpty } from 'class-validator';
 import { v4 } from 'uuid';
 
-export class Initiative {
+export class User {
   constructor(body: any) {
     Object.keys(body).forEach(key => {
       if (body[key]) {
         this[key] = body[key];
       }
     });
-    if (!this.initiativeId) {
-      this.initiativeId = v4();
+    if (!this.id) {
+      this.id = v4();
     }
   }
 
   // @IsNotEmpty({ message: 'Submission ID is required' })
-  initiativeId: string;
+  id: string;
 
   [key: string]: any;
 }
