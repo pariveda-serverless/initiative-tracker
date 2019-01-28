@@ -1,7 +1,7 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { post } from 'request-promise';
 import { Initiative } from './initiatives/initiative'
-import { saveInitiative } from './initiatives/initiative.service'
+import { saveInitiative, getInitiativeByName } from './initiatives/initiative.service'
 import { Status } from './initiatives/status'
 
 export const handler = apiWrapper(async ({body, success, error} : ApiSignature) => {
@@ -21,6 +21,9 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     });
 
     await saveInitiative(initiative);
+
+    const response = await getInitiativeByName(initiative.name)
+    console.log('STORED INITIATIVE', response)
 
     const message = {
       text: 'Selection was received by slack!',
