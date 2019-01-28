@@ -19,17 +19,34 @@ export function getInitiativeByName(initiativeName: string): Promise<any> {
     .then(res => res.Items);
 }
 
-export function getInitiativeByUser(initiativeId: string): Promise<any> {
+// I do not like scan strategy...
+export function getInitiatives(): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { initiativeId }
+    ProjectionExpression: 'partitionKey',
+    KeyConditionExpression: 'begins_with(partitionKey, :pkey)',
+    ExpressionAttributeValues: {
+      ':pkey': 'INITIATIVE',
+    }
   };
-
+  console.log('PARAMS ', params);
   return initiatives
-    .get(params)
+    .scan(params)
     .promise()
-    .then(res => res.Item);
+    .then(res => res.Items);
 }
+
+// export function getInitiativeByUser(initiativeId: string): Promise<any> {
+//   const params = {
+//     TableName: process.env.INITIATIVES_TABLE,
+//     Key: { initiativeId }
+//   };
+
+//   return initiatives
+//     .get(params)
+//     .promise()
+//     .then(res => res.Item);
+// }
 
 export function saveInitiative(initiative: Initiative): Promise<Initiative> {
   // This can be done better, but not sure what is the right mix of business logic and abstraction in this case

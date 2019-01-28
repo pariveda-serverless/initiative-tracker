@@ -69,6 +69,13 @@ functions:
           method: post
           path: actions
 
+  list-initiatives:
+    handler: app/list-initiatives.handler
+    events:
+      - http:
+          method: post
+          path: list-initiatives
+
   auth-redirect:
     handler: app/auth-redirect.handler
     events:
