@@ -10,7 +10,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const cachedInitiatives: any = new Object();
     initiatives.map((initiative)=> cachedInitiatives[initiative.partitionKey] = initiative)
     console.log('CACHED_INITIATIVES', cachedInitiatives);
-    initiativeNamesList = cachedInitiatives.keys();
+    initiativeNamesList = Object.keys(cachedInitiatives);
     console.log('INITIATIVES', initiativeNamesList)
 
     const message = {
