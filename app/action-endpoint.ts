@@ -2,6 +2,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { post } from 'request-promise';
 import { Initiative } from './initiatives/initiative'
 import { saveInitiative } from './initiatives/initiative.service'
+import { Status } from './initiatives/status'
 
 export const handler = apiWrapper(async ({body, success, error} : ApiSignature) => {
   try {
@@ -16,7 +17,7 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
     const initiative = new Initiative({
       'name': name,
       'creator': userId,
-      'status': 'WIP'
+      'status': Status.WIP
     });
 
     await saveInitiative(initiative);

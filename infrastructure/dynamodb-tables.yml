@@ -13,6 +13,14 @@ Resources:
           KeyType: HASH
         - AttributeName: sortKey
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: sortKey
+          KeySchema:
+            - AttributeName: sortKey
+              KeyType: HASH
+          ProvisionedThroughput:
+            ReadCapacityUnits: ${self:custom.config.table.min}
+            WriteCapacityUnits: ${self:custom.config.table.min}      
       # Set the capacity based on the stage
       ProvisionedThroughput:
         ReadCapacityUnits: ${self:custom.config.table.min}

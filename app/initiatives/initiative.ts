@@ -19,5 +19,7 @@ export class Initiative {
 
   creator: string
 
+  name: string
+
   [key: string]: any;
 }
