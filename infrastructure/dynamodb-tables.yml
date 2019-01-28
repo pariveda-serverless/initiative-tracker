@@ -18,6 +18,8 @@ Resources:
           KeySchema:
             - AttributeName: sortKey
               KeyType: HASH
+          Projection:
+            ProjectionType: ALL
           ProvisionedThroughput:
             ReadCapacityUnits: ${self:custom.config.table.min}
             WriteCapacityUnits: ${self:custom.config.table.min}      
