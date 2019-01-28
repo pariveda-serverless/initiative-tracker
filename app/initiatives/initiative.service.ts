@@ -7,8 +7,9 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export function getInitiativeByName(initiativeName: string): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: {
-      partitionKey: `INITIATIVE:${initiativeName}`
+    KeyConditionExpression: 'HashKey = :hkey',
+    ExpressionAttributeValues: {
+      ':hkey': `INITIATIVE:${initiativeName}`,
     }
   };
   console.log('PARAMS ', params);
