@@ -8,7 +8,7 @@ export function getInitiativeByName(initiativeName: string): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: {
-      HashKey: `INITIATIVE:${initiativeName}` // partitionKey
+      partitionKey: `INITIATIVE:${initiativeName}`
     }
   };
   console.log('PARAMS ', params);
