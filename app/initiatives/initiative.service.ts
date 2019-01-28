@@ -13,9 +13,9 @@ export function getInitiativeByName(initiativeName: string): Promise<any> {
   };
   console.log('PARAMS ', params);
   return initiatives
-    .get(params)
+    .query(params)
     .promise()
-    .then(res => res.Item);
+    .then(res => res.Items);
 }
 
 export function getInitiativeByUser(initiativeId: string): Promise<any> {
