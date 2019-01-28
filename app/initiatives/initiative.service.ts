@@ -52,7 +52,7 @@ export function saveInitiative(initiative: Initiative): Promise<Initiative> {
   // This can be done better, but not sure what is the right mix of business logic and abstraction in this case
   const initiativeItem = new TableItem({
     'body': initiative,
-    'partitionKey': `INITIATIVE:${initiative.name}`, //  ${initiative.constructor.name}:${initiative.id}
+    'partitionKey': `INITIATIVE:${initiative.id}`, //  ${initiative.constructor.name}:${initiative.id}
     'sortKey': `USER:${initiative.creator}`
   })
 

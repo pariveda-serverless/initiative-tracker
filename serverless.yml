@@ -55,12 +55,19 @@ custom:
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
-  register-initiative:
-    handler: app/register-initiative.handler
+  create-initiative:
+    handler: app/create-initiative.handler
     events:
       - http:
           method: post
-          path: initiatives
+          path: initiatives/create
+
+  list-initiatives:
+    handler: app/list-initiatives.handler
+    events:
+      - http:
+          method: post
+          path: initiatives/list
 
   action-endpoint:
     handler: app/action-endpoint.handler
@@ -68,13 +75,6 @@ functions:
       - http:
           method: post
           path: actions
-
-  list-initiatives:
-    handler: app/list-initiatives.handler
-    events:
-      - http:
-          method: post
-          path: list-initiatives
 
   auth-redirect:
     handler: app/auth-redirect.handler

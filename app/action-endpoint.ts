@@ -1,5 +1,4 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { post } from 'request-promise';
 import { Initiative } from './initiatives/initiative'
 import { saveInitiative, getInitiativeByName } from './initiatives/initiative.service'
 import { Status } from './initiatives/status'
