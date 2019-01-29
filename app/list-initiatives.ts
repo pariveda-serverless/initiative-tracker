@@ -11,7 +11,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     initiatives.map((initiative)=> cachedInitiatives[initiative.partitionKey] = initiative)
     console.log('CACHED_INITIATIVES', cachedInitiatives);
     initiativeNamesList = Object.keys(cachedInitiatives);
-    console.log('INITIATIVES', initiativeNamesList)
+    console.log('INITIATIVES', initiativeNamesList);
 
     const message = {
       text: 'Initiative registration',
@@ -27,9 +27,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 });
 
 
-function generateAttachments(list: Array<String>) : Array<any> {
+function generateAttachments(list) : Array<any> {
   let attachemnts = [];
-  for (const item in list){
+  for (const item of list){
+    console.log('ITEM', item);
     attachemnts.push(generateAttacment(item))
   }
   return attachemnts;
