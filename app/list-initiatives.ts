@@ -10,9 +10,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const cachedInitiatives: any = new Object();
     // Getting map of partition key to initiative
     initiatives.map((initiative)=> cachedInitiatives[initiative.partitionKey] = initiative)
+    console.log('cachedInitiatives', cachedInitiatives)
     // Storing names of each initiative in array
-    for (const partitionKey in initiatives) {
-      if (initiatives[partitionKey].name){
+    for (const partitionKey in cachedInitiatives) {
+      console.log()
+      if (cachedInitiatives[partitionKey].name){
         initiativeNamesList.push(initiatives[partitionKey].name)
       }
     }
