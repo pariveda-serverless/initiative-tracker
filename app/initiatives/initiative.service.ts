@@ -23,7 +23,6 @@ export function getInitiativeByName(initiativeName: string): Promise<any> {
 export function getInitiatives(): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    ProjectionExpression: 'partitionKey',
     FilterExpression: 'begins_with(partitionKey, :pkey)',
     ExpressionAttributeValues: {
       ':pkey': 'INITIATIVE',

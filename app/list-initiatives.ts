@@ -13,7 +13,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log('cachedInitiatives', cachedInitiatives)
     // Storing names of each initiative in array
     for (const partitionKey in cachedInitiatives) {
-      console.log()
       if (cachedInitiatives[partitionKey].name){
         initiativeNamesList.push(initiatives[partitionKey].name)
       }
