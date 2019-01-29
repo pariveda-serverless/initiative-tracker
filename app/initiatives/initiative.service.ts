@@ -53,9 +53,8 @@ export function saveInitiative(initiative: Initiative): Promise<Initiative> {
   const initiativeItem = new TableItem({
     'body': initiative,
     'partitionKey': `INITIATIVE:${initiative.id}`, //  ${initiative.constructor.name}:${initiative.id}
-    'sortKey': `USER:${initiative.creator}`
+    'sortKey': 'INITIATIVE'
   })
-
   const params = { 
       TableName: process.env.INITIATIVES_TABLE, 
       Item: initiativeItem
