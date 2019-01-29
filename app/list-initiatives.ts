@@ -23,7 +23,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     
     const message = generateInitiativeMessage(initiatives);
 
-    console.log('Message is ', message);
+    console.log('Message is ', JSON.stringify(message));
     success(message);
   } catch (err) {
     error(err);

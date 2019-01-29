@@ -1,5 +1,6 @@
 import { Initiative } from '../initiatives/initiative'
 import { generateInitiativeDecisionButton } from './buttons'
+import { Colors } from './colors';
 
 export  function generateInitiativeAttachments(initiatives: Array<Initiative>) : any {
   let attachments = []
@@ -10,6 +11,8 @@ export  function generateInitiativeAttachments(initiatives: Array<Initiative>) :
 export function generateInitiativeAttachment(initiative: Initiative){
   return {
     text: initiative.name,
+    color: Colors[`${initiative.status}`],
+    "attachment_type": "default",
     actions: [
       generateInitiativeDecisionButton('CHAMPION', initiative.id),
       generateInitiativeDecisionButton('JOIN', initiative.id),

@@ -1,5 +1,5 @@
-import {Types} from './types'
-import {Colors} from './colors'
+import { Types } from './types'
+import { Colors } from './colors'
 
 export function generateInitiativeDecisionButton(action: string, initiativeId: string ): any {
   switch(action){
