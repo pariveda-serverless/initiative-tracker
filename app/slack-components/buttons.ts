@@ -9,7 +9,7 @@ export function generateInitiativeDecisionButton(action: string, initiativeId: s
         text: 'Champion',
         value: `CHAMPION:${initiativeId}`,
         type: Types.BUTTON,
-        style: Colors.GOOD
+        style: Colors.PRIMARY
       }
     case 'JOIN':
       return {
@@ -17,7 +17,7 @@ export function generateInitiativeDecisionButton(action: string, initiativeId: s
         text: 'Join',
         value: `JOIN:${initiativeId}`,
         type: Types.BUTTON,
-        style: Colors.GOLD
+        style: Colors.DANGER
       }
     default:
       return null
