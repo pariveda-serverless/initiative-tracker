@@ -8,11 +8,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log('INITIATIVES', initiatives);
     let initiativeNamesList: Array<String> = new Array();
     const cachedInitiatives: any = new Object();
+    // Getting map of partition key to initiative
     initiatives.map((initiative)=> cachedInitiatives[initiative.partitionKey] = initiative)
-    console.log('CACHED_INITIATIVES', cachedInitiatives);
-    initiativeNamesList = Object.keys(cachedInitiatives);
-    console.log('INITIATIVES', initiativeNamesList);
-
+    // Storing names of each initiative in array
+    for (const partitionKey in initiatives) {
+      if (initiatives[partitionKey].name){
+        initiativeNamesList.push(initiatives[partitionKey].name)
+      }
+    }
     const message = {
       text: 'Initiative registration',
       attachments: generateAttachments(initiativeNamesList),
