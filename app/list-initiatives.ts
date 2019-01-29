@@ -16,7 +16,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       console.log('EVALUATING', partitionKey);
       console.log('INITIATIVE = ', cachedInitiatives[partitionKey]);
       if (cachedInitiatives[partitionKey].name){
-        initiativeNamesList.push(initiatives[partitionKey].name)
+        initiativeNamesList.push(cachedInitiatives[partitionKey].name)
       }
     }
     const message = {
