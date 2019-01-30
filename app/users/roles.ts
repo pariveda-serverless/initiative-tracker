@@ -1,0 +1,4 @@
+export enum Roles {
+  CHAMPION = 'CHAMPION',
+  CONTRIBUTOR = 'CONTRIBUTOR',
+}

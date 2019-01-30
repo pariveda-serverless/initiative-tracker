@@ -1,21 +1,20 @@
 
 // import { IsNotEmpty } from 'class-validator';
-import { v4 } from 'uuid';
+
+interface IUser {
+  slackId: string, 
+  role: string
+}
 
 export class User {
-  constructor(body: any) {
-    Object.keys(body).forEach(key => {
-      if (body[key]) {
-        this[key] = body[key];
-      }
-    });
-    if (!this.id) {
-      this.id = v4();
-    }
+  constructor(body: IUser) {
+    this.slackId = body.slackId
+    this.role = body.role
   }
 
   // @IsNotEmpty({ message: 'Submission ID is required' })
-  id: string;
+  slackId: string;
 
-  [key: string]: any;
+  role: string
+
 }

@@ -12,7 +12,7 @@ export  function generateInitiativeAttachments(initiatives: Array<Initiative>) :
 export function generateInitiativeAttachment(initiative: Initiative){
   return {
     text: initiative.name,
-    color: Colors[`${initiative.status}`],
+    style: Colors[`${initiative.status}`],
     "attachment_type": "default",
     fields: [
       generateField('Creator', initiative.creator),

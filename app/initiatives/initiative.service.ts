@@ -1,5 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { Initiative } from './initiative';
+import { User } from '../users/user'
 import { TableItem } from '../shared/table-item'
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -62,4 +63,27 @@ export function saveInitiative(initiative: Initiative): Promise<Initiative> {
     .put(params)
     .promise()
     .then(() => initiative);
+}
+
+
+export function joinInitiative(initiativeId: Initiative, user: User): Promise<User> {
+
+  // TODO: Add checks to see if user is already part of an initiative
+  // NOT SURE IF THIS NEEDS TO BE DONE WITHIN THE METHOD OR OUTSIDE OF THE METHOD. PROBABLY OUTSIDE.
+
+  // CREATE INTERFACE HERIARCHY FOR TABLE ITEM, TABLE USER ITEM, INITIATIVE TABLE ITEM
+  const userItem = new TableItem({
+    'body': { role: user.role },
+    'partitionKey': `INITIATIVE:${initiativeId}`, //  ${initiative.constructor.name}:${initiative.id}
+    'sortKey': `USER:${user.slackId}`
+  })
+  const params = { 
+    TableName: process.env.INITIATIVES_TABLE, 
+    Item: userItem
+};
+  return initiatives
+    .put(params)
+    .promise()
+    .then(() => user);
+
 }
