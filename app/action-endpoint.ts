@@ -1,43 +1,57 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Initiative } from './initiatives/initiative'
-import { saveInitiative, getInitiativeByName } from './initiatives/initiative.service'
-import { Status } from './initiatives/status'
+import { User } from './users/user'
+import { saveInitiative, getInitiativeByName, joinInitiative } from './initiatives/initiative.service'
+import { Actions } from './action-types'
+
 
 export const handler = apiWrapper(async ({body, success, error} : ApiSignature) => {
   try {
-    const payload = JSON.parse(body.payload)
-    console.log('Body', body);
+    const payload = JSON.parse(body.payload);
     console.log('Payload', payload);
-    console.log('Response url', payload.response_url);
-
-    const userId = payload.user.id
-    const name = payload.actions[0].value || 'Test-Initiative-Name';
-
-    const initiative = new Initiative({
-      'name': name,
-      'creator': userId,
-      'status': Status.WIP
-    });
-
-    await saveInitiative(initiative);
-
-    const response = await getInitiativeByName(initiative.name)
-    console.log('STORED INITIATIVE', response)
-
-    const message = {
-      text: 'Selection was received by slack!',
-      attachments: [
-        {
-          text: 'This message is ephemeral and is only visible to you.',
-        }
-      ],
-      response_type: 'in_channel'
-    };
+    // Read Action Type
+    let message: any;
+    const callback_id = payload.callback_id;
+    switch(callback_id) {
+      case Actions.JOIN_INITIATIVE:
+        message = await joinInitiativeHalder(payload);
+        break;
+      default:
+        break;
+    }
 
     console.log('Message is: ', message);
     success(message);
   } catch (err) {
     console.log('Error')
+    error(err);
+  }
+});
+
+const joinInitiativeHalder = apiWrapper(async ({ body, success, error }: ApiSignature) => {
+  try {
+
+    const payload = JSON.parse(body.payload);
+    const selection = payload.actions[0].value;
+    const role = selection.split(':')[0];
+    const initiativeId = selection.split(':')[1];
+    console.log('Payload', payload);
+
+    const user = new User ({
+      slackId: payload.user.id,
+      role: role,
+    })
+
+    await joinInitiative(initiativeId, user);
+
+    const message = {
+      text: `User ${user.slackId}  joined initiative ${initiativeId} as a ${user.role}!`,
+      response_type: 'in_channel'
+    };
+
+    console.log('Message is ', JSON.stringify(message));
+    success(message);
+  } catch (err) {
     error(err);
   }
 });
