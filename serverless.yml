@@ -62,6 +62,13 @@ functions:
           method: post
           path: initiatives/join
 
+  say-hello:
+    handler: app/say-hello.foo
+    events:
+      - http:
+          method: post
+          path: initiatives/say-hello
+
   create-initiative:
     handler: app/create-initiative.handler
     events:
