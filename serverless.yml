@@ -9,7 +9,7 @@ plugins:
 
 provider:
   name: aws
-  stage: local # jorge local dev env
+  stage: local # jorge local dev env (changed circleci env vars)
   runtime: nodejs8.10
   environment:
     INITIATIVES_TABLE: ${self:custom.initiativesTableName}
