@@ -31,14 +31,13 @@ export const handler = apiWrapper(async ({body, success, error} : ApiSignature) 
 const joinInitiativeHalder = async (body: any): Promise<any> => {
   return new Promise(async (resolve, reject) =>{
     try {
-      const payload = JSON.parse(body.payload);
-      const selection = payload.actions[0].value;
+      console.log('BODY INSIDE HANDLER', body);
+      const selection = body.actions[0].value;
       const role = selection.split(':')[0];
       const initiativeId = selection.split(':')[1];
-      console.log('Payload', payload);
   
       const user = new User ({
-        slackId: payload.user.id,
+        slackId: body.user.id,
         role: role,
       })
   
