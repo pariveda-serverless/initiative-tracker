@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "deploy": "sls deploy",
-    "generate:swagger": "yaml2json docs/swagger.yml --save"
+    "generate-swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
     "@manwaring/lambda-wrapper": "^0.2.1",
@@ -31,7 +31,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run generate:swagger"
+      "pre-commit": "npm run generate-swagger"
     }
   }
 }
