@@ -2,7 +2,7 @@
 
 ### Motivation
 
-The initiative-tracker project is a solution used to deploy AWS resources that support the cloud infrastructure that manages the data and enables the interactivity of the initiative-tracker salckbot. The goals of this solution is to create a salck-bot application that tracks the initiatives that are going on in the office.
+The initiative-tracker project is a solution used to deploy AWS resources that support the cloud infrastructure that manages the data and enables the interactivity of the initiative-tracker slack-bot. The goals of this solution is to create a slack-bot application that tracks the initiatives that are going on in the office.
 
 The ny-serverless-workshop group created this project in order to provide a canvas for developers to get familiar with the slack API and test out different serverless patterns and architectures.
 
