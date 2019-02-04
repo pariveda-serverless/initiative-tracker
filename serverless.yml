@@ -12,7 +12,7 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
-    INITIATIVES_TABLE: ${self:custom.initiativesTableName}
+    INITIATIVES_TABLE: { Ref: InitiativesTable }
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
