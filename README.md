@@ -24,7 +24,7 @@ The serverless solution is written in tyescript and built for running on nodejs.
 
 ### Access Needed
 
-- [Slack](https:/initativetracker.slack.com)
+- [Slack](https://initativetracker.slack.com)
 - [Pariveda Serverless AWS](https://pariveda-serverless.signin.aws.amazon.com/)
 - [Epsagon](https://pariveda-serverless.signin.aws.amazon.com/) - serverless monitoring tool
 - [CircleCI](/) - CI/CD pipelines

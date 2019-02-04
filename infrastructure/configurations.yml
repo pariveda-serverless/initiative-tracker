@@ -1,5 +1,0 @@
-table:
-  min: 1
-  max: 50
-  utilization: 50
-region: us-east-1
