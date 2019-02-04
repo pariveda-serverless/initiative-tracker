@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@manwaring/lambda-wrapper": "^0.2.1",
-    "epsagon": "^1.7.13",
+    "epsagon": "^1.9.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
