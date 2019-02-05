@@ -5,12 +5,10 @@ import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiat
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
-export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ success, error }: ApiSignature) => {
   try {
     const initiatives = await getInitiatives();
-    console.log('INITIATIVES', initiatives);
     const message = generateInitiativeMessage(initiatives);
-    console.log('Message is ', JSON.stringify(message));
     success(message);
   } catch (err) {
     error(err);
@@ -20,8 +18,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 async function getInitiatives(): Promise<InitiativeResponse[]> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    IndexName: process.env.INITIATIVES_TABLE_TYPE_INDEX,
-    KeyConditionExpression: 'begins_with(#type, :type)',
+    IndexName: process.env.INITIATIVES_TABLE_INITIATIVE_INDEX,
+    KeyConditionExpression: '#type > :type',
     ExpressionAttributeNames: { '#type': 'type' },
     ExpressionAttributeValues: { ':type': INITIATIVE_TYPE }
   };
@@ -30,5 +28,6 @@ async function getInitiatives(): Promise<InitiativeResponse[]> {
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
+  console.log('Received initiatives', records);
   return records.map(initiative => new InitiativeResponse(initiative));
 }
