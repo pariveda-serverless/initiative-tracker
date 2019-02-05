@@ -22,7 +22,7 @@ async function getInitiatives(): Promise<InitiativeResponse[]> {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: 'begins_with(#type, :type)',
     ExpressionAttributeNames: { '#type': 'type' },
-    ExpressionAttributeValues: { '#type': 'type', ':type': INITIATIVE_TYPE }
+    ExpressionAttributeValues: { ':type': INITIATIVE_TYPE }
   };
   console.log('Getting all initiatives with params', params);
   const records = await initiatives
