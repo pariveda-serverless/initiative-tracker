@@ -7,7 +7,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   try {
     const payload = JSON.parse(body.payload);
     console.log('Payload', payload);
-    // Read Action Type
     let message: any;
     const callback_id = payload.callback_id;
     switch (callback_id) {
@@ -37,7 +36,7 @@ const joinInitiativeHalder = async (body: any): Promise<any> => {
       const member = new CreateMemberRequest({
         initiativeId,
         slackUserId: body.user.id,
-        name: 'TODO',
+        name: body.user.name,
         champion: role && role === 'CHAMPION'
       });
 

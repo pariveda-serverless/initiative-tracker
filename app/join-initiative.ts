@@ -14,7 +14,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 
     const member = new CreateMemberRequest({
       slackUserId: payload.user.id,
-      name: 'TODO',
+      name: payload.user.name,
       initiativeId,
       champion: role && role === 'CHAMPION'
     });
