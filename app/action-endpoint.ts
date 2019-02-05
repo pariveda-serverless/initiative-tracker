@@ -1,10 +1,7 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { User } from './users/user';
-import { getInitiativeByName } from './initiatives/initiative.service';
 import { Actions } from './action-types';
 import { joinInitiative } from './join-initiative';
 import { CreateMemberRequest } from './initiative';
-import { Roles } from './users/roles';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
