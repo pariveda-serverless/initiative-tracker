@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import { Status } from './status';
 
-export const INITIATIVE_TYPE: string = 'INITIATIVE:';
+export const INITIATIVE_TYPE: string = 'INITIATIVE';
 export const MEMBER_TYPE: string = 'MEMBER:';
 
 export interface InitiativeRecord {

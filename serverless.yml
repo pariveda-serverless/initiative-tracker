@@ -104,6 +104,8 @@ resources:
             AttributeType: S
           - AttributeName: type
             AttributeType: S
+          - AttributeName: status
+            AttributeType: S
         KeySchema:
           - AttributeName: initiativeId
             KeyType: HASH
