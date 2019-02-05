@@ -108,12 +108,12 @@ resources:
           - AttributeName: type
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        # GlobalSecondaryIndexes:
-        #   - IndexName: ${self:custom.typeIndex}
-        #     KeySchema:
-        #       - AttributeName: type
-        #         KeyType: HASH
-        #       - AttributeName: initiativeId
-        #         KeyType: RANGE
-        #     Projection:
-        #       ProjectionType: ALL
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:custom.typeIndex}
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+              - AttributeName: initiativeId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
