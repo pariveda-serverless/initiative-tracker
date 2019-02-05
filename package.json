@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "deploy": "sls deploy",
+    "pregenerate-swagger": "echo 'Generating json swagger docs for API documentation from docs/swagger.yml'",
     "generate-swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
