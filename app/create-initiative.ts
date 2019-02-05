@@ -1,19 +1,15 @@
+import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { post } from 'request-promise';
-import { Status } from './initiatives/status'
-import { Initiative } from './initiatives/initiative'
-import { saveInitiative } from './initiatives/initiative.service'
+import { CreateInitiativeRequest } from './initiative';
+
+const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     console.log('Body', body);
     console.log('Response url', body.response_url);
 
-    const initiative = new Initiative({
-      name: body.text,
-      creator: body.user_id,
-      status: Status.WIP
-    });
+    const initiative = new CreateInitiativeRequest({ name: body.text });
 
     await saveInitiative(initiative);
 
@@ -23,7 +19,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       attachments: [
         // TODO: PUT INITIATIVE SLACK ATTACHMENTS
         {
-          text: `${body.text}`,
+          text: `${body.text}`
         }
       ],
       response_type: 'in_channel'
@@ -34,3 +30,9 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
+  const params = { TableName: process.env.INITIATIVES_TABLE, Item };
+  console.log('Creating new initiative with params', params);
+  return initiatives.put(params).promise();
+}

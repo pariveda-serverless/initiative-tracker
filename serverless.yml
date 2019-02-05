@@ -13,6 +13,7 @@ provider:
   runtime: nodejs8.10
   environment:
     INITIATIVES_TABLE: { Ref: InitiativesTable }
+    INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
@@ -38,9 +39,12 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: { Fn::GetAtt: [InitiativesTable, Arn] }
+      Resource:
+        - { Fn::GetAtt: [InitiativesTable, Arn] }
+        - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
 
 custom:
+  typeIndex: TYPE_INDEX
   epsagon:
     token: ${env:EPSAGON_TOKEN}
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
@@ -94,20 +98,20 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: partitionKey
+          - AttributeName: initiativeId
             AttributeType: S
-          - AttributeName: sortKey
+          - AttributeName: type
             AttributeType: S
         KeySchema:
-          - AttributeName: partitionKey
+          - AttributeName: initiativeId
             KeyType: HASH
-          - AttributeName: sortKey
+          - AttributeName: type
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          - IndexName: sortKey
+          - IndexName: ${self:custom.typeIndex}
             KeySchema:
-              - AttributeName: sortKey
+              - AttributeName: type
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
