@@ -14,6 +14,7 @@ provider:
   environment:
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
+    INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
@@ -45,6 +46,7 @@ provider:
 
 custom:
   typeIndex: TYPE_INDEX
+  statusIndex: STATUS_INDEX
   epsagon:
     token: ${env:EPSAGON_TOKEN}
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
@@ -114,6 +116,14 @@ resources:
               - AttributeName: type
                 KeyType: HASH
               - AttributeName: initiativeId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: ${self:custom.statusIndex}
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+              - AttributeName: status
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
