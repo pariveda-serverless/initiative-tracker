@@ -1,34 +1,40 @@
+import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
+import { CreateMemberRequest } from './initiative';
 
-import { joinInitiative } from './initiatives/initiative.service'
-
-import { Roles } from './users/roles'
-import { User } from './users/user'
+const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-
     const payload = JSON.parse(body.payload);
     const selection = payload.actions[0].value;
     const role = selection.split(':')[0];
     const initiativeId = selection.split(':')[1];
     console.log('Payload', payload);
 
-    const user = new User ({
-      slackId: payload.user.id,
-      role: role,
-    })
+    const member = new CreateMemberRequest({
+      slackUserId: payload.user.id,
+      name: 'TODO',
+      initiativeId,
+      champion: role && role === 'CHAMPION'
+    });
 
-    await joinInitiative(initiativeId, user);
+    await joinInitiative(member);
 
     const message = {
-      text: `User ${user.slackId}  joined initiative ${initiativeId} as a ${user.role}!`,
+      text: `User ${member.slackUserId}  joined initiative ${initiativeId} as a ${
+        member.champion ? 'champion' : 'member'
+      }!`,
       response_type: 'in_channel'
     };
-
-    console.log('Message is ', JSON.stringify(message));
     success(message);
   } catch (err) {
     error(err);
   }
 });
+
+export function joinInitiative(Item: CreateMemberRequest): Promise<any> {
+  const params = { TableName: process.env.INITIATIVES_TABLE, Item };
+  console.log('Adding member to initiative with params', params);
+  return initiatives.put(params).promise();
+}
