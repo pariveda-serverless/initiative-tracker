@@ -18,8 +18,8 @@ export const handler = apiWrapper(async ({ success, error }: ApiSignature) => {
 async function getInitiatives(): Promise<InitiativeResponse[]> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    IndexName: process.env.INITIATIVES_TABLE_INITIATIVE_INDEX,
-    KeyConditionExpression: '#type > :type',
+    IndexName: process.env.INITIATIVES_TABLE_TYPE_INDEX,
+    KeyConditionExpression: '#type = :type',
     ExpressionAttributeNames: { '#type': 'type' },
     ExpressionAttributeValues: { ':type': INITIATIVE_TYPE }
   };

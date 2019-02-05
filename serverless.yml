@@ -13,7 +13,7 @@ provider:
   runtime: nodejs8.10
   environment:
     INITIATIVES_TABLE: { Ref: InitiativesTable }
-    INITIATIVES_TABLE_INITIATIVE_INDEX: ${self:custom.initiativeIndex}
+    INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
@@ -44,7 +44,7 @@ provider:
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
 
 custom:
-  initiativeIndex: INITIATIVE_INDEX
+  typeIndex: TYPE_INDEX
   epsagon:
     token: ${env:EPSAGON_TOKEN}
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
@@ -108,12 +108,12 @@ resources:
           - AttributeName: type
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        GlobalSecondaryIndexes:
-          - IndexName: ${self:custom.initiativeIndex}
+        LocalSecondaryIndexes:
+          - IndexName: ${self:custom.typeIndex}
             KeySchema:
               - AttributeName: type
                 KeyType: HASH
-              - AttributeName: status
+              - AttributeName: initiativeId
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

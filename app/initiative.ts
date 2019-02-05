@@ -46,7 +46,7 @@ export class CreateInitiativeRequest {
   constructor({ name }: CreateInitiativeRequestProperties) {
     this.initiativeId = v4();
     this.name = name;
-    this.type = `${INITIATIVE_TYPE}${this.initiativeId}`;
+    this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.IN_PROGRESS;
   }
 }
