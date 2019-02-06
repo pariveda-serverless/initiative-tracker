@@ -60,7 +60,7 @@ functions:
           path: initiatives/join
 
   say-hello:
-    handler: app/say-hello.foo
+    handler: app/say-hello.handler
     events:
       - http:
           method: post

@@ -1,26 +1,26 @@
-import { Types } from './types'
-import { Colors } from './colors'
+import { Types } from './types';
+import { Colors } from './colors';
+import { Intent } from '../interactions';
 
-export function generateInitiativeDecisionButton(action: string, initiativeId: string ): any {
-  switch(action){
+export function generateInitiativeDecisionButton(action: string, initiativeId: string): any {
+  switch (action) {
     case 'CHAMPION':
       return {
-        name: 'champion-button',
+        name: Intent.JOIN_AS_CHAMPION,
         text: 'Champion',
-        value: `CHAMPION:${initiativeId}`,
+        value: initiativeId,
         type: Types.BUTTON,
         style: Colors.PRIMARY
-      }
+      };
     case 'JOIN':
       return {
-        name: 'join-button',
+        name: Intent.JOIN_AS_MEMBER,
         text: 'Join',
-        value: `JOIN:${initiativeId}`,
+        value: initiativeId,
         type: Types.BUTTON,
         style: Colors.DANGER
-      }
+      };
     default:
-      return null
+      return null;
   }
-
 }

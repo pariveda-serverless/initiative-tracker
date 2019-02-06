@@ -2,7 +2,7 @@ import { InitiativeResponse } from '../initiative';
 import { generateInitiativeDecisionButton } from './buttons';
 import { Colors } from './colors';
 import { generateField } from './fields';
-import { Actions } from '../action-types';
+import { Action } from '../interactions';
 
 export function generateInitiativeAttachments(initiatives: InitiativeResponse[]): any {
   let attachments = [];
@@ -15,7 +15,7 @@ export function generateInitiativeAttachment(initiative: InitiativeResponse) {
     text: initiative.name,
     style: Colors[`${initiative.status}`],
     attachment_type: 'default',
-    callback_id: Actions.JOIN_INITIATIVE,
+    callback_id: Action.JOIN,
     fields: [generateField('Status', initiative.status)],
     actions: [
       generateInitiativeDecisionButton('CHAMPION', initiative.initiativeId),

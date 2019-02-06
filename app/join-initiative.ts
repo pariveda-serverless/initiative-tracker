@@ -22,9 +22,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     await joinInitiative(member);
 
     const message = {
-      text: `User ${member.slackUserId}  joined initiative ${initiativeId} as a ${
-        member.champion ? 'champion' : 'member'
-      }!`,
+      text: `User ${member.name}  joined initiative ${initiativeId} as a ${member.champion ? 'champion' : 'member'}!`,
       response_type: 'in_channel'
     };
     success(message);
