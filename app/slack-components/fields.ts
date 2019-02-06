@@ -1,6 +1,6 @@
-import { Types } from './types'
-import { Colors } from './colors'
+// import { Types } from './types'
+// import { Colors } from './display'
 
-export function generateField(title: string, value: string, short?: boolean): any {
-  return { title, value, short}
-}
+// export function generateField(title: string, value: string, short?: boolean): any {
+//   return { title, value, short}
+// }

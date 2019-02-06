@@ -52,13 +52,6 @@ custom:
     appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
-  join-initiative:
-    handler: app/join-initiative.handler
-    events:
-      - http:
-          method: post
-          path: initiatives/join
-
   say-hello:
     handler: app/say-hello.handler
     events:

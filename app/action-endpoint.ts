@@ -1,7 +1,9 @@
+import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Action, Intent } from './interactions';
-import { joinInitiative } from './join-initiative';
 import { CreateMemberRequest } from './initiative';
+
+const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -39,4 +41,10 @@ async function joinInitiativeHandler(body: any): Promise<any> {
     response_type: 'in_channel'
   };
   return message;
+}
+
+export function joinInitiative(Item: CreateMemberRequest): Promise<any> {
+  const params = { TableName: process.env.INITIATIVES_TABLE, Item };
+  console.log('Adding member to initiative with params', params);
+  return initiatives.put(params).promise();
 }
