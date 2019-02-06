@@ -47,7 +47,7 @@ export class CreateInitiativeRequest {
     this.initiativeId = v4();
     this.name = name;
     this.type = `${INITIATIVE_TYPE}`;
-    this.status = Status.IN_PROGRESS;
+    this.status = Status.ACTIVE;
   }
 }
 
