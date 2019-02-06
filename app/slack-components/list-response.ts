@@ -1,6 +1,6 @@
 import { InitiativeResponse } from '../initiative';
-import { STATUS_DISPLAY, INTENT_DISPLAY } from './display';
-import { Intent, Action } from '../interactions';
+import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
+import { InitiativeIntent, Action } from '../interactions';
 
 export class SlackListResponse {
   text: string;
@@ -19,14 +19,14 @@ class SlackBasicInitiativeResponse {
   attachment_type: string;
   callback_id: string;
   fields: SlackField[];
-  actions: SlackJoinButton[];
+  actions: SlackInitiativeAction[];
 
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = Action.LIST_ACTIONS;
-    this.actions = Object.values(Intent).map(intent => new SlackJoinButton(initiative, intent));
+    this.callback_id = Action.INITIATIVE_ACTION;
+    this.actions = Object.values(InitiativeIntent).map(intent => new SlackInitiativeAction(initiative, intent));
   }
 }
 
@@ -36,18 +36,18 @@ class SlackField {
   short: boolean;
 }
 
-class SlackJoinButton {
+export class SlackInitiativeAction {
   name: string;
   text: string;
   value: string;
   type: string;
   style: string;
 
-  constructor(initiative: InitiativeResponse, intent: Intent) {
+  constructor(initiative: InitiativeResponse, intent: InitiativeIntent) {
     this.name = intent;
-    this.style = INTENT_DISPLAY[intent].style;
+    this.style = INITIATIVE_INTENT_DISPLAY[intent].style;
     this.value = initiative.initiativeId;
-    this.text = INTENT_DISPLAY[intent].text;
+    this.text = INITIATIVE_INTENT_DISPLAY[intent].text;
     this.type = 'button'; //TODO what are the other options?
   }
 }

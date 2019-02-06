@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Action, Intent } from './interactions';
+import { Action, InitiativeIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { SlackDetailResponse } from './slack-components/detail-response';
@@ -13,7 +13,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { callback_id: action } = payload;
     let response: any;
     switch (action) {
-      case Action.LIST_ACTIONS:
+      case Action.INITIATIVE_ACTION:
         response = await handleListActions(payload);
         break;
       default:
@@ -26,16 +26,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 });
 
 async function handleListActions(payload: any): Promise<any> {
-  const intent: Intent = payload.actions[0].name;
+  const intent: InitiativeIntent = payload.actions[0].name;
   let response: any;
   switch (intent) {
-    case Intent.JOIN_AS_CHAMPION:
+    case InitiativeIntent.JOIN_AS_CHAMPION:
       response = await joinInitiativeHandler(payload, true);
       break;
-    case Intent.JOIN_AS_MEMBER:
+    case InitiativeIntent.JOIN_AS_MEMBER:
       response = await joinInitiativeHandler(payload, false);
       break;
-    case Intent.VIEW_DETAILS:
+    case InitiativeIntent.VIEW_DETAILS:
       response = await viewDetailsHandler(payload);
       break;
     default:

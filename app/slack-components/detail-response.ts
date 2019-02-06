@@ -1,6 +1,6 @@
 import { InitiativeResponse } from '../initiative';
-import { STATUS_DISPLAY, INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
-import { Intent, Action } from '../interactions';
+import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
+import { InitiativeIntent, Action, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
 
 export class SlackDetailResponse {
@@ -10,7 +10,7 @@ export class SlackDetailResponse {
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.response_type = 'in_channel'; //TODO what are the other options?
-    this.attachments = initiative.members.map(member => new SlackMemberResponse(member));
+    this.attachments = initiative.members.map(member => new SlackMemberResponse(member, initiative));
   }
 }
 
@@ -20,15 +20,15 @@ class SlackMemberResponse {
   attachment_type: string;
   callback_id: string;
   fields: SlackField[];
-  actions: SlackJoinButton[];
+  actions: SlackMemberAction[];
 
-  constructor(member: MemberResponse) {
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
     this.text = member.name;
     const memberType = member.champion ? 'CHAMPION' : 'MEMBER';
     this.color = MEMBER_DISPLAY[memberType].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    // this.callback_id = Action.LIST_ACTIONS;
-    // this.actions = Object.values(Intent).map(intent => new SlackJoinButton(initiative, intent));
+    this.callback_id = Action.MEMBER_ACTION;
+    this.actions = Object.values(MemberIntent).map(intent => new SlackMemberAction(member, initiative, intent));
   }
 }
 
@@ -38,18 +38,18 @@ class SlackField {
   short: boolean;
 }
 
-class SlackJoinButton {
+class SlackMemberAction {
   name: string;
   text: string;
   value: string;
   type: string;
   style: string;
 
-  constructor(initiative: InitiativeResponse, intent: Intent) {
+  constructor(member: MemberResponse, initiative: InitiativeResponse, intent: InitiativeIntent) {
     this.name = intent;
-    this.style = INTENT_DISPLAY[intent].style;
+    this.style = MEMBER_INTENT_DISPLAY[intent].style;
     this.value = initiative.initiativeId;
-    this.text = INTENT_DISPLAY[intent].text;
+    this.text = MEMBER_INTENT_DISPLAY[intent].text;
     this.type = 'button'; //TODO what are the other options?
   }
 }

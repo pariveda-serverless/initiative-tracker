@@ -1,5 +1,5 @@
 import { Status } from '../status';
-import { Intent } from '../interactions';
+import { InitiativeIntent, MemberIntent } from '../interactions';
 
 const statuses: Display[] = [];
 statuses[Status.ACTIVE] = {
@@ -19,27 +19,33 @@ statuses[Status.ON_HOLD] = {
   text: 'On hold'
 };
 
-const intents: Display[] = [];
-intents[Intent.JOIN_AS_CHAMPION] = {
+const initiativeIntents: Display[] = [];
+initiativeIntents[InitiativeIntent.JOIN_AS_CHAMPION] = {
   style: 'default',
   text: 'Champion this initiative'
 };
-intents[Intent.JOIN_AS_MEMBER] = {
+initiativeIntents[InitiativeIntent.JOIN_AS_MEMBER] = {
   style: 'default',
   text: 'Join this initiative'
 };
-intents[Intent.VIEW_DETAILS] = {
+initiativeIntents[InitiativeIntent.VIEW_DETAILS] = {
   style: 'default',
   text: 'View initiative details'
 };
 
+const memberIntents: Display[] = [];
+memberIntents[MemberIntent.REMOVE_MEMBER] = {
+  style: 'danger',
+  text: 'Remove member from initiative'
+};
+
 const members: Display[] = [];
 members['CHAMPION'] = {
-  color: '#85DB18', // Green
+  color: '#FCF500', // Yellow
   text: 'Champion'
 };
 members['MEMBER'] = {
-  color: '#00FEFF', // Blue
+  color: '', // Blue
   text: 'Member'
 };
 
@@ -49,5 +55,6 @@ interface Display {
 }
 
 export const STATUS_DISPLAY: Display[] = statuses;
-export const INTENT_DISPLAY: Display[] = intents;
+export const INITIATIVE_INTENT_DISPLAY: Display[] = initiativeIntents;
+export const MEMBER_INTENT_DISPLAY: Display[] = memberIntents;
 export const MEMBER_DISPLAY: Display[] = members;

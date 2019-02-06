@@ -1,9 +1,14 @@
 export enum Action {
-  LIST_ACTIONS = 'LIST_ACTIONS'
+  INITIATIVE_ACTION = 'INITIATIVE_ACTION',
+  MEMBER_ACTION = 'MEMBER_ACTION'
 }
 
-export enum Intent {
+export enum InitiativeIntent {
   JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
   JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
   VIEW_DETAILS = 'VIEW_DETAILS'
+}
+
+export enum MemberIntent {
+  REMOVE_MEMBER = 'REMOVE_MEMBER'
 }
