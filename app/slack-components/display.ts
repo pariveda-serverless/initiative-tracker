@@ -36,7 +36,18 @@ initiativeIntents[InitiativeIntent.VIEW_DETAILS] = {
 const memberIntents: Display[] = [];
 memberIntents[MemberIntent.REMOVE_MEMBER] = {
   style: 'danger',
-  text: 'Remove member from initiative'
+  text: 'Remove member from initiative',
+  confirmation: ['remove', 'from the initiative']
+};
+memberIntents[MemberIntent.MAKE_CHAMPION] = {
+  style: 'default',
+  text: 'Change to champion',
+  confirmation: ['mark', 'as a member instead of champion']
+};
+memberIntents[MemberIntent.MAKE_MEMBER] = {
+  style: 'default',
+  text: 'Change to member',
+  confirmation: ['mark', 'as a member instead of champion']
 };
 
 const members: Display[] = [];

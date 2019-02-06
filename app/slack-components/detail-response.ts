@@ -11,6 +11,7 @@ export class SlackDetailResponse {
     this.text = initiative.name;
     this.response_type = 'in_channel'; //TODO what are the other options?
     this.attachments = initiative.members.map(member => new SlackMemberResponse(member, initiative));
+    // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }
 }
 
@@ -44,12 +45,26 @@ class SlackMemberAction {
   value: string;
   type: string;
   style: string;
+  confirm: SlackConfirmAction;
 
-  constructor(member: MemberResponse, initiative: InitiativeResponse, intent: InitiativeIntent) {
+  constructor(member: MemberResponse, initiative: InitiativeResponse, intent: MemberIntent) {
     this.name = intent;
     this.style = MEMBER_INTENT_DISPLAY[intent].style;
     this.value = initiative.initiativeId;
     this.text = MEMBER_INTENT_DISPLAY[intent].text;
     this.type = 'button'; //TODO what are the other options?
+    this.confirm = new SlackConfirmAction(member, intent);
+  }
+}
+
+class SlackConfirmAction {
+  text: string;
+  ok_text: string = 'Yes';
+  dismiss_text: string = 'No';
+
+  constructor(member: MemberResponse, intent: MemberIntent) {
+    const verb = MEMBER_INTENT_DISPLAY[intent].confirmation[0];
+    const action = MEMBER_INTENT_DISPLAY[intent].confirmation[1];
+    this.text = `Are you sure you want to ${verb} ${member.name} ${action}?`;
   }
 }
