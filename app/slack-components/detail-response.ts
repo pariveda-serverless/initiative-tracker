@@ -29,7 +29,9 @@ class SlackMemberResponse {
     this.color = MEMBER_DISPLAY[memberType].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = Action.MEMBER_ACTION;
-    this.actions = Object.values(MemberIntent).map(intent => new SlackMemberAction(member, initiative, intent));
+    this.actions = Object.values(MemberIntent)
+      .filter(intent => (member.champion ? intent !== MemberIntent.MAKE_CHAMPION : intent !== MemberIntent.MAKE_MEMBER))
+      .map(intent => new SlackMemberAction(member, initiative, intent));
   }
 }
 
@@ -58,13 +60,14 @@ class SlackMemberAction {
 }
 
 class SlackConfirmAction {
+  title: string;
   text: string;
   ok_text: string = 'Yes';
   dismiss_text: string = 'No';
 
   constructor(member: MemberResponse, intent: MemberIntent) {
-    const verb = MEMBER_INTENT_DISPLAY[intent].confirmation[0];
-    const action = MEMBER_INTENT_DISPLAY[intent].confirmation[1];
+    const { verb, action, title } = MEMBER_INTENT_DISPLAY[intent].confirmation;
+    this.title = title;
     this.text = `Are you sure you want to ${verb} ${member.name} ${action}?`;
   }
 }
