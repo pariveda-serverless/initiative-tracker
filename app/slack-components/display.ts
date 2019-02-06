@@ -21,11 +21,11 @@ statuses[Status.ON_HOLD] = {
 
 let intents: Display[] = [];
 intents[Intent.JOIN_AS_CHAMPION] = {
-  color: '#85DB18',
+  color: 'primary',
   text: 'Champion this initiative'
 };
 intents[Intent.JOIN_AS_MEMBER] = {
-  color: '#00FEFF',
+  color: 'default',
   text: 'Join this initiative'
 };
 
