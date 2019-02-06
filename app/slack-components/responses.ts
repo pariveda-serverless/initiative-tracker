@@ -15,7 +15,7 @@ export class ListResponse {
 
 class BasicInitiativeResponse {
   text: string;
-  style: string;
+  color: string;
   attachment_type: string;
   callback_id: string;
   fields: Field[];
@@ -23,7 +23,7 @@ class BasicInitiativeResponse {
 
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
-    this.style = STATUS_DISPLAY[initiative.status].color;
+    this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = Action.JOIN;
     this.actions = Object.values(Intent).map(intent => new JoinButton(initiative, intent));
