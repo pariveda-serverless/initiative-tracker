@@ -85,9 +85,9 @@ async function getInitiativeDetails(initiativeId: string): Promise<InitiativeRes
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
-  let initiative: InitiativeResponse = records
-    .find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
-    .map(record => new InitiativeResponse(record));
+  let initiative: InitiativeResponse = new InitiativeResponse(
+    records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
+  );
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
