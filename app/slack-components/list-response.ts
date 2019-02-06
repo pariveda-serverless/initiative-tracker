@@ -25,7 +25,7 @@ class BasicInitiativeResponse {
     this.text = initiative.name;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = Action.JOIN;
+    this.callback_id = Action.LIST_ACTIONS;
     this.actions = Object.values(Intent).map(intent => new JoinButton(initiative, intent));
   }
 }
@@ -45,7 +45,7 @@ class JoinButton {
 
   constructor(initiative: InitiativeResponse, intent: Intent) {
     this.name = intent;
-    this.style = INTENT_DISPLAY[intent].color;
+    this.style = INTENT_DISPLAY[intent].style;
     this.value = initiative.initiativeId;
     this.text = INTENT_DISPLAY[intent].text;
     this.type = 'button'; //TODO what are the other options?

@@ -21,16 +21,20 @@ statuses[Status.ON_HOLD] = {
 
 let intents: Display[] = [];
 intents[Intent.JOIN_AS_CHAMPION] = {
-  color: 'primary',
+  style: 'default',
   text: 'Champion this initiative'
 };
 intents[Intent.JOIN_AS_MEMBER] = {
-  color: 'default',
+  style: 'default',
   text: 'Join this initiative'
+};
+intents[Intent.VIEW_DETAILS] = {
+  style: 'default',
+  text: 'View initiative details'
 };
 
 interface Display {
-  color: string;
+  style: string;
   text: string;
 }
 

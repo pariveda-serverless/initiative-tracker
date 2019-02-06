@@ -1,7 +1,9 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Action, Intent } from './interactions';
-import { CreateMemberRequest } from './initiative';
+import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
+import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
+import { DetailResponse } from './slack-components/detail-response';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -11,8 +13,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { callback_id: action } = payload;
     let response: any;
     switch (action) {
-      case Action.JOIN:
-        response = await joinInitiativeHandler(payload);
+      case Action.LIST_ACTIONS:
+        response = await handleListActions(payload);
         break;
       default:
         break;
@@ -23,19 +25,34 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function joinInitiativeHandler(body: any): Promise<any> {
-  const initiativeId: string = body.actions[0].value;
-  const intent: Intent = body.actions[0].name;
+async function handleListActions(payload: any): Promise<any> {
+  const intent: Intent = payload.actions[0].name;
+  let response: any;
+  switch (intent) {
+    case Intent.JOIN_AS_CHAMPION:
+      response = await joinInitiativeHandler(payload, true);
+      break;
+    case Intent.JOIN_AS_MEMBER:
+      response = await joinInitiativeHandler(payload, false);
+      break;
+    case Intent.VIEW_DETAILS:
+      response = await viewDetailsHandler(payload);
+      break;
+    default:
+      break;
+  }
+  return response;
+}
 
+async function joinInitiativeHandler(payload: any, champion: boolean): Promise<any> {
+  const initiativeId: string = payload.actions[0].value;
   const member = new CreateMemberRequest({
     initiativeId,
-    slackUserId: body.user.id,
-    name: body.user.name,
-    champion: intent === Intent.JOIN_AS_CHAMPION
+    slackUserId: payload.user.id,
+    name: payload.user.name,
+    champion: champion
   });
-
   await joinInitiative(member);
-
   const message = {
     text: `User ${member.name}  joined initiative ${initiativeId} as a ${member.champion ? 'champion' : 'member'}!`,
     response_type: 'in_channel'
@@ -43,8 +60,36 @@ async function joinInitiativeHandler(body: any): Promise<any> {
   return message;
 }
 
-export function joinInitiative(Item: CreateMemberRequest): Promise<any> {
+function joinInitiative(Item: CreateMemberRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Adding member to initiative with params', params);
   return initiatives.put(params).promise();
+}
+
+async function viewDetailsHandler(payload: any) {
+  const initiativeId: string = payload.actions[0].value;
+  const initiative = await getInitiativeDetails(initiativeId);
+  return new DetailResponse(initiative);
+}
+
+async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+  const params = {
+    TableName: process.env.INITIATIVES_TABLE,
+    KeyConditionExpression: '#initiativeId = :initiativeId',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId }
+  };
+  console.log('Getting initiative details with params', params);
+  const records = await initiatives
+    .query(params)
+    .promise()
+    .then(res => <InitiativeRecord[]>res.Items);
+  console.log('Received initiative records', records);
+  let initiative: InitiativeResponse = records
+    .find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
+    .map(record => new InitiativeResponse(record));
+  initiative.members = records
+    .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
+    .map(record => new MemberResponse(record));
+  return initiative;
 }

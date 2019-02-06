@@ -1,36 +1,13 @@
 import { v4 } from 'uuid';
 import { Status } from './status';
+import { MemberResponse } from './member';
 
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
-export const MEMBER_TYPE: string = 'MEMBER:';
 
 export interface InitiativeRecord {
   initiativeId: string;
   type: string;
   [key: string]: any;
-}
-
-export class CreateMemberRequest {
-  initiativeId: string;
-  type: string;
-  name: string;
-  slackUserId: string;
-  champion: boolean;
-
-  constructor({ initiativeId, name, slackUserId, champion = false }: CreateMemberRequestProperties) {
-    this.initiativeId = initiativeId;
-    this.type = `${MEMBER_TYPE}${slackUserId}`;
-    this.name = name;
-    this.slackUserId = slackUserId;
-    this.champion = champion;
-  }
-}
-
-interface CreateMemberRequestProperties {
-  initiativeId: string;
-  name: string;
-  slackUserId: string;
-  champion: boolean;
 }
 
 interface CreateInitiativeRequestProperties {
@@ -55,6 +32,7 @@ export class InitiativeResponse {
   initiativeId: string;
   name: string;
   status: Status;
+  members?: MemberResponse[];
 
   constructor(record: InitiativeRecord) {
     this.initiativeId = record.initiativeId;
