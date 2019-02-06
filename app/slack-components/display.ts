@@ -1,7 +1,7 @@
 import { Status } from '../status';
 import { Intent } from '../interactions';
 
-let statuses: Display[] = [];
+const statuses: Display[] = [];
 statuses[Status.ACTIVE] = {
   color: '#85DB18', // Green
   text: 'Active'
@@ -19,7 +19,7 @@ statuses[Status.ON_HOLD] = {
   text: 'On hold'
 };
 
-let intents: Display[] = [];
+const intents: Display[] = [];
 intents[Intent.JOIN_AS_CHAMPION] = {
   style: 'default',
   text: 'Champion this initiative'
@@ -33,10 +33,21 @@ intents[Intent.VIEW_DETAILS] = {
   text: 'View initiative details'
 };
 
+const members: Display[] = [];
+members['CHAMPION'] = {
+  color: '#85DB18', // Green
+  text: 'Champion'
+};
+members['MEMBER'] = {
+  color: '#00FEFF', // Blue
+  text: 'Member'
+};
+
 interface Display {
   style: string;
   text: string;
 }
 
-export const STATUS_DISPLAY = statuses;
-export const INTENT_DISPLAY = intents;
+export const STATUS_DISPLAY: Display[] = statuses;
+export const INTENT_DISPLAY: Display[] = intents;
+export const MEMBER_DISPLAY: Display[] = members;

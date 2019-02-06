@@ -26,11 +26,11 @@ interface CreateMemberRequestProperties {
 export class MemberResponse {
   initiativeId: string;
   name: string;
-  role: string;
+  champion: boolean;
 
   constructor(record: any) {
     this.initiativeId = record.initaitiveId;
     this.name = record.name;
-    this.role = record.champion ? 'Champion' : 'Member';
+    this.champion = record.champion;
   }
 }

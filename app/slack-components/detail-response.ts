@@ -1,42 +1,44 @@
 import { InitiativeResponse } from '../initiative';
-import { STATUS_DISPLAY, INTENT_DISPLAY } from './display';
+import { STATUS_DISPLAY, INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { Intent, Action } from '../interactions';
+import { MemberResponse } from '../member';
 
-export class DetailResponse {
+export class SlackDetailResponse {
   text: string;
   response_type: string;
-  attachments: DetailInitiativeResponse;
+  attachments: SlackMemberResponse[];
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.response_type = 'in_channel'; //TODO what are the other options?
-    // this.attachments = initiatives.map(initiative => new BasicInitiativeResponse(initiative));
+    this.attachments = initiative.members.map(member => new SlackMemberResponse(member));
   }
 }
 
-class DetailInitiativeResponse {
+class SlackMemberResponse {
   text: string;
   color: string;
   attachment_type: string;
   callback_id: string;
-  fields: Field[];
-  actions: JoinButton[];
+  fields: SlackField[];
+  actions: SlackJoinButton[];
 
-  constructor(initiative: InitiativeResponse) {
-    this.text = initiative.name;
-    this.color = STATUS_DISPLAY[initiative.status].color;
+  constructor(member: MemberResponse) {
+    this.text = member.name;
+    const memberType = member.champion ? 'CHAMPION' : 'MEMBER';
+    this.color = MEMBER_DISPLAY[memberType].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = Action.LIST_ACTIONS;
-    this.actions = Object.values(Intent).map(intent => new JoinButton(initiative, intent));
+    // this.callback_id = Action.LIST_ACTIONS;
+    // this.actions = Object.values(Intent).map(intent => new SlackJoinButton(initiative, intent));
   }
 }
 
-class Field {
+class SlackField {
   title: string;
   value: string;
   short: boolean;
 }
 
-class JoinButton {
+class SlackJoinButton {
   name: string;
   text: string;
   value: string;

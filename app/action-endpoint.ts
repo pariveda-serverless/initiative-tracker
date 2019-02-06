@@ -3,7 +3,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Action, Intent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
-import { DetailResponse } from './slack-components/detail-response';
+import { SlackDetailResponse } from './slack-components/detail-response';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -69,7 +69,7 @@ function joinInitiative(Item: CreateMemberRequest): Promise<any> {
 async function viewDetailsHandler(payload: any) {
   const initiativeId: string = payload.actions[0].value;
   const initiative = await getInitiativeDetails(initiativeId);
-  return new DetailResponse(initiative);
+  return new SlackDetailResponse(initiative);
 }
 
 async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
