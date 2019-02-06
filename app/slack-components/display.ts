@@ -42,12 +42,12 @@ memberIntents[MemberIntent.REMOVE_MEMBER] = {
 memberIntents[MemberIntent.MAKE_CHAMPION] = {
   style: 'default',
   text: 'Change to champion',
-  confirmation: { title: 'Confirm change', verb: 'change', action: 'to a member instead of champion' }
+  confirmation: { title: 'Confirm change', verb: 'set', action: 'as an initiative champion' }
 };
 memberIntents[MemberIntent.MAKE_MEMBER] = {
   style: 'default',
   text: 'Change to member',
-  confirmation: { title: 'Confirm change', verb: 'change', action: 'to a member instead of champion' }
+  confirmation: { title: 'Confirm change', verb: 'set', action: 'as an initiative member instead of a champion' }
 };
 
 const members: Display[] = [];
