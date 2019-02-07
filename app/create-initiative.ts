@@ -6,12 +6,15 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    console.log(typeof body);
+    console.log(typeof body.text);
     const testString =
       'serverless workshops, making content that can be shared with clients and will help us learn ourselves';
+    console.log(typeof testString);
     const splitTestString = testString.split(',');
     console.log(splitTestString);
     const [first, second] = testString.split(',');
-    console.log(first, second);
+    console.log(first);
     const [name, description] = body.text.toString().split[','];
     const initiative = new CreateInitiativeRequest({ name, description });
     await saveInitiative(initiative);
