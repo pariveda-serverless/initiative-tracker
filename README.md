@@ -14,7 +14,7 @@
 
 ## Slack commands
 
-`/register-initiative <initiative name>`
+`/register-initiative <initiative name>, <optional initiative description>`
 `/list-initiatives`
 `/say-hello`
 
