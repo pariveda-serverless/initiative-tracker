@@ -8,6 +8,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   try {
     console.log(typeof body);
     console.log(typeof body.text);
+    console.log('body');
     console.log(body);
     const testString =
       'serverless workshops, making content that can be shared with clients and will help us learn ourselves';
