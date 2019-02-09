@@ -10,7 +10,7 @@
   "dependencies": {
     "@iopipe/iopipe": "^1.12.3",
     "@iopipe/logger": "^1.2.0",
-    "@manwaring/lambda-wrapper": "^0.3.3",
+    "@manwaring/lambda-wrapper": "^0.3.5",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
@@ -35,5 +35,15 @@
     "hooks": {
       "pre-commit": "npm run generate-swagger"
     }
+  },
+  "iopipe": {
+    "plugins": [
+      [
+        "@iopipe/logger",
+        {
+          "enabled": true
+        }
+      ]
+    ]
   }
 }
