@@ -21,6 +21,7 @@ declare module 'slack' {
     callback_id?: string;
     fields?: Field[];
     actions?: Action[];
+    ts?: number;
   }
 
   export interface Field {
