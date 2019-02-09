@@ -27,10 +27,12 @@ export class MemberResponse {
   initiativeId: string;
   name: string;
   champion: boolean;
+  role: string;
 
   constructor(record: any) {
     this.initiativeId = record.initaitiveId;
     this.name = record.name;
     this.champion = record.champion;
+    this.role = record.champion ? 'CHAMPION' : 'MEMBER';
   }
 }

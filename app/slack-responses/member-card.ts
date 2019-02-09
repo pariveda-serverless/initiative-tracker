@@ -5,7 +5,6 @@ import { MEMBER_DISPLAY, MEMBER_INTENT_DISPLAY } from './display';
 import { ActionType, MemberIntent } from '../interactions';
 
 export class MemberCard implements Attachment {
-  text: string;
   color: string;
   attachment_type: string;
   callback_id: string;
@@ -13,14 +12,37 @@ export class MemberCard implements Attachment {
   actions: Action[];
 
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    this.text = member.name;
-    const memberType = member.champion ? 'CHAMPION' : 'MEMBER';
-    this.color = MEMBER_DISPLAY[memberType].color;
+    this.color = MEMBER_DISPLAY[member.role].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.MEMBER_ACTION;
+    const name = new Name(member);
+    const role = new Role(member);
+    this.fields = [name, role];
     this.actions = Object.values(MemberIntent)
       .filter(intent => (member.champion ? intent !== MemberIntent.MAKE_CHAMPION : intent !== MemberIntent.MAKE_MEMBER))
       .map(intent => new MemberAction(member, initiative, intent));
+  }
+}
+
+class Name implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(member: MemberResponse) {
+    this.title = 'Name';
+    this.value = member.name;
+    this.short = true;
+  }
+}
+
+class Role implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(member: MemberResponse) {
+    this.title = 'Role';
+    this.value = MEMBER_DISPLAY[member.role].text;
+    this.short = true;
   }
 }
 
