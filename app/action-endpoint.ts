@@ -52,6 +52,7 @@ async function handleMemberActions(payload: any): Promise<any> {
       response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
       break;
   }
+  return response;
 }
 
 async function handleInitiativeActions(payload: any): Promise<any> {
