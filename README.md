@@ -12,40 +12,39 @@
 
 # Initiative Tracker
 
-## Slack commands
+Initiative Tracker is a slackbot which helps teams track the internal initiatives that people are working on. In addition to creating initiatives users can indicate their participation as an initiative champion or member.
 
-`/register-initiative <initiative name>, <optional initiative description>`
-`/list-initiatives`
-`/say-hello`
+Available slash commands are:
 
-### Motivation
+- `/register-initiative [initiative name], [optional initiative description]`
+- `/list-initiatives [optional initiative status 'active' | 'abandoned' | 'complete' | 'on hold']`
+- `/say-hello`
 
-The initiative tracker project is a solution used to deploy AWS resources that support the cloud infrastructure that manages the data and enables the interactivity of the initiative tracker slack-bot. The goals of this solution is to create a slack-bot application that tracks the initiatives that are going on in the office.
+## Architecture diagram
 
-The ny-serverless-workshop group created this project in order to provide a canvas for developers to get familiar with the slack API and test out different serverless patterns and architectures.
+TODO architecture diagram
 
-### Architecture
+## Tools used to build this application
 
-The serverless solution is written in tyescript and built for running on nodejs. It deploys multiple AWS Lambda functions and a DynamoDB table used to manage the data. It has CI/CD configurations for CircleCI and has Epsagon integration configured for monitoring and logging of the execution of the Lambda functions.
+- [Serverless Framework](https://serverless.com/framework/docs/) for easy serverless development and deployment
+- [TypeScript](https://www.typescriptlang.org/) for strongly typed JavaScript
+- [CircleCI](https://circleci.com/) for application CI/CD - /.circleci/config.yml contains the job and workflow configurations
+- [AWS](https://console.aws.amazon.com) for application and infrastructure hosting, primarily API Gateway, Lambda, and DynamoDB
+- [IOPipe](https://www.iopipe.com/) for serverless logging and monitoring
 
-### Access Needed
+## Key libraries
 
-- [Slack](https://initativetracker.slack.com)
-- [Pariveda Serverless AWS](https://pariveda-serverless.signin.aws.amazon.com/)
-- [Epsagon](https://pariveda-serverless.signin.aws.amazon.com/) - serverless monitoring tool
-- [CircleCI](/) - CI/CD pipelines
+- [Serverless plugin IOPipe](https://github.com/iopipe/serverless-plugin-iopipe): a serverless plugin which automatically wraps the Lambda functions for IOPipe logging
+- [Serverless webpack](https://github.com/serverless-heaven/serverless-webpack): a plugin included with the serverless framework TypeScript template for compilation and bundling
+- [Serverless plugin IAM Checker](https://github.com/manwaring/serverless-plugin-iam-checker): a serverless framework plugin which validates IAM policies and roles to make sure there are no overly permissive (e.g. \*) actions or resources
+- [Serverless CloudFormation resource counter](https://github.com/drexler/serverless-cloudformation-resource-counter#readme): a serverless framework plugin which outputs the number of AWS resources deployed with the service
+- [Nodejs Slack SDK](https://slackapi.github.io/node-slack-sdk/): the official Slack Nodejs library for calling their API
+- [Lambda wrapper](https://github.com/manwaring/lambda-wrapper): a library which wraps Lambda functions to provide a better developer experience and implement boilerplate parsing, responses, logging, and monitoring
 
-### Prerequisites
+## Development resources
 
-```
-node 8 or 10
-```
-
-### Setup
-
-```
-npm install
-```
+- [Slack API documentation](https://api.slack.com/methods)
+- [Slack interactive message documentation](https://api.slack.com/interactive-messages)
 
 [build-badge]: https://circleci.com/gh/pariveda-serverless/initiative-tracker.svg?style=shield&circle-token=1e1369bd1b5bec6e28eaf499a98f8af0dc3dbe3e
 [build-badge-url]: https://circleci.com/gh/pariveda-serverless/initiative-tracker
