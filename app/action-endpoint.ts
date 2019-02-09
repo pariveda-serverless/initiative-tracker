@@ -45,7 +45,8 @@ async function handleMemberActions(payload: any): Promise<any> {
       response = await viewDetailsHandler(initiativeId);
       break;
     case MemberIntent.REMOVE_MEMBER:
-      response = await leaveInitiativeHandler(payload);
+      await leaveInitiativeHandler(payload);
+      response = await viewDetailsHandler(initiativeId);
       break;
     default:
       // TODO replace with a slack response class
@@ -90,12 +91,6 @@ async function leaveInitiativeHandler(payload: any): Promise<any> {
   const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
   const member = new DeleteMemberRequest({ initiativeId, slackUserId });
   await leaveInitiative(member);
-  const name = await getUserName(slackUserId);
-  // TODO replace with a slack response
-  return {
-    text: `${name} is no longer on this initiative`,
-    response_type: 'ephemeral'
-  };
 }
 
 function joinInitiative(Item: CreateMemberRequest): Promise<any> {
