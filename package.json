@@ -8,8 +8,9 @@
     "generate-swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
-    "@manwaring/lambda-wrapper": "^0.2.1",
-    "epsagon": "^1.9.0",
+    "@iopipe/iopipe": "^1.12.3",
+    "@iopipe/logger": "^1.2.0",
+    "@manwaring/lambda-wrapper": "^0.3.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
@@ -21,8 +22,8 @@
     "husky": "^1.3.1",
     "serverless": "^1.36.2",
     "serverless-cloudformation-resource-counter": "^0.2.0",
-    "serverless-plugin-epsagon": "^1.4.10",
     "serverless-plugin-iam-checker": "0.0.43",
+    "serverless-plugin-iopipe": "^1.6.2",
     "serverless-stack-output": "^0.2.3",
     "serverless-webpack": "^5.1.1",
     "source-map-support": "^0.5.6",

@@ -12,7 +12,7 @@ export interface InitiativeRecord {
 
 interface CreateInitiativeRequestProperties {
   name: string;
-  description: string;
+  description?: string;
 }
 
 export class CreateInitiativeRequest {

@@ -2,7 +2,7 @@ service:
   name: initiative-tracker
 
 plugins:
-  - serverless-plugin-epsagon
+  - serverless-plugin-iopipe
   - serverless-webpack
   - serverless-plugin-iam-checker
   - serverless-cloudformation-resource-counter
@@ -12,6 +12,8 @@ provider:
   stage: local
   runtime: nodejs8.10
   environment:
+    IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
+    IOPIPE_LOGGER_ENABLED: true
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
@@ -47,9 +49,9 @@ provider:
 custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
-  epsagon:
-    token: ${env:EPSAGON_TOKEN}
-    appName: ${self:service.name}-${opt:stage, self:provider.stage}
+  # epsagon:
+  #   token: ${env:EPSAGON_TOKEN}
+  #   appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
   say-hello:
@@ -65,6 +67,13 @@ functions:
       - http:
           method: post
           path: initiatives/create
+
+  create-initiative-p:
+    handler: app/create-initiative-p.handler
+    events:
+      - http:
+          method: post
+          path: initiatives-p/create
 
   list-initiatives:
     handler: app/list-initiatives.handler
