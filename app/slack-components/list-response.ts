@@ -14,7 +14,6 @@ export class ListResponse implements Message {
 }
 
 class BasicInitiativeCard implements Attachment {
-  pretext: string;
   color: string;
   attachment_type: string;
   callback_id: string;
@@ -22,13 +21,13 @@ class BasicInitiativeCard implements Attachment {
   actions: Action[];
 
   constructor(initiative: InitiativeResponse) {
-    this.pretext = initiative.name;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
-    const description = new Description(initiative);
+    const name = new Name(initiative);
     const status = new Status(initiative);
-    this.fields = [description, status];
+    const description = new Description(initiative);
+    this.fields = [name, status, description];
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
   }
 }
@@ -51,6 +50,17 @@ class Status implements Field {
   constructor(initiative: InitiativeResponse) {
     this.title = 'Status';
     this.value = STATUS_DISPLAY[initiative.status].text;
+    this.short = true;
+  }
+}
+
+class Name implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Name';
+    this.value = initiative.name;
     this.short = true;
   }
 }
