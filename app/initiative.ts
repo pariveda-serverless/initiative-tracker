@@ -14,6 +14,7 @@ interface CreateInitiativeRequestProperties {
   name: string;
   description?: string;
   createdBy: string;
+  createdByIcon: string;
 }
 
 export class CreateInitiativeRequest {
@@ -23,15 +24,17 @@ export class CreateInitiativeRequest {
   description: string;
   status: Status;
   createdBy: string;
+  createdByIcon: string;
   createdAt: string;
 
-  constructor({ name, description, createdBy }: CreateInitiativeRequestProperties) {
+  constructor({ name, description, createdBy, createdByIcon }: CreateInitiativeRequestProperties) {
     this.initiativeId = v4();
     this.name = name;
     this.description = description;
     this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
+    this.createdByIcon = createdByIcon;
     this.createdAt = new Date().toDateString();
   }
 }
@@ -42,11 +45,17 @@ export class InitiativeResponse {
   description: string;
   status: Status;
   members?: MemberResponse[];
+  createdBy: string;
+  createdByIcon: string;
+  createdAt: number;
 
   constructor(record: InitiativeRecord) {
     this.initiativeId = record.initiativeId;
     this.name = record.name;
     this.description = record.description;
     this.status = record.status;
+    this.createdAt = record.createdAt;
+    this.createdBy = record.createdBy;
+    this.createdByIcon = record.createdByIcon;
   }
 }

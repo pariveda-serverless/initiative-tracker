@@ -9,6 +9,8 @@ export class BasicInitiativeCard implements Attachment {
   callback_id: string;
   fields: Field[];
   actions: Action[];
+  footer: string;
+  footerIcon: string;
 
   constructor(initiative: InitiativeResponse, details: boolean) {
     this.color = STATUS_DISPLAY[initiative.status].color;
@@ -22,6 +24,8 @@ export class BasicInitiativeCard implements Attachment {
       // Don't show the view details button when already looking at details
       .filter(intent => !details || intent !== InitiativeIntent.VIEW_DETAILS)
       .map(intent => new InitiativeAction(initiative, intent));
+    this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
+    this.footerIcon = initiative.createdByIcon;
   }
 }
 
