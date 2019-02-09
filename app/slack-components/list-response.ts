@@ -8,14 +8,13 @@ export class ListResponse implements Message {
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
   constructor(initiatives: InitiativeResponse[]) {
-    this.text = 'Here are all the initiatives';
     this.response_type = 'ephemeral';
     this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative));
   }
 }
 
 class BasicInitiativeCard implements Attachment {
-  text: string;
+  pretext: string;
   color: string;
   attachment_type: string;
   callback_id: string;
@@ -23,13 +22,13 @@ class BasicInitiativeCard implements Attachment {
   actions: Action[];
 
   constructor(initiative: InitiativeResponse) {
-    this.text = initiative.name;
+    this.pretext = initiative.name;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
     const description = new Description(initiative);
     const status = new Status(initiative);
-    this.fields = [description];
+    this.fields = [description, status];
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
   }
 }
