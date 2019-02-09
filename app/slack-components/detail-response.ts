@@ -2,11 +2,12 @@ import { InitiativeResponse } from '../initiative';
 import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { InitiativeIntent, Action, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
+import { SlackAttachment, SlackField, SlackAction } from './interfaces';
 
 export class SlackDetailResponse {
   text: string;
   response_type: string;
-  attachments: SlackMemberResponse[];
+  attachments: SlackAttachment[];
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.response_type = 'in_channel'; //TODO what are the other options?
@@ -15,7 +16,7 @@ export class SlackDetailResponse {
   }
 }
 
-class SlackMemberResponse {
+class SlackMemberResponse implements SlackAttachment {
   text: string;
   color: string;
   attachment_type: string;
@@ -35,13 +36,7 @@ class SlackMemberResponse {
   }
 }
 
-class SlackField {
-  title: string;
-  value: string;
-  short: boolean;
-}
-
-class SlackMemberAction {
+class SlackMemberAction implements SlackAction {
   name: string;
   text: string;
   value: string;
@@ -59,7 +54,7 @@ class SlackMemberAction {
   }
 }
 
-class SlackConfirmAction {
+class SlackConfirmAction implements SlackConfirmAction {
   title: string;
   text: string;
   ok_text: string = 'Yes';

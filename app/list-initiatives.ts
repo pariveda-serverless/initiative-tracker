@@ -1,14 +1,14 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
-import { SlackListResponse } from './slack-components/list-response';
+import { ListResponse } from './slack-components/list-response';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ success, error }: ApiSignature) => {
   try {
     const initiatives = await getInitiatives();
-    const message = new SlackListResponse(initiatives);
+    const message = new ListResponse(initiatives);
     success(message);
   } catch (err) {
     error(err);
