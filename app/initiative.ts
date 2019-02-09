@@ -13,6 +13,7 @@ export interface InitiativeRecord {
 interface CreateInitiativeRequestProperties {
   name: string;
   description?: string;
+  createdBy: string;
 }
 
 export class CreateInitiativeRequest {
@@ -21,13 +22,17 @@ export class CreateInitiativeRequest {
   name: string;
   description: string;
   status: Status;
+  createdBy: string;
+  createdAt: string;
 
-  constructor({ name, description }: CreateInitiativeRequestProperties) {
+  constructor({ name, description, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = v4();
     this.name = name;
     this.description = description;
     this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
+    this.createdBy = createdBy;
+    this.createdAt = new Date().toDateString();
   }
 }
 

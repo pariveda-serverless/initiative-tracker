@@ -1,13 +1,15 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest } from './initiative';
+import { getUserName } from './slack-calls/profile';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    const createdBy = await getUserName(body.user_id);
     const [name, description] = body.text.split(',');
-    const initiative = new CreateInitiativeRequest({ name, description });
+    const initiative = new CreateInitiativeRequest({ name, description, createdBy });
     await saveInitiative(initiative);
     const message = {
       text: `${body.user_name} has successfully created initiative:`,
