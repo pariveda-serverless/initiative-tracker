@@ -10,7 +10,7 @@ export class BasicInitiativeCard implements Attachment {
   fields: Field[];
   actions: Action[];
 
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, details: boolean) {
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
@@ -18,7 +18,10 @@ export class BasicInitiativeCard implements Attachment {
     const status = new Status(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
-    this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
+    this.actions = Object.values(InitiativeIntent)
+      // Don't show the view details button when already looking at details
+      .filter(intent => !details && intent !== InitiativeIntent.VIEW_DETAILS)
+      .map(intent => new InitiativeAction(initiative, intent));
   }
 }
 

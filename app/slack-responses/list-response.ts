@@ -7,6 +7,6 @@ export class ListResponse implements Message {
   attachments: Attachment[];
   constructor(initiatives: InitiativeResponse[]) {
     this.response_type = 'ephemeral';
-    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative));
+    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative, false));
   }
 }

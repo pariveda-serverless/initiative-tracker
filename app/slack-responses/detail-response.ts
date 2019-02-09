@@ -8,7 +8,7 @@ export class DetailResponse implements Message {
   attachments: Attachment[];
   constructor(initiative: InitiativeResponse) {
     this.response_type = 'ephemeral';
-    const initiativeCard = new BasicInitiativeCard(initiative);
+    const initiativeCard = new BasicInitiativeCard(initiative, true);
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
       .map(member => new MemberCard(member, initiative));

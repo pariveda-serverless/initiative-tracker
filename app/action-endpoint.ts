@@ -21,7 +21,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = await handleMemberActions(payload);
         break;
       default:
-        error('No action type specified for this action');
+        // TODO replace with a slack response class
+        response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
         break;
     }
     success(response);
@@ -44,6 +45,8 @@ async function handleMemberActions(payload: any): Promise<any> {
       response = await leaveInitiativeHandler(payload);
       break;
     default:
+      // TODO replace with a slack response class
+      response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
       break;
   }
 }
@@ -62,6 +65,8 @@ async function handleInitiativeActions(payload: any): Promise<any> {
       response = await viewDetailsHandler(payload);
       break;
     default:
+      // TODO replace with a slack response class
+      response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
       break;
   }
   return response;
