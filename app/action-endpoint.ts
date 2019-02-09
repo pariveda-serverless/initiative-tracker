@@ -3,7 +3,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { ActionType, InitiativeIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
-import { DetailResponse } from './slack-components/detail-response';
+import { DetailResponse } from './slack-responses/detail-response';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 

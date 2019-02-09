@@ -4,7 +4,6 @@ import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { InitiativeIntent, ActionType } from '../interactions';
 
 export class ListResponse implements Message {
-  text: string;
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
   constructor(initiatives: InitiativeResponse[]) {

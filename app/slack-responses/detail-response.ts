@@ -5,11 +5,9 @@ import { InitiativeIntent, ActionType, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
 
 export class DetailResponse implements Message {
-  text: string;
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
   constructor(initiative: InitiativeResponse) {
-    this.text = initiative.name;
     this.response_type = 'ephemeral';
     const initiativeCard = new BasicInitiativeCard(initiative);
     const members = initiative.members.map(member => new MemberCard(member, initiative));

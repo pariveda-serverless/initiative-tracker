@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
-import { ListResponse } from './slack-components/list-response';
+import { ListResponse } from './slack-responses/list-response';
 import { Status } from './status';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
