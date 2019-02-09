@@ -1,12 +1,12 @@
 import { Status } from '../status';
 import { InitiativeIntent, MemberIntent } from '../interactions';
 
-const YELLOW = '#FCF500';
-const PINK = '#FF1C7D';
-const GREEN = '#83DE00';
-const ORANGE = '#FF7F0D';
-const PURPLE = '#CC38CE';
-const BLACK = '#000000';
+export const YELLOW = '#FCF500';
+export const PINK = '#FF1C7D';
+export const GREEN = '#83DE00';
+export const ORANGE = '#FF7F0D';
+export const PURPLE = '#CC38CE';
+export const BLACK = '#000000';
 
 const statuses: StatusDisplay[] = [];
 statuses[Status.ACTIVE] = <StatusDisplay>{ color: GREEN, text: 'Active' };

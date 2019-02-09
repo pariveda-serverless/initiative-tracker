@@ -44,6 +44,8 @@ TODO architecture diagram
 ## Development resources
 
 - [Slack API documentation](https://api.slack.com/methods)
+- [Slack message formatting](https://api.slack.com/docs/message-formatting)
+- [Slack message attachments](https://api.slack.com/docs/message-attachments)
 - [Slack interactive message documentation](https://api.slack.com/interactive-messages)
 
 [build-badge]: https://circleci.com/gh/pariveda-serverless/initiative-tracker.svg?style=shield&circle-token=1e1369bd1b5bec6e28eaf499a98f8af0dc3dbe3e

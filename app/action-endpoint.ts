@@ -5,6 +5,7 @@ import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest }
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserName } from './slack-calls/profile';
+import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -14,15 +15,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { callback_id: action } = payload;
     let response: any;
     switch (action) {
-      case ActionType.INITIATIVE_ACTION:
-        response = await handleInitiativeActions(payload);
-        break;
+      // case ActionType.INITIATIVE_ACTION:
+      //   response = await handleInitiativeActions(payload);
+      //   break;
       case ActionType.MEMBER_ACTION:
         response = await handleMemberActions(payload);
         break;
       default:
-        // TODO replace with a slack response class
-        response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
+        response = new NotImplementedResponse();
         break;
     }
     success(response);
@@ -49,8 +49,7 @@ async function handleMemberActions(payload: any): Promise<any> {
       response = await viewDetailsHandler(initiativeId);
       break;
     default:
-      // TODO replace with a slack response class
-      response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
+      response = new NotImplementedResponse();
       break;
   }
   return response;
@@ -74,8 +73,7 @@ async function handleInitiativeActions(payload: any): Promise<any> {
       response = await viewDetailsHandler(initiativeId);
       break;
     default:
-      // TODO replace with a slack response class
-      response = { text: `Something went wrong - this action wasn't handled by the app`, response_type: 'ephemeral' };
+      response = new NotImplementedResponse();
       break;
   }
   return response;

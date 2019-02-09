@@ -13,6 +13,5 @@ export class DetailResponse implements Message {
       .sort(member => (member.champion ? -1 : 1))
       .map(member => new MemberCard(member, initiative));
     this.attachments = [initiativeCard, ...members];
-    // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }
 }

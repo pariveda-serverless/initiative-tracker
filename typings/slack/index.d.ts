@@ -3,7 +3,7 @@ declare module 'slack' {
     text?: string;
     response_type: 'in_channel' | 'ephemeral';
     mrkdwn?: boolean;
-    attachments: Attachment[];
+    attachments?: Attachment[];
   }
 
   export interface Attachment {
@@ -18,9 +18,9 @@ declare module 'slack' {
     footer?: string;
     footer_icon?: string;
     attachment_type: string;
-    callback_id: string;
-    fields: Field[];
-    actions: Action[];
+    callback_id?: string;
+    fields?: Field[];
+    actions?: Action[];
   }
 
   export interface Field {
