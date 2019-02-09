@@ -1,71 +1,77 @@
 import { Status } from '../status';
 import { InitiativeIntent, MemberIntent } from '../interactions';
 
-const statuses: Display[] = [];
-statuses[Status.ACTIVE] = {
-  color: '#85DB18', // Green
-  text: 'Active'
-};
-statuses[Status.COMPLETE] = {
-  color: '#000000', // Black
-  text: 'Complete'
-};
-statuses[Status.ABANDONED] = {
-  color: '#FF4300', // Pink
-  text: 'Abandoned'
-};
-statuses[Status.ON_HOLD] = {
-  color: '#00FEFF', // Blue
-  text: 'On hold'
-};
+const YELLOW = '#FCF500';
+const PINK = '#FF1C7D';
+const GREEN = '#83DE00';
+const ORANGE = '#FF7F0D';
+const PURPLE = '#CC38CE';
+const BLACK = '#000000';
 
-const initiativeIntents: Display[] = [];
-initiativeIntents[InitiativeIntent.JOIN_AS_CHAMPION] = {
+const statuses: StatusDisplay[] = [];
+statuses[Status.ACTIVE] = <StatusDisplay>{ color: GREEN, text: 'Active' };
+statuses[Status.COMPLETE] = <StatusDisplay>{ color: BLACK, text: 'Complete' };
+statuses[Status.ABANDONED] = <StatusDisplay>{ color: PINK, text: 'Abandoned' };
+statuses[Status.ON_HOLD] = <StatusDisplay>{ color: ORANGE, text: 'On hold' };
+
+const initiativeIntents: IntentDisplay[] = [];
+initiativeIntents[InitiativeIntent.JOIN_AS_CHAMPION] = <IntentDisplay>{
   style: 'default',
   text: 'Champion this initiative'
 };
-initiativeIntents[InitiativeIntent.JOIN_AS_MEMBER] = {
+initiativeIntents[InitiativeIntent.JOIN_AS_MEMBER] = <IntentDisplay>{
   style: 'default',
   text: 'Join this initiative'
 };
-initiativeIntents[InitiativeIntent.VIEW_DETAILS] = {
+initiativeIntents[InitiativeIntent.VIEW_DETAILS] = <IntentDisplay>{
   style: 'default',
   text: 'View initiative details'
 };
 
-const memberIntents: Display[] = [];
-memberIntents[MemberIntent.REMOVE_MEMBER] = {
+const memberIntents: IntentDisplay[] = [];
+memberIntents[MemberIntent.REMOVE_MEMBER] = <IntentDisplay>{
   style: 'danger',
   text: 'Remove from initiative',
   confirmation: { title: 'Confirm removal', verb: 'remove', action: 'from the initiative' }
 };
-memberIntents[MemberIntent.MAKE_CHAMPION] = {
+memberIntents[MemberIntent.MAKE_CHAMPION] = <IntentDisplay>{
   style: 'default',
   text: 'Change to champion',
   confirmation: { title: 'Confirm change', verb: 'set', action: 'as an initiative champion' }
 };
-memberIntents[MemberIntent.MAKE_MEMBER] = {
+memberIntents[MemberIntent.MAKE_MEMBER] = <IntentDisplay>{
   style: 'default',
   text: 'Change to member',
   confirmation: { title: 'Confirm change', verb: 'set', action: 'as an initiative member instead of a champion' }
 };
 
-const members: Display[] = [];
-members['CHAMPION'] = {
-  color: '#FCF500', // Yellow
-  text: 'Champion'
-};
-members['MEMBER'] = {
-  color: '', // Blue
-  text: 'Member'
-};
+const members: MemberDisplay[] = [];
+members['CHAMPION'] = <MemberDisplay>{ color: YELLOW, text: 'Champion' };
+members['MEMBER'] = <MemberDisplay>{ color: '', text: 'Member' };
 
-interface Display {
-  style: string;
+interface StatusDisplay {
+  color: string;
   text: string;
 }
 
-export const STATUS_DISPLAY: Display[] = statuses;
-export const INITIATIVE_INTENT_DISPLAY: Display[] = initiativeIntents;
-export const MEMBER_INTENT_DISPLAY: Display[] = memberIntents;
-export const MEMBER_DISPLAY: Display[] = members;
+interface MemberDisplay {
+  color: string;
+  text: string;
+}
+
+interface IntentDisplay {
+  style: 'default' | 'danger' | 'primary';
+  text: string;
+  confirmation?: ConfirmationDisplay;
+}
+
+interface ConfirmationDisplay {
+  title: string;
+  verb: string;
+  action: string;
+}
+
+export const STATUS_DISPLAY: StatusDisplay[] = statuses;
+export const INITIATIVE_INTENT_DISPLAY: IntentDisplay[] = initiativeIntents;
+export const MEMBER_INTENT_DISPLAY: IntentDisplay[] = memberIntents;
+export const MEMBER_DISPLAY: MemberDisplay[] = members;
