@@ -1,7 +1,9 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateInitiativeRequest } from './initiative';
+import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 import { getUserName } from './slack-calls/profile';
+import { DetailResponse } from './slack-responses/detail-response';
+import { MemberResponse, MEMBER_TYPE } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -11,11 +13,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const [name, description] = body.text.split(',');
     const initiative = new CreateInitiativeRequest({ name, description, createdBy });
     await saveInitiative(initiative);
-    const message = {
-      text: `${body.user_name} has successfully created initiative:`,
-      attachments: [{ text: `${body.text}` }],
-      response_type: 'in_channel'
-    };
+    const message = await viewDetailsHandler(initiative.initiativeId);
     success(message);
   } catch (err) {
     error(err);
@@ -26,4 +24,31 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Creating new initiative with params', params);
   return initiatives.put(params).promise();
+}
+
+async function viewDetailsHandler(initiativeId: string) {
+  const initiative = await getInitiativeDetails(initiativeId);
+  return new DetailResponse(initiative);
+}
+
+async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+  const params = {
+    TableName: process.env.INITIATIVES_TABLE,
+    KeyConditionExpression: '#initiativeId = :initiativeId',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId }
+  };
+  console.log('Getting initiative details with params', params);
+  const records = await initiatives
+    .query(params)
+    .promise()
+    .then(res => <InitiativeRecord[]>res.Items);
+  console.log('Received initiative records', records);
+  let initiative: InitiativeResponse = new InitiativeResponse(
+    records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
+  );
+  initiative.members = records
+    .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
+    .map(record => new MemberResponse(record));
+  return initiative;
 }
