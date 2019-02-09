@@ -1,46 +1,21 @@
 import { InitiativeResponse } from '../initiative';
-import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY, STATUS_DISPLAY } from './display';
+import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { InitiativeIntent, Action, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
-import { SlackInitiativeAction, SlackStatusField, SlackDescriptionField } from './list-response';
-import { SlackAttachment, SlackField, SlackAction } from './interfaces';
 
 export class SlackDetailResponse {
   text: string;
   response_type: string;
-  attachments: SlackAttachment[];
+  attachments: SlackMemberResponse[];
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
-    this.response_type = 'ephemeral'; //TODO what are the other options?
-    const initiativeAttachment = new SlackDetailedInitiativeResponse(initiative);
-    const memberAttachments = initiative.members.map(member => new SlackMemberResponse(member, initiative));
-    this.attachments = [initiativeAttachment, ...memberAttachments];
+    this.response_type = 'in_channel'; //TODO what are the other options?
+    this.attachments = initiative.members.map(member => new SlackMemberResponse(member, initiative));
+    // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }
 }
 
-class SlackDetailedInitiativeResponse implements SlackAttachment {
-  title: string;
-  text: string;
-  color: string;
-  attachment_type: string;
-  callback_id: string;
-  fields: SlackField[];
-  actions: SlackInitiativeAction[];
-
-  constructor(initiative: InitiativeResponse) {
-    this.title = initiative.name;
-    this.color = STATUS_DISPLAY[initiative.status].color;
-    this.attachment_type = 'default';
-    this.callback_id = Action.INITIATIVE_ACTION;
-    const statusField = new SlackStatusField(initiative.status);
-    const descriptionField = new SlackDescriptionField(initiative);
-    this.fields = [statusField, descriptionField];
-
-    this.actions = Object.values(InitiativeIntent).map(intent => new SlackInitiativeAction(initiative, intent));
-  }
-}
-
-class SlackMemberResponse implements SlackAttachment {
+class SlackMemberResponse {
   text: string;
   color: string;
   attachment_type: string;
@@ -60,7 +35,13 @@ class SlackMemberResponse implements SlackAttachment {
   }
 }
 
-class SlackMemberAction implements SlackAction {
+class SlackField {
+  title: string;
+  value: string;
+  short: boolean;
+}
+
+class SlackMemberAction {
   name: string;
   text: string;
   value: string;
