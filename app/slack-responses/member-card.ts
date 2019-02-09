@@ -57,7 +57,7 @@ class MemberAction implements Action {
   constructor(member: MemberResponse, initiative: InitiativeResponse, intent: MemberIntent) {
     this.name = intent;
     this.style = MEMBER_INTENT_DISPLAY[intent].style;
-    this.value = initiative.initiativeId;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
     this.text = MEMBER_INTENT_DISPLAY[intent].text;
     this.type = 'button'; //TODO what are the other options?
     this.confirm = new MemberActionConfirmation(member, intent);

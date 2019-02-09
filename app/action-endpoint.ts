@@ -35,10 +35,10 @@ async function handleMemberActions(payload: any): Promise<any> {
   let response: any;
   switch (intent) {
     case MemberIntent.MAKE_CHAMPION:
-      response = await joinInitiativeHandler(payload, true);
+      response = await changeRoleHandler(payload, true);
       break;
     case MemberIntent.MAKE_MEMBER:
-      response = await joinInitiativeHandler(payload, false);
+      response = await changeRoleHandler(payload, false);
       break;
     case MemberIntent.REMOVE_MEMBER:
       response = await leaveInitiativeHandler(payload);
@@ -73,18 +73,35 @@ async function joinInitiativeHandler(payload: any, champion: boolean): Promise<a
   const name = await getUserName(slackUserId);
   const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
   await joinInitiative(member);
-  const message = {
-    text: `User ${member.name}  joined initiative ${initiativeId} as a ${member.champion ? 'champion' : 'member'}!`,
-    response_type: 'in_channel'
+  // TODO replace with a slack response class
+  return {
+    text: `${member.name} is now a ${member.champion ? 'champion' : 'member'} of the initiative`,
+    response_type: 'ephemeral'
   };
-  return message;
+}
+
+async function changeRoleHandler(payload: any, champion: boolean): Promise<any> {
+  const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
+  const name = await getUserName(slackUserId);
+  const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
+  await joinInitiative(member);
+  // TODO replace with a slack response
+  return {
+    text: `${member.name} is now a ${member.champion ? 'champion' : 'member'} of the initiative`,
+    response_type: 'ephemeral'
+  };
 }
 
 async function leaveInitiativeHandler(payload: any): Promise<any> {
-  const initiativeId = payload.actions[0].value;
-  const slackUserId = payload.user.id;
+  const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
   const member = new DeleteMemberRequest({ initiativeId, slackUserId });
   await leaveInitiative(member);
+  const name = await getUserName(slackUserId);
+  // TODO replace with a slack response
+  return {
+    text: `${name} is no longer on this initiative`,
+    response_type: 'ephemeral'
+  };
 }
 
 function joinInitiative(Item: CreateMemberRequest): Promise<any> {

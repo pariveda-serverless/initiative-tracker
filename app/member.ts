@@ -28,12 +28,14 @@ export class MemberResponse {
   name: string;
   champion: boolean;
   role: string;
+  slackUserId: string;
 
   constructor(record: any) {
     this.initiativeId = record.initaitiveId;
     this.name = record.name;
     this.champion = record.champion;
     this.role = record.champion ? 'CHAMPION' : 'MEMBER';
+    this.slackUserId = record.slackUserId;
   }
 }
 
