@@ -13,7 +13,7 @@ export class ListResponse implements Message {
   }
 }
 
-class BasicInitiativeCard implements Attachment {
+export class BasicInitiativeCard implements Attachment {
   color: string;
   attachment_type: string;
   callback_id: string;

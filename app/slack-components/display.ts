@@ -46,7 +46,7 @@ memberIntents[MemberIntent.MAKE_MEMBER] = <IntentDisplay>{
 };
 
 const members: MemberDisplay[] = [];
-members['CHAMPION'] = <MemberDisplay>{ color: YELLOW, text: 'Champion' };
+members['CHAMPION'] = <MemberDisplay>{ color: PURPLE, text: 'Champion' };
 members['MEMBER'] = <MemberDisplay>{ color: '', text: 'Member' };
 
 interface StatusDisplay {

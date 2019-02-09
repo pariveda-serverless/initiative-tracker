@@ -3,6 +3,7 @@ import { InitiativeResponse } from '../initiative';
 import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { InitiativeIntent, ActionType, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
+import { BasicInitiativeCard } from './list-response';
 
 export class DetailResponse implements Message {
   text: string;
@@ -11,7 +12,9 @@ export class DetailResponse implements Message {
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.response_type = 'ephemeral';
-    this.attachments = initiative.members.map(member => new MemberCard(member, initiative));
+    const initiativeCard = new BasicInitiativeCard(initiative);
+    const members = initiative.members.map(member => new MemberCard(member, initiative));
+    this.attachments = [initiativeCard, ...members];
     // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }
 }
