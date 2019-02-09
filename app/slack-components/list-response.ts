@@ -1,7 +1,7 @@
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { InitiativeIntent, Action } from '../interactions';
-import { SlackAttachment } from './interfaces';
+import { SlackAttachment, SlackField, SlackAction } from './interfaces';
 
 export class SlackListResponse {
   text: string;
@@ -31,13 +31,7 @@ class SlackBasicInitiativeResponse implements SlackAttachment {
   }
 }
 
-class SlackField {
-  title: string;
-  value: string;
-  short: boolean;
-}
-
-export class SlackInitiativeAction {
+export class SlackInitiativeAction implements SlackAction {
   name: string;
   text: string;
   value: string;
