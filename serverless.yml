@@ -13,7 +13,6 @@ provider:
   runtime: nodejs8.10
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
-    IOPIPE_LOGGER_ENABLED: true
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
@@ -22,6 +21,7 @@ provider:
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+    SLACK_ACCESS_TOKEN: ${env:SLACK_ACCESS_TOKEN}
     SLACK_REDIRECT_URI:
       Fn::Join:
         - ''

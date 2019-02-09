@@ -4,6 +4,7 @@ import { ActionType, InitiativeIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
+import { getUserName } from './slack-calls/profile';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -46,12 +47,9 @@ async function handleListActions(payload: any): Promise<any> {
 
 async function joinInitiativeHandler(payload: any, champion: boolean): Promise<any> {
   const initiativeId: string = payload.actions[0].value;
-  const member = new CreateMemberRequest({
-    initiativeId,
-    slackUserId: payload.user.id,
-    name: payload.user.name,
-    champion: champion
-  });
+  const slackUserId = payload.user.id;
+  const name = await getUserName(slackUserId);
+  const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
   await joinInitiative(member);
   const message = {
     text: `User ${member.name}  joined initiative ${initiativeId} as a ${member.champion ? 'champion' : 'member'}!`,
