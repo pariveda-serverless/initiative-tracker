@@ -8,7 +8,12 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const text = body.text ? body.text.toUpperCase() : '';
+    const text = body.text
+      ? body.text
+          .toUpperCase()
+          .trim()
+          .replace(' ', '_')
+      : '';
     console.log('status argument', text);
     const status: Status | undefined = <any>Status[text];
     console.log('status', status);
