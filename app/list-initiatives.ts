@@ -27,6 +27,10 @@ async function getInitiatives(): Promise<InitiativeResponse[]> {
   const records = await initiatives
     .query(params)
     .promise()
+    .then(res => {
+      console.log(res);
+      return res;
+    })
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiatives', records);
   return records.map(initiative => new InitiativeResponse(initiative));
