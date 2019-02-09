@@ -1,16 +1,16 @@
-import { Attachment, Field, Action, ConfirmAction } from 'slack';
+import { Message, Attachment, Field, Action, ConfirmAction } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { InitiativeIntent, ActionType, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
 
-export class DetailResponse {
+export class DetailResponse implements Message {
   text: string;
-  response_type: string;
+  response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
-    this.response_type = 'in_channel'; //TODO what are the other options?
+    this.response_type = 'ephemeral';
     this.attachments = initiative.members.map(member => new MemberCard(member, initiative));
     // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }

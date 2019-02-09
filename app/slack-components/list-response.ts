@@ -27,7 +27,32 @@ class BasicInitiativeCard implements Attachment {
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
+    const description = new Description(initiative);
+    const status = new Status(initiative);
+    this.fields = [description];
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
+  }
+}
+
+class Description implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Description';
+    this.value = initiative.description;
+    this.short = false;
+  }
+}
+
+class Status implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Status';
+    this.value = STATUS_DISPLAY[initiative.status].text;
+    this.short = true;
   }
 }
 

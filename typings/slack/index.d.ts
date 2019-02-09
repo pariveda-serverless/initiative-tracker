@@ -2,13 +2,21 @@ declare module 'slack' {
   export interface Message {
     text: string;
     response_type: 'in_channel' | 'ephemeral';
+    mrkdwn?: boolean;
     attachments: Attachment[];
   }
 
   export interface Attachment {
     title?: string;
-    text: string;
-    color: string;
+    title_link?: string;
+    pretext?: string;
+    text?: string;
+    color?: string;
+    mrkdwn_in?: string[];
+    image_url?: string;
+    thumb_url?: string;
+    footer?: string;
+    footer_icon?: string;
     attachment_type: string;
     callback_id: string;
     fields: Field[];
