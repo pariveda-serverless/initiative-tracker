@@ -3,11 +3,12 @@ import { WebClient, WebAPICallResult } from '@slack/client';
 const slack = new WebClient(process.env.SLACK_ACCESS_TOKEN);
 
 export async function getUserName(user: string): Promise<string> {
-  const result = await slack.users.profile.get({ user }).then(raw => {
-    console.log(raw);
-    return raw as ProfileResult;
-  });
-  return result.profile.real_name;
+  const profile = await slack.users.profile
+    .get({ user })
+    .then(raw => raw as ProfileResult)
+    .then(result => result.profile);
+  console.log('Received profile result from Slack', profile);
+  return profile.real_name_normalized;
 }
 
 interface ProfileResult extends WebAPICallResult {
