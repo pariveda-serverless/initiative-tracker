@@ -24,14 +24,10 @@ async function getInitiatives(): Promise<InitiativeResponse[]> {
     ExpressionAttributeValues: { ':type': INITIATIVE_TYPE }
   };
   console.log('Getting all initiatives with params', params);
-  const pecords = await initiatives
+  const records = await initiatives
     .query(params)
     .promise()
-    .then(res => {
-      console.log(res);
-      return res;
-    })
     .then(res => <InitiativeRecord[]>res.Items);
-  console.log('Received initiatives', pecords);
-  return pecords.map(initiative => new InitiativeResponse(initiative));
+  console.log('Received initiatives', records);
+  return records.map(initiative => new InitiativeResponse(initiative));
 }

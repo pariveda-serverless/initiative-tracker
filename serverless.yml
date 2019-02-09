@@ -49,9 +49,6 @@ provider:
 custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
-  # epsagon:
-  #   token: ${env:EPSAGON_TOKEN}
-  #   appName: ${self:service.name}-${opt:stage, self:provider.stage}
 
 functions:
   say-hello:

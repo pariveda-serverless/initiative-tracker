@@ -2,20 +2,20 @@ import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { InitiativeIntent, Action } from '../interactions';
 import { Status } from '../status';
-import { MemberResponse } from '../member';
+// import { MemberResponse } from '../member';
 import { SlackAttachment, SlackAction, SlackField } from './interfaces';
 
 export class SlackListResponse {
   text: string;
   response_type: string;
-  attachments: SlackBasicInitiativeResponse[];
+  attachments: SlackAttachment[];
   constructor(initiatives: InitiativeResponse[]) {
     this.response_type = 'ephemeral'; //TODO what are the other options?
     this.attachments = initiatives.map(initiative => new SlackBasicInitiativeResponse(initiative));
   }
 }
 
-class SlackBasicInitiativeResponse {
+class SlackBasicInitiativeResponse implements SlackAttachment {
   title: string;
   text: string;
   color: string;
@@ -63,18 +63,18 @@ export class SlackDescriptionField implements SlackField {
   }
 }
 
-class SlackMembersField implements SlackField {
-  title: string;
-  value: string;
-  short: boolean;
-  constructor(members: MemberResponse[], champions: boolean) {
-    this.title = `${champions ? 'Champions' : 'Members'}`;
-    this.value = members.reduce((names, member) => {
-      return member.champion === champions ? `${names}, ${member.name}` : names;
-    }, '');
-    this.short = false;
-  }
-}
+// class SlackMembersField implements SlackField {
+//   title: string;
+//   value: string;
+//   short: boolean;
+//   constructor(members: MemberResponse[], champions: boolean) {
+//     this.title = `${champions ? 'Champions' : 'Members'}`;
+//     this.value = members.reduce((names, member) => {
+//       return member.champion === champions ? `${names}, ${member.name}` : names;
+//     }, '');
+//     this.short = false;
+//   }
+// }
 
 export class SlackInitiativeAction implements SlackAction {
   name: string;
