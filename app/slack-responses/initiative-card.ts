@@ -20,7 +20,7 @@ export class BasicInitiativeCard implements Attachment {
     this.fields = [name, status, description];
     this.actions = Object.values(InitiativeIntent)
       // Don't show the view details button when already looking at details
-      .filter(intent => !details && intent !== InitiativeIntent.VIEW_DETAILS)
+      .filter(intent => !details || intent !== InitiativeIntent.VIEW_DETAILS)
       .map(intent => new InitiativeAction(initiative, intent));
   }
 }
