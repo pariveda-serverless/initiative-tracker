@@ -9,7 +9,9 @@ export class DetailResponse implements Message {
   constructor(initiative: InitiativeResponse) {
     this.response_type = 'ephemeral';
     const initiativeCard = new BasicInitiativeCard(initiative);
-    const members = initiative.members.map(member => new MemberCard(member, initiative));
+    const members = initiative.members
+      .sort(member => (member.champion ? -1 : 1))
+      .map(member => new MemberCard(member, initiative));
     this.attachments = [initiativeCard, ...members];
     // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
   }
