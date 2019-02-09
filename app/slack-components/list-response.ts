@@ -10,11 +10,11 @@ export class ListResponse {
   constructor(initiatives: InitiativeResponse[]) {
     this.text = 'Here are all the initiatives';
     this.response_type = 'in_channel'; //TODO what are the other options?
-    this.attachments = initiatives.map(initiative => new BasicInitiativeResponse(initiative));
+    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative));
   }
 }
 
-class BasicInitiativeResponse implements SlackAttachment {
+class BasicInitiativeCard implements SlackAttachment {
   text: string;
   color: string;
   attachment_type: string;
