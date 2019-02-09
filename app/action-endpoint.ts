@@ -15,9 +15,9 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { callback_id: action } = payload;
     let response: any;
     switch (action) {
-      // case ActionType.INITIATIVE_ACTION:
-      //   response = await handleInitiativeActions(payload);
-      //   break;
+      case ActionType.INITIATIVE_ACTION:
+        response = await handleInitiativeActions(payload);
+        break;
       case ActionType.MEMBER_ACTION:
         response = await handleMemberActions(payload);
         break;
