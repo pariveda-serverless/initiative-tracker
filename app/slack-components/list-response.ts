@@ -1,11 +1,12 @@
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { InitiativeIntent, Action } from '../interactions';
+import { SlackAttachment } from './interfaces';
 
 export class SlackListResponse {
   text: string;
   response_type: string;
-  attachments: SlackBasicInitiativeResponse[];
+  attachments: SlackAttachment[]; // SlackBasicInitiativeResponse[];
   constructor(initiatives: InitiativeResponse[]) {
     this.text = 'Here are all the initiatives';
     this.response_type = 'in_channel'; //TODO what are the other options?
@@ -13,7 +14,7 @@ export class SlackListResponse {
   }
 }
 
-class SlackBasicInitiativeResponse {
+class SlackBasicInitiativeResponse implements SlackAttachment {
   text: string;
   color: string;
   attachment_type: string;
