@@ -36,3 +36,17 @@ export class MemberResponse {
     this.role = record.champion ? 'CHAMPION' : 'MEMBER';
   }
 }
+
+export class DeleteMemberRequest {
+  initiativeId: string;
+  type: string;
+  constructor({ initiativeId, slackUserId }: DeleteMemberRequestProperties) {
+    this.initiativeId = initiativeId;
+    this.type = `${MEMBER_TYPE}${slackUserId}`;
+  }
+}
+
+interface DeleteMemberRequestProperties {
+  initiativeId: string;
+  slackUserId: string;
+}

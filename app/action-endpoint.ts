@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { ActionType, InitiativeIntent } from './interactions';
-import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
+import { ActionType, InitiativeIntent, MemberIntent } from './interactions';
+import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserName } from './slack-calls/profile';
@@ -15,9 +15,13 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     let response: any;
     switch (action) {
       case ActionType.INITIATIVE_ACTION:
-        response = await handleListActions(payload);
+        response = await handleInitiativeActions(payload);
+        break;
+      case ActionType.MEMBER_ACTION:
+        response = await handleMemberActions(payload);
         break;
       default:
+        error('No action type specified for this action');
         break;
     }
     success(response);
@@ -26,7 +30,25 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function handleListActions(payload: any): Promise<any> {
+async function handleMemberActions(payload: any): Promise<any> {
+  const intent: MemberIntent = payload.actions[0].name;
+  let response: any;
+  switch (intent) {
+    case MemberIntent.MAKE_CHAMPION:
+      response = await joinInitiativeHandler(payload, true);
+      break;
+    case MemberIntent.MAKE_MEMBER:
+      response = await joinInitiativeHandler(payload, false);
+      break;
+    case MemberIntent.REMOVE_MEMBER:
+      response = await leaveInitiativeHandler(payload);
+      break;
+    default:
+      break;
+  }
+}
+
+async function handleInitiativeActions(payload: any): Promise<any> {
   const intent: InitiativeIntent = payload.actions[0].name;
   let response: any;
   switch (intent) {
@@ -46,7 +68,7 @@ async function handleListActions(payload: any): Promise<any> {
 }
 
 async function joinInitiativeHandler(payload: any, champion: boolean): Promise<any> {
-  const initiativeId: string = payload.actions[0].value;
+  const initiativeId = payload.actions[0].value;
   const slackUserId = payload.user.id;
   const name = await getUserName(slackUserId);
   const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
@@ -58,10 +80,23 @@ async function joinInitiativeHandler(payload: any, champion: boolean): Promise<a
   return message;
 }
 
+async function leaveInitiativeHandler(payload: any): Promise<any> {
+  const initiativeId = payload.actions[0].value;
+  const slackUserId = payload.user.id;
+  const member = new DeleteMemberRequest({ initiativeId, slackUserId });
+  await leaveInitiative(member);
+}
+
 function joinInitiative(Item: CreateMemberRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Adding member to initiative with params', params);
   return initiatives.put(params).promise();
+}
+
+function leaveInitiative(Key: DeleteMemberRequest): Promise<any> {
+  const params = { TableName: process.env.INITIATIVES_TABLE, Key };
+  console.log('Removing member from initiative with params', params);
+  return initiatives.delete(params).promise();
 }
 
 async function viewDetailsHandler(payload: any) {
