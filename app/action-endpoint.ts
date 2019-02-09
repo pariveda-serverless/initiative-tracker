@@ -33,13 +33,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 
 async function handleMemberActions(payload: any): Promise<any> {
   const intent: MemberIntent = payload.actions[0].name;
+  const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
   let response: any;
   switch (intent) {
     case MemberIntent.MAKE_CHAMPION:
-      response = await changeRoleHandler(payload, true);
+      await joinInitiativeHandler(initiativeId, slackUserId, true);
+      response = await viewDetailsHandler(initiativeId);
       break;
     case MemberIntent.MAKE_MEMBER:
-      response = await changeRoleHandler(payload, false);
+      await joinInitiativeHandler(initiativeId, slackUserId, false);
+      response = await viewDetailsHandler(initiativeId);
       break;
     case MemberIntent.REMOVE_MEMBER:
       response = await leaveInitiativeHandler(payload);
@@ -53,16 +56,20 @@ async function handleMemberActions(payload: any): Promise<any> {
 
 async function handleInitiativeActions(payload: any): Promise<any> {
   const intent: InitiativeIntent = payload.actions[0].name;
+  const initiativeId = payload.actions[0].value;
+  const slackUserId = payload.user.id;
   let response: any;
   switch (intent) {
     case InitiativeIntent.JOIN_AS_CHAMPION:
-      response = await joinInitiativeHandler(payload, true);
+      await joinInitiativeHandler(initiativeId, slackUserId, true);
+      response = await viewDetailsHandler(initiativeId);
       break;
     case InitiativeIntent.JOIN_AS_MEMBER:
-      response = await joinInitiativeHandler(payload, false);
+      await joinInitiativeHandler(initiativeId, slackUserId, false);
+      response = await viewDetailsHandler(initiativeId);
       break;
     case InitiativeIntent.VIEW_DETAILS:
-      response = await viewDetailsHandler(payload);
+      response = await viewDetailsHandler(initiativeId);
       break;
     default:
       // TODO replace with a slack response class
@@ -72,29 +79,10 @@ async function handleInitiativeActions(payload: any): Promise<any> {
   return response;
 }
 
-async function joinInitiativeHandler(payload: any, champion: boolean): Promise<any> {
-  const initiativeId = payload.actions[0].value;
-  const slackUserId = payload.user.id;
+async function joinInitiativeHandler(initiativeId: string, slackUserId: string, champion: boolean): Promise<any> {
   const name = await getUserName(slackUserId);
   const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
   await joinInitiative(member);
-  // TODO replace with a slack response class
-  return {
-    text: `${member.name} is now a ${member.champion ? 'champion' : 'member'} of the initiative`,
-    response_type: 'ephemeral'
-  };
-}
-
-async function changeRoleHandler(payload: any, champion: boolean): Promise<any> {
-  const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-  const name = await getUserName(slackUserId);
-  const member = new CreateMemberRequest({ initiativeId, slackUserId, name, champion });
-  await joinInitiative(member);
-  // TODO replace with a slack response
-  return {
-    text: `${member.name} is now a ${member.champion ? 'champion' : 'member'} of the initiative`,
-    response_type: 'ephemeral'
-  };
 }
 
 async function leaveInitiativeHandler(payload: any): Promise<any> {
@@ -121,8 +109,7 @@ function leaveInitiative(Key: DeleteMemberRequest): Promise<any> {
   return initiatives.delete(params).promise();
 }
 
-async function viewDetailsHandler(payload: any) {
-  const initiativeId: string = payload.actions[0].value;
+async function viewDetailsHandler(initiativeId: string) {
   const initiative = await getInitiativeDetails(initiativeId);
   return new DetailResponse(initiative);
 }
