@@ -25,6 +25,6 @@ class NotImplementedCard implements Attachment {
       'https://user-images.githubusercontent.com/2955468/52139934-6e6d2880-261f-11e9-9bbf-cfacd1facf3a.png';
     this.footer = 'Initiative Tracker';
     this.title = `Woops!  This command hasn't been implemented in the application yet or is improperly configured`;
-    this.ts = Date.now();
+    this.ts = new Date().getTime() / 1000;
   }
 }
