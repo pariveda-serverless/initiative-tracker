@@ -1,9 +1,8 @@
 import { Message, Attachment, Field, Action, ConfirmAction } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
+import { MEMBER_INTENT_DISPLAY, STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
 import { InitiativeIntent, ActionType, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
-import { BasicInitiativeCard } from './list-response';
 
 export class DetailResponse implements Message {
   text: string;
@@ -16,6 +15,58 @@ export class DetailResponse implements Message {
     const members = initiative.members.map(member => new MemberCard(member, initiative));
     this.attachments = [initiativeCard, ...members];
     // TODO add an attachment for initiative itself, wich intents being join and join (no view details)
+  }
+}
+
+class BasicInitiativeCard implements Attachment {
+  color: string;
+  attachment_type: string;
+  callback_id: string;
+  fields: Field[];
+  actions: Action[];
+
+  constructor(initiative: InitiativeResponse) {
+    this.color = STATUS_DISPLAY[initiative.status].color;
+    this.attachment_type = 'default'; //TODO what are the other options?
+    this.callback_id = ActionType.INITIATIVE_ACTION;
+    const name = new Name(initiative);
+    const status = new Status(initiative);
+    const description = new Description(initiative);
+    this.fields = [name, status, description];
+    this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
+  }
+}
+
+class Description implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Description';
+    this.value = initiative.description;
+    this.short = false;
+  }
+}
+
+class Status implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Status';
+    this.value = STATUS_DISPLAY[initiative.status].text;
+    this.short = true;
+  }
+}
+
+class Name implements Field {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Name';
+    this.value = initiative.name;
+    this.short = true;
   }
 }
 
@@ -67,5 +118,21 @@ class MemberActionConfirmation implements ConfirmAction {
     const { verb, action, title } = MEMBER_INTENT_DISPLAY[intent].confirmation;
     this.title = title;
     this.text = `Are you sure you want to ${verb} ${member.name} ${action}?`;
+  }
+}
+
+class InitiativeAction implements Action {
+  name: string;
+  text: string;
+  value: string;
+  type: string;
+  style: string;
+
+  constructor(initiative: InitiativeResponse, intent: InitiativeIntent) {
+    this.name = intent;
+    this.style = INITIATIVE_INTENT_DISPLAY[intent].style;
+    this.value = initiative.initiativeId;
+    this.text = INITIATIVE_INTENT_DISPLAY[intent].text;
+    this.type = 'button'; //TODO what are the other options?
   }
 }
