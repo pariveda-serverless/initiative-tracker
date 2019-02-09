@@ -68,13 +68,6 @@ functions:
           method: post
           path: initiatives/create
 
-  create-initiative-p:
-    handler: app/create-initiative-p.handler
-    events:
-      - http:
-          method: post
-          path: initiatives-p/create
-
   list-initiatives:
     handler: app/list-initiatives.handler
     events:
