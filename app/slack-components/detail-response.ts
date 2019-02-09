@@ -1,13 +1,13 @@
+import { Attachment, Field, Action, ConfirmAction } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_INTENT_DISPLAY, INITIATIVE_INTENT_DISPLAY, MEMBER_DISPLAY } from './display';
-import { InitiativeIntent, Action, MemberIntent } from '../interactions';
+import { InitiativeIntent, ActionType, MemberIntent } from '../interactions';
 import { MemberResponse } from '../member';
-import { SlackAttachment, SlackField, SlackAction, SlackConfirmAction } from './interfaces';
 
 export class DetailResponse {
   text: string;
   response_type: string;
-  attachments: SlackAttachment[];
+  attachments: Attachment[];
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.response_type = 'in_channel'; //TODO what are the other options?
@@ -16,33 +16,33 @@ export class DetailResponse {
   }
 }
 
-class MemberCard implements SlackAttachment {
+class MemberCard implements Attachment {
   text: string;
   color: string;
   attachment_type: string;
   callback_id: string;
-  fields: SlackField[];
-  actions: SlackAction[];
+  fields: Field[];
+  actions: Action[];
 
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     this.text = member.name;
     const memberType = member.champion ? 'CHAMPION' : 'MEMBER';
     this.color = MEMBER_DISPLAY[memberType].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = Action.MEMBER_ACTION;
+    this.callback_id = ActionType.MEMBER_ACTION;
     this.actions = Object.values(MemberIntent)
       .filter(intent => (member.champion ? intent !== MemberIntent.MAKE_CHAMPION : intent !== MemberIntent.MAKE_MEMBER))
       .map(intent => new MemberAction(member, initiative, intent));
   }
 }
 
-class MemberAction implements SlackAction {
+class MemberAction implements Action {
   name: string;
   text: string;
   value: string;
   type: string;
   style: string;
-  confirm: SlackConfirmAction;
+  confirm: ConfirmAction;
 
   constructor(member: MemberResponse, initiative: InitiativeResponse, intent: MemberIntent) {
     this.name = intent;
@@ -54,7 +54,7 @@ class MemberAction implements SlackAction {
   }
 }
 
-class MemberActionConfirmation implements SlackConfirmAction {
+class MemberActionConfirmation implements ConfirmAction {
   title: string;
   text: string;
   ok_text: string = 'Yes';

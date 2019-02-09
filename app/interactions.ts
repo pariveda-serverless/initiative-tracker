@@ -1,4 +1,4 @@
-export enum Action {
+export enum ActionType {
   INITIATIVE_ACTION = 'INITIATIVE_ACTION',
   MEMBER_ACTION = 'MEMBER_ACTION'
 }

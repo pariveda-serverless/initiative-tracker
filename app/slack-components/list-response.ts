@@ -1,37 +1,37 @@
+import { Attachment, Field, Action, Message } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
-import { InitiativeIntent, Action } from '../interactions';
-import { SlackAttachment, SlackField, SlackAction } from './interfaces';
+import { InitiativeIntent, ActionType } from '../interactions';
 
-export class ListResponse {
+export class ListResponse implements Message {
   text: string;
-  response_type: string;
-  attachments: SlackAttachment[];
+  response_type: 'in_channel' | 'ephemeral';
+  attachments: Attachment[];
   constructor(initiatives: InitiativeResponse[]) {
     this.text = 'Here are all the initiatives';
-    this.response_type = 'in_channel'; //TODO what are the other options?
+    this.response_type = 'ephemeral';
     this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative));
   }
 }
 
-class BasicInitiativeCard implements SlackAttachment {
+class BasicInitiativeCard implements Attachment {
   text: string;
   color: string;
   attachment_type: string;
   callback_id: string;
-  fields: SlackField[];
-  actions: SlackAction[];
+  fields: Field[];
+  actions: Action[];
 
   constructor(initiative: InitiativeResponse) {
     this.text = initiative.name;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = Action.INITIATIVE_ACTION;
+    this.callback_id = ActionType.INITIATIVE_ACTION;
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
   }
 }
 
-export class InitiativeAction implements SlackAction {
+export class InitiativeAction implements Action {
   name: string;
   text: string;
   value: string;

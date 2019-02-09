@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Action, InitiativeIntent } from './interactions';
+import { ActionType, InitiativeIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-components/detail-response';
@@ -13,7 +13,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { callback_id: action } = payload;
     let response: any;
     switch (action) {
-      case Action.INITIATIVE_ACTION:
+      case ActionType.INITIATIVE_ACTION:
         response = await handleListActions(payload);
         break;
       default:
