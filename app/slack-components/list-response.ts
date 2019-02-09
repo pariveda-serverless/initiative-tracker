@@ -1,19 +1,20 @@
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { InitiativeIntent, Action } from '../interactions';
+import { Status } from '../status';
 
 export class SlackListResponse {
   text: string;
   response_type: string;
   attachments: SlackBasicInitiativeResponse[];
   constructor(initiatives: InitiativeResponse[]) {
-    this.text = 'Here are all the initiatives';
-    this.response_type = 'in_channel'; //TODO what are the other options?
+    this.response_type = 'ephemeral'; //TODO what are the other options?
     this.attachments = initiatives.map(initiative => new SlackBasicInitiativeResponse(initiative));
   }
 }
 
 class SlackBasicInitiativeResponse {
+  title: string;
   text: string;
   color: string;
   attachment_type: string;
@@ -22,15 +23,30 @@ class SlackBasicInitiativeResponse {
   actions: SlackInitiativeAction[];
 
   constructor(initiative: InitiativeResponse) {
-    this.text = initiative.name;
+    this.title = initiative.name;
+    this.text = initiative.description;
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = Action.INITIATIVE_ACTION;
+
+    this.fields = [new SlackStatusField(initiative.status)];
+
     this.actions = Object.values(InitiativeIntent).map(intent => new SlackInitiativeAction(initiative, intent));
   }
 }
 
-class SlackField {
+class SlackStatusField implements SlackField {
+  title: string;
+  value: string;
+  short: boolean;
+  constructor(status: Status) {
+    this.title = 'Status';
+    this.value = STATUS_DISPLAY[status].text;
+    this.short = false;
+  }
+}
+
+interface SlackField {
   title: string;
   value: string;
   short: boolean;
