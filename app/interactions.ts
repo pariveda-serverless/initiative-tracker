@@ -10,7 +10,7 @@ export enum InitiativeIntent {
 }
 
 export enum MemberIntent {
-  REMOVE_MEMBER = 'REMOVE_MEMBER',
   MAKE_CHAMPION = 'MAKE_CHAMPION',
-  MAKE_MEMBER = 'MAKE_MEMBER'
+  MAKE_MEMBER = 'MAKE_MEMBER',
+  REMOVE_MEMBER = 'REMOVE_MEMBER'
 }
