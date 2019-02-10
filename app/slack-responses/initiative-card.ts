@@ -10,7 +10,7 @@ export class BasicInitiativeCard implements Attachment {
   fields: Field[];
   actions: Action[];
   footer: string;
-  footerIcon: string;
+  footer_icon: string;
 
   constructor(initiative: InitiativeResponse, details: boolean) {
     this.color = STATUS_DISPLAY[initiative.status].color;
@@ -25,7 +25,7 @@ export class BasicInitiativeCard implements Attachment {
       .filter(intent => !details || intent !== InitiativeIntent.VIEW_DETAILS)
       .map(intent => new InitiativeAction(initiative, intent));
     this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
-    this.footerIcon = initiative.createdByIcon;
+    this.footer_icon = initiative.createdByIcon;
   }
 }
 
