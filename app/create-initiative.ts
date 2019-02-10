@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
-import { getUserName } from './slack-calls/profile';
+import { getUserProfile } from './slack-calls/profile';
 import { DetailResponse } from './slack-responses/detail-response';
 import { MemberResponse, MEMBER_TYPE } from './member';
 
@@ -9,7 +9,7 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { createdBy, createdByIcon } = await getUserName(body.user_id);
+    const { name: createdBy, icon: createdByIcon } = await getUserProfile(body.user_id);
     const [name, description] = body.text.split(',');
     const initiative = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
     await saveInitiative(initiative);

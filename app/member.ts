@@ -6,13 +6,15 @@ export class CreateMemberRequest {
   name: string;
   slackUserId: string;
   champion: boolean;
+  icon: string;
 
-  constructor({ initiativeId, name, slackUserId, champion = false }: CreateMemberRequestProperties) {
+  constructor({ initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
     this.initiativeId = initiativeId;
     this.type = `${MEMBER_TYPE}${slackUserId}`;
     this.name = name;
     this.slackUserId = slackUserId;
     this.champion = champion;
+    this.icon = icon;
   }
 }
 
@@ -21,6 +23,7 @@ interface CreateMemberRequestProperties {
   name: string;
   slackUserId: string;
   champion: boolean;
+  icon: string;
 }
 
 export class MemberResponse {
@@ -29,6 +32,7 @@ export class MemberResponse {
   champion: boolean;
   role: string;
   slackUserId: string;
+  icon: string;
 
   constructor(record: any) {
     this.initiativeId = record.initaitiveId;
@@ -36,6 +40,7 @@ export class MemberResponse {
     this.champion = record.champion;
     this.role = record.champion ? 'CHAMPION' : 'MEMBER';
     this.slackUserId = record.slackUserId;
+    this.icon = record.icon;
   }
 }
 
