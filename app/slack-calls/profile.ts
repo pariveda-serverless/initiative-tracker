@@ -8,7 +8,10 @@ export async function getUserProfile(user: string): Promise<Profile> {
     .then(raw => raw as ProfileResult)
     .then(result => result.profile);
   console.log('Received profile result from Slack', profile);
-  return { name: profile.real_name_normalized, icon: profile.image_original };
+  return {
+    name: profile.real_name_normalized,
+    icon: profile.image_original ? profile.image_original : profile.image_512
+  };
 }
 
 interface Profile {
@@ -30,5 +33,6 @@ interface SlackProfile {
   display_name_normalized: string;
   email: string;
   image_original: string;
+  image_512: string;
   team: string;
 }
