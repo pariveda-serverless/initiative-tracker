@@ -60,23 +60,23 @@ provider:
           - - arn:aws:sns
             - Ref: AWS::Region
             - Ref: AWS::AccountId
-            - request-feedback-${opt:stage, self:provider.stage}
+            - request-update-${opt:stage, self:provider.stage}
 
 custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
 
 functions:
-  initiate-feedback-request:
-    handler: app/initiate-feedback-request.handler
+  initiate-update-request:
+    handler: app/initiate-update-request.handler
     events:
       # - schedule: cron(0 15 * * MON *) # 3PM UTC (10 AM EST) every Monday
       - schedule: cron(0/5 * * * ? *) # every 5 minutes
 
-  request-feedback:
-    handler: app/request-feedback.handler
+  request-update:
+    handler: app/request-update.handler
     events:
-      - sns: request-feedback-${opt:stage, self:provider.stage}
+      - sns: request-update-${opt:stage, self:provider.stage}
 
   create-initiative:
     handler: app/create-initiative.handler
