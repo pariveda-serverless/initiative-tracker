@@ -18,7 +18,6 @@ Available slash commands are:
 
 - `/register-initiative [initiative name], [optional initiative description]`
 - `/list-initiatives [optional initiative status: 'active' | 'abandoned' | 'complete' | 'on hold']`
-- `/say-hello`
 
 ## Architecture diagram
 
