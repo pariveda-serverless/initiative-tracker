@@ -16,6 +16,7 @@ provider:
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
+    REQUEST_FEEDBACK_SNS: { Ref: 'SNSTopicRequestfeedback${opt:stage, self:provider.stage}' }
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
@@ -45,18 +46,24 @@ provider:
       Resource:
         - { Fn::GetAtt: [InitiativesTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
+    - Effect: Allow
+      Action: sns:Publish
+      Resource: { Ref: 'SNSTopicRequestfeedback${opt:stage, self:provider.stage}' }
 
 custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
 
 functions:
-  say-hello:
-    handler: app/say-hello.handler
+  initiate-feedback-request:
+    handler: app/initiate-feedback-request.handler
     events:
-      - http:
-          method: post
-          path: initiatives/say-hello
+      - schedule: cron(0 15 * * MON *)
+
+  request-feedback:
+    handler: app/request-feedback.handler
+    events:
+      - sns: request-feedback-${opt:stage, self:provider.stage}
 
   create-initiative:
     handler: app/create-initiative.handler
