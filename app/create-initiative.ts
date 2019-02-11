@@ -10,7 +10,8 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const { name: createdBy, icon: createdByIcon } = await getUserProfile(body.user_id);
-    const [name, description] = body.text.split(',');
+    const [name, ...remaining] = body.text.split(',');
+    const description = remaining.join('').trim();
     const initiative = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
     await saveInitiative(initiative);
     const message = await viewDetailsHandler(initiative.initiativeId);
