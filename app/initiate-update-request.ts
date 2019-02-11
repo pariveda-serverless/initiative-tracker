@@ -1,9 +1,8 @@
-import { SNS, DynamoDB } from 'aws-sdk';
-import { wrapper, WrapperSignature, snsWrapper } from '@manwaring/lambda-wrapper';
-import { InitiativeResponse, INITIATIVE_TYPE, InitiativeRecord } from './initiative';
-import { Status } from './status';
+import { SNS } from 'aws-sdk';
+import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
+import { InitiativeResponse } from './initiative';
+import { getInitiatives } from './list-initiatives';
 
-const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 const sns = new SNS({ apiVersion: '2010-03-31' });
 
 export const handler = wrapper(async ({ event, success, error }: WrapperSignature) => {
@@ -22,26 +21,4 @@ async function publishInitiativeForStatusUpdateRequest(initiative: InitiativeRes
     TopicArn: process.env.REQUEST_UPDATE_SNS
   };
   return sns.publish(params).promise();
-}
-
-async function getInitiatives(status?: Status): Promise<InitiativeResponse[]> {
-  const KeyConditionExpression = status ? '#type = :type and #status = :status' : '#type = :type';
-  const ExpressionAttributeNames = status ? { '#type': 'type', '#status': 'status' } : { '#type': 'type' };
-  const ExpressionAttributeValues = status
-    ? { ':type': INITIATIVE_TYPE, ':status': status }
-    : { ':type': INITIATIVE_TYPE };
-  const params = {
-    TableName: process.env.INITIATIVES_TABLE,
-    IndexName: process.env.INITIATIVES_TABLE_STATUS_INDEX,
-    KeyConditionExpression,
-    ExpressionAttributeNames,
-    ExpressionAttributeValues
-  };
-  console.log('Getting all initiatives with params', params);
-  const records = await initiatives
-    .query(params)
-    .promise()
-    .then(res => <InitiativeRecord[]>res.Items);
-  console.log('Received initiatives', records);
-  return records.map(initiative => new InitiativeResponse(initiative));
 }
