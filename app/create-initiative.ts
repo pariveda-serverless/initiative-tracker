@@ -14,7 +14,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const description = remaining.join('').trim();
     const initiative = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
     await saveInitiative(initiative);
-    const message = await viewDetailsHandler(initiative.initiativeId);
+    const message = await getInitiativeDetails(initiative.initiativeId);
     success(message);
   } catch (err) {
     error(err);
@@ -27,12 +27,7 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return initiatives.put(params).promise();
 }
 
-async function viewDetailsHandler(initiativeId: string) {
-  const initiative = await getInitiativeDetails(initiativeId);
-  return new DetailResponse(initiative);
-}
-
-async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(initiativeId: string): Promise<DetailResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -51,5 +46,5 @@ async function getInitiativeDetails(initiativeId: string): Promise<InitiativeRes
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return initiative;
+  return new DetailResponse(initiative);
 }

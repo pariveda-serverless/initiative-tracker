@@ -38,15 +38,15 @@ async function handleMemberActions(payload: any): Promise<any> {
   switch (intent) {
     case MemberIntent.MAKE_CHAMPION:
       await joinInitiativeHandler(initiativeId, slackUserId, true);
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     case MemberIntent.MAKE_MEMBER:
       await joinInitiativeHandler(initiativeId, slackUserId, false);
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     case MemberIntent.REMOVE_MEMBER:
       await leaveInitiativeHandler(payload);
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     default:
       response = new NotImplementedResponse();
@@ -63,14 +63,14 @@ async function handleInitiativeActions(payload: any): Promise<any> {
   switch (intent) {
     case InitiativeIntent.JOIN_AS_CHAMPION:
       await joinInitiativeHandler(initiativeId, slackUserId, true);
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     case InitiativeIntent.JOIN_AS_MEMBER:
       await joinInitiativeHandler(initiativeId, slackUserId, false);
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     case InitiativeIntent.VIEW_DETAILS:
-      response = await viewDetailsHandler(initiativeId);
+      response = await getInitiativeDetails(initiativeId);
       break;
     default:
       response = new NotImplementedResponse();
@@ -103,12 +103,7 @@ function leaveInitiative(Key: DeleteMemberRequest): Promise<any> {
   return initiatives.delete(params).promise();
 }
 
-async function viewDetailsHandler(initiativeId: string) {
-  const initiative = await getInitiativeDetails(initiativeId);
-  return new DetailResponse(initiative);
-}
-
-async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(initiativeId: string): Promise<DetailResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -127,5 +122,5 @@ async function getInitiativeDetails(initiativeId: string): Promise<InitiativeRes
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return initiative;
+  return new DetailResponse(initiative);
 }
