@@ -1,7 +1,7 @@
 import { SNS } from 'aws-sdk';
 import { wrapper, WrapperSignature, snsWrapper } from '@manwaring/lambda-wrapper';
 
-const sns = new SNS({ apiVersion: '2010-03-21' });
+const sns = new SNS({ apiVersion: '2010-03-31' });
 
 export const handler = wrapper(async ({ event, success, error }: WrapperSignature) => {
   try {
