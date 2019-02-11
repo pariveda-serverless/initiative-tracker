@@ -58,7 +58,8 @@ functions:
   initiate-feedback-request:
     handler: app/initiate-feedback-request.handler
     events:
-      - schedule: cron(0 15 * * MON *)
+      # - schedule: cron(0 15 * * MON *) # 3PM UTC (10 AM EST) every Monday
+      - schedule: cron(0/5 * * * ? *) # every 5 minutes
 
   request-feedback:
     handler: app/request-feedback.handler
