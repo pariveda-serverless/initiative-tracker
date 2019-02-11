@@ -19,7 +19,7 @@ export const handler = wrapper(async ({ event, success, error }: WrapperSignatur
 async function publishInitiativeForStatusUpdateRequest(initiative: InitiativeResponse): Promise<any> {
   const params = {
     Message: JSON.stringify(initiative),
-    TopicArn: process.env.REQUEST_FEEDBACK_SNS
+    TopicArn: process.env.REQUEST_UPDATE_SNS
   };
   return sns.publish(params).promise();
 }

@@ -16,13 +16,13 @@ provider:
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
-    REQUEST_FEEDBACK_SNS:
+    REQUEST_UPDATE_SNS:
       Fn::Join:
         - ':'
         - - arn:aws:sns
           - Ref: AWS::Region
           - Ref: AWS::AccountId
-          - request-feedback-${opt:stage, self:provider.stage}
+          - request-update-${opt:stage, self:provider.stage}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
