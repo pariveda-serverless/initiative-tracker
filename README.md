@@ -17,12 +17,12 @@ Initiative Tracker is a slackbot which helps teams track the internal initiative
 Available slash commands are:
 
 - `/register-initiative [initiative name], [optional initiative description]`
-- `/list-initiatives [optional initiative status 'active' | 'abandoned' | 'complete' | 'on hold']`
+- `/list-initiatives [optional initiative status: 'active' | 'abandoned' | 'complete' | 'on hold']`
 - `/say-hello`
 
 ## Architecture diagram
 
-TODO architecture diagram
+![Architecture diagram](/architecture/cloudcraft-diagram.png)
 
 ## Tools used to build this application
 
