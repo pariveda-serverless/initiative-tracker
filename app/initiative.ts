@@ -30,7 +30,7 @@ export class CreateInitiativeRequest {
   constructor({ name, description, createdBy, createdByIcon }: CreateInitiativeRequestProperties) {
     this.initiativeId = v4();
     this.name = name;
-    this.description = description;
+    this.description = description ? description : null;
     this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;

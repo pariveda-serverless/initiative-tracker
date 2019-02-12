@@ -1,5 +1,5 @@
 import { Status } from '../status';
-import { InitiativeIntent, MemberIntent } from '../interactions';
+import { InitiativeIntent, MemberIntent, StatusUpdateIntent } from '../interactions';
 
 export const YELLOW = '#FCF500';
 export const PINK = '#FF1C7D';
@@ -45,6 +45,28 @@ memberIntents[MemberIntent.MAKE_MEMBER] = <IntentDisplay>{
   confirmation: { title: 'Confirm change', verb: 'make', action: 'an initiative member instead of champion' }
 };
 
+const statusUpdateIntents: IntentDisplay[] = [];
+statusUpdateIntents[StatusUpdateIntent.MARK_ABANDONED] = <IntentDisplay>{
+  style: 'default',
+  text: `Not being worked on`,
+  status: Status.ACTIVE
+};
+statusUpdateIntents[StatusUpdateIntent.MARK_COMPLETE] = <IntentDisplay>{
+  style: 'default',
+  text: `Completed`,
+  status: Status.COMPLETE
+};
+statusUpdateIntents[StatusUpdateIntent.MARK_ACTIVE] = <IntentDisplay>{
+  style: 'default',
+  text: `Actively being worked on`,
+  status: Status.ACTIVE
+};
+statusUpdateIntents[StatusUpdateIntent.MARK_ON_HOLD] = <IntentDisplay>{
+  style: 'default',
+  text: `On hold`,
+  status: Status.ON_HOLD
+};
+
 const members: MemberDisplay[] = [];
 members['CHAMPION'] = <MemberDisplay>{ color: PURPLE, text: 'Champion' };
 members['MEMBER'] = <MemberDisplay>{ color: '', text: 'Member' };
@@ -74,4 +96,5 @@ interface ConfirmationDisplay {
 export const STATUS_DISPLAY: StatusDisplay[] = statuses;
 export const INITIATIVE_INTENT_DISPLAY: IntentDisplay[] = initiativeIntents;
 export const MEMBER_INTENT_DISPLAY: IntentDisplay[] = memberIntents;
+export const STATUS_UPDATE_DISPLAY: IntentDisplay[] = statusUpdateIntents;
 export const MEMBER_DISPLAY: MemberDisplay[] = members;

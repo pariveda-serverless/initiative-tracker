@@ -25,7 +25,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function getInitiatives(status?: Status): Promise<InitiativeResponse[]> {
+export async function getInitiatives(status?: Status): Promise<InitiativeResponse[]> {
   const KeyConditionExpression = status ? '#type = :type and #status = :status' : '#type = :type';
   const ExpressionAttributeNames = status ? { '#type': 'type', '#status': 'status' } : { '#type': 'type' };
   const ExpressionAttributeValues = status
