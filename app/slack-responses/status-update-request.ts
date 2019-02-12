@@ -67,10 +67,11 @@ class StatusUpdateAction implements Action {
   style: string;
 
   constructor(initiative: InitiativeResponse, intent: StatusUpdateIntent) {
+    const { style, text, status } = STATUS_UPDATE_DISPLAY[intent];
     this.name = intent;
-    this.style = STATUS_UPDATE_DISPLAY[intent].style;
-    this.value = initiative.initiativeId;
-    this.text = STATUS_UPDATE_DISPLAY[intent].text;
+    this.style = style;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
+    this.text = text;
     this.type = 'button'; //TODO what are the other options?
   }
 }

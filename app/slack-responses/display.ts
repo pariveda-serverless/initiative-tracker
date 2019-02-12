@@ -48,19 +48,23 @@ memberIntents[MemberIntent.MAKE_MEMBER] = <IntentDisplay>{
 const statusUpdateIntents: IntentDisplay[] = [];
 statusUpdateIntents[StatusUpdateIntent.MARK_ABANDONED] = <IntentDisplay>{
   style: 'default',
-  text: `Not being worked on`
+  text: `Not being worked on`,
+  status: Status.ACTIVE
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_COMPLETE] = <IntentDisplay>{
   style: 'default',
-  text: `Completed`
+  text: `Completed`,
+  status: Status.COMPLETE
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_ACTIVE] = <IntentDisplay>{
   style: 'default',
-  text: `Actively being worked on`
+  text: `Actively being worked on`,
+  status: Status.ACTIVE
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_ON_HOLD] = <IntentDisplay>{
   style: 'default',
-  text: `On hold`
+  text: `On hold`,
+  status: Status.ON_HOLD
 };
 
 const members: MemberDisplay[] = [];
