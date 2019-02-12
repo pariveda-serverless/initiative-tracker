@@ -49,7 +49,7 @@ const statusUpdateIntents: IntentDisplay[] = [];
 statusUpdateIntents[StatusUpdateIntent.MARK_ABANDONED] = <IntentDisplay>{
   style: 'default',
   text: `Not being worked on`,
-  status: Status.ACTIVE
+  status: Status.ABANDONED
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_COMPLETE] = <IntentDisplay>{
   style: 'default',
