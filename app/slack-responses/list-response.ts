@@ -1,14 +1,19 @@
 import { Attachment, Message } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { BasicInitiativeCard } from './initiative-card';
+import { Status } from '../status';
+import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
   text: string;
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
-  constructor(initiatives: InitiativeResponse[]) {
+  constructor(initiatives: InitiativeResponse[], status?: Status) {
     this.response_type = 'ephemeral';
-    this.text = initiatives && initiatives.length ? '' : 'No initiatives found matching the search criteria';
+    if (!initiatives || !initiatives.length) {
+      const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
+      this.text = `No ${search}initiatives found `;
+    }
     this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative, false));
   }
 }
