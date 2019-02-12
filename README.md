@@ -30,6 +30,7 @@ Available slash commands are:
 - [CircleCI](https://circleci.com/) for application CI/CD - /.circleci/config.yml contains the job and workflow configurations
 - [AWS](https://console.aws.amazon.com) for application and infrastructure hosting, primarily API Gateway, Lambda, and DynamoDB
 - [IOPipe](https://www.iopipe.com/) for serverless logging and monitoring
+- [Cloudcraft](https://cloudcraft.co/) for the architecture diagram
 
 ## Key libraries
 
