@@ -3,21 +3,22 @@ import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from './initiative';
 import { MemberResponse, MEMBER_TYPE } from './member';
 import { DetailResponse } from './slack-responses/detail-response';
+import { requestStatusUpdate } from './slack-calls/status-update';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
-    // TODO get initiative information (including champions and members)
-    // await getInitiativeDetails();
-    // Send status update requests (to champions only?)
-    success(message);
+    const initiative = await getInitiativeDetails(message.initiativeId);
+    const champions = initiative.members.filter(member => member.champion);
+    await Promise.all(champions.map(champion => requestStatusUpdate(champion, initiative)));
+    success();
   } catch (err) {
     error(err);
   }
 });
 
-async function getInitiativeDetails(initiativeId: string): Promise<DetailResponse> {
+async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -36,5 +37,5 @@ async function getInitiativeDetails(initiativeId: string): Promise<DetailRespons
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return new DetailResponse(initiative);
+  return initiative;
 }
