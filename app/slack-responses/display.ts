@@ -48,19 +48,19 @@ memberIntents[MemberIntent.MAKE_MEMBER] = <IntentDisplay>{
 const statusUpdateIntents: IntentDisplay[] = [];
 statusUpdateIntents[StatusUpdateIntent.MARK_ABANDONED] = <IntentDisplay>{
   style: 'default',
-  text: `I'm no longer championing this initiative`
+  text: `Not being worked on`
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_COMPLETE] = <IntentDisplay>{
   style: 'default',
-  text: `This initiative is completed`
+  text: `Completed`
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_ACTIVE] = <IntentDisplay>{
   style: 'default',
-  text: `I'm actively championing this initiative`
+  text: `Actively being worked on`
 };
 statusUpdateIntents[StatusUpdateIntent.MARK_ON_HOLD] = <IntentDisplay>{
   style: 'default',
-  text: `I've temporarily paused championing this initiative`
+  text: `On hold`
 };
 
 const members: MemberDisplay[] = [];
