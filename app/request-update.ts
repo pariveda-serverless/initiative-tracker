@@ -3,14 +3,17 @@ import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from './initiative';
 import { MemberResponse, MEMBER_TYPE } from './member';
 import { requestStatusUpdate } from './slack-calls/status-update';
+import { Status } from './status';
+import { StatusUpdateRequest } from './slack-responses/status-update-request';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
     const initiative = await getInitiativeDetails(message.initiativeId);
+    const statusUpdateRequest = new StatusUpdateRequest(initiative);
     // const champions = initiative.members.filter(member => member.champion);
-    await requestStatusUpdate();
+    await requestStatusUpdate(statusUpdateRequest);
     // await Promise.all(champions.map(champion => requestStatusUpdate(champion, initiative)));
     success();
   } catch (err) {
