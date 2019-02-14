@@ -44,7 +44,11 @@ export class DetailedInitiativeCard implements Attachment {
     const description = new Description(initiative);
     this.fields = [name, status, description];
     // Only show the join buttons if user isn't already a member
-    if (initiative.members.find(member => member.slackUserId === slackUserId)) {
+    if (
+      initiative.members &&
+      initiative.members.length > 0 &&
+      initiative.members.find(member => member.slackUserId === slackUserId)
+    ) {
       this.actions = Object.values(InitiativeIntent)
         // Never show the view details button because already on details view
         .filter(intent => intent !== InitiativeIntent.VIEW_DETAILS)
