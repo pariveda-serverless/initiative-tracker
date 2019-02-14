@@ -9,12 +9,12 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { name: createdBy, icon: createdByIcon } = await getUserProfile(body.user_id);
+    const { name: createdBy, icon: createdByIcon, slackUserId } = await getUserProfile(body.user_id);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
     const initiative = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
     await saveInitiative(initiative);
-    const message = await getInitiativeDetails(initiative.initiativeId);
+    const message = await getInitiativeDetails(initiative.initiativeId, slackUserId);
     success(message);
   } catch (err) {
     error(err);
@@ -27,7 +27,7 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return initiatives.put(params).promise();
 }
 
-async function getInitiativeDetails(initiativeId: string): Promise<DetailResponse> {
+async function getInitiativeDetails(initiativeId: string, slackUserId: string): Promise<DetailResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -46,5 +46,5 @@ async function getInitiativeDetails(initiativeId: string): Promise<DetailRespons
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return new DetailResponse(initiative);
+  return new DetailResponse(initiative, slackUserId);
 }

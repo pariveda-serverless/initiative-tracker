@@ -33,6 +33,62 @@ declare module 'slack' {
     attachments?: Attachment[];
   }
 
+  export interface Block {
+    type: string;
+    text: string;
+    fields: Field[];
+    accessory: Image | Button | StaticSelect;
+  }
+
+  export interface StaticSelect {
+    type: 'static_select';
+    placeholder: string;
+    action_id: string;
+    options: Option[];
+    option_groups?: OptionGroup[];
+    initial_option?: Option;
+    confirm?: Confirmation;
+  }
+
+  export interface Option {
+    text: PlainTextObject;
+    value: string;
+  }
+
+  export interface OptionGroup {
+    label: PlainTextObject;
+    options: Option[];
+  }
+
+  export interface PlainTextObject {
+    type: 'plain_text';
+    text: string;
+    emoji?: boolean;
+    varbatim?: boolean;
+  }
+
+  export interface MarkdownTextObject {
+    type: 'mrkdwn';
+    text: string;
+    emoji?: boolean;
+    verbatim?: boolean;
+  }
+
+  export interface Button {
+    type: 'button';
+    text: string;
+    action_id: string;
+    url?: string;
+    value?: string;
+    confirm?: Confirmation;
+  }
+
+  export interface Image {
+    type: 'image';
+    image_url: string;
+    alt_text: string;
+  }
+
   export interface Attachment {
     title?: string;
     title_link?: string;
@@ -64,6 +120,13 @@ declare module 'slack' {
     type: string;
     style: string;
     confirm?: ConfirmAction;
+  }
+
+  export interface Confirmation {
+    title: PlainTextObject;
+    text: PlainTextObject | MarkdownTextObject;
+    confirm: PlainTextObject;
+    deny: PlainTextObject;
   }
 
   export interface ConfirmAction {
