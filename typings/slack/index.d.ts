@@ -31,20 +31,41 @@ declare module 'slack' {
     text?: string;
     response_type: 'in_channel' | 'ephemeral';
     mrkdwn?: boolean;
-    blocks?: Block[];
+    blocks?: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
     attachments?: Attachment[];
   }
 
-  export interface Block {
-    type: string;
+  export interface ContextBlock {
+    type: 'context';
+    elements: (Image | PlainTextObject | MarkdownTextObject)[];
+  }
+
+  export interface SectionBlock {
+    type: 'section';
     text: string;
     fields: Field[];
     accessory: Image | Button | StaticSelect;
   }
 
+  export interface ImageBlock {
+    type: 'image';
+    image_url: string;
+    alt_text: string;
+    title: string;
+  }
+
+  export interface ActionsBlock {
+    type: 'actions';
+    elements: (StaticSelect | Button)[];
+  }
+
+  export interface DividerBlock {
+    type: 'divider';
+  }
+
   export interface StaticSelect {
     type: 'static_select';
-    placeholder: string;
+    placeholder: PlainTextObject | MarkdownTextObject;
     action_id: string;
     options: Option[];
     option_groups?: OptionGroup[];
@@ -78,7 +99,7 @@ declare module 'slack' {
 
   export interface Button {
     type: 'button';
-    text: string;
+    text: PlainTextObject;
     action_id: string;
     url?: string;
     value?: string;

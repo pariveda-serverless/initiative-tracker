@@ -1,7 +1,19 @@
-import { Attachment, Field, Action } from 'slack';
+import {
+  Attachment,
+  Field,
+  Action,
+  SectionBlock,
+  StaticSelect,
+  Image,
+  Button,
+  ActionsBlock,
+  PlainTextObject,
+  Option
+} from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
 import { ActionType, InitiativeIntent } from '../interactions';
+import { Status } from '../status';
 
 export class BasicInitiativeCard implements Attachment {
   color: string;
@@ -17,13 +29,53 @@ export class BasicInitiativeCard implements Attachment {
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
     const name = new Name(initiative);
-    const status = new Status(initiative);
+    const status = new StatusField(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
     this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
     this.footer_icon = initiative.createdByIcon;
   }
+}
+
+export class DetailedInitiativeBlock implements SectionBlock {
+  type: 'section';
+  fields: Field[];
+  accessory: Image | Button | StaticSelect;
+  constructor(initiative: InitiativeResponse) {
+    const name = new Name(initiative);
+    const status = new StatusField(initiative);
+    const description = new Description(initiative);
+    this.fields = [name, status, description];
+    this.accessory = new StatusUpdate(initiative);
+  }
+}
+
+export class StatusUpdate implements StaticSelect {
+  type: 'static_select';
+  placeholder: PlainTextObject;
+  action_id: string;
+  options: Option[];
+  initial_option: Option;
+  constructor(initiative: InitiativeResponse) {
+    this.placeholder = { type: 'plain_text', text: 'Initiative status' };
+    this.options = Object.values(Status).map(status => new StatusOption(status));
+    this.initial_option = new StatusOption(initiative.status);
+  }
+}
+
+class StatusOption implements Option {
+  text: PlainTextObject;
+  value: string;
+  constructor(status: Status) {
+    this.text = { text: STATUS_DISPLAY[status].text, type: 'plain_text' };
+    this.value = status;
+  }
+}
+
+export class DetailedInitiativeActions implements ActionsBlock {
+  type: 'actions';
+  elements: (StaticSelect | Button)[];
 }
 
 export class DetailedInitiativeCard implements Attachment {
@@ -40,7 +92,7 @@ export class DetailedInitiativeCard implements Attachment {
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
     const name = new Name(initiative);
-    const status = new Status(initiative);
+    const status = new StatusField(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
     // Only show the join buttons if user isn't already a member
@@ -66,7 +118,7 @@ class Description implements Field {
   }
 }
 
-class Status implements Field {
+class StatusField implements Field {
   title: string;
   value: string;
   short: boolean;

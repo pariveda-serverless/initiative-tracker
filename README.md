@@ -41,9 +41,10 @@ Available slash commands are:
 - [Nodejs Slack SDK](https://slackapi.github.io/node-slack-sdk/): the official Slack Nodejs library for calling their API
 - [Lambda wrapper](https://github.com/manwaring/lambda-wrapper): a library which wraps Lambda functions to provide a better developer experience and implement boilerplate parsing, responses, logging, and monitoring
 
-## Development resources
+## Slack development resources
 
 - [Slack API documentation](https://api.slack.com/methods)
+- [Slack blocks](https://api.slack.com/tools/block-kit-builder)
 - [Slack message formatting](https://api.slack.com/docs/message-formatting)
 - [Slack message attachments](https://api.slack.com/docs/message-attachments)
 - [Slack interactive message documentation](https://api.slack.com/interactive-messages)
