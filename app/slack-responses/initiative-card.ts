@@ -12,7 +12,7 @@ export class BasicInitiativeCard implements Attachment {
   footer: string;
   footer_icon: string;
 
-  constructor(initiative: InitiativeResponse, details: boolean) {
+  constructor(initiative: InitiativeResponse) {
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
@@ -20,10 +20,36 @@ export class BasicInitiativeCard implements Attachment {
     const status = new Status(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
-    this.actions = Object.values(InitiativeIntent)
-      // Don't show the view details button when already looking at details
-      .filter(intent => !details || intent !== InitiativeIntent.VIEW_DETAILS)
-      .map(intent => new InitiativeAction(initiative, intent));
+    this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
+    this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
+    this.footer_icon = initiative.createdByIcon;
+  }
+}
+
+export class DetailedInitiativeCard implements Attachment {
+  color: string;
+  attachment_type: string;
+  callback_id: string;
+  fields: Field[];
+  actions: Action[];
+  footer: string;
+  footer_icon: string;
+
+  constructor(initiative: InitiativeResponse, slackUserId: string) {
+    this.color = STATUS_DISPLAY[initiative.status].color;
+    this.attachment_type = 'default'; //TODO what are the other options?
+    this.callback_id = ActionType.INITIATIVE_ACTION;
+    const name = new Name(initiative);
+    const status = new Status(initiative);
+    const description = new Description(initiative);
+    this.fields = [name, status, description];
+    // Only show the join buttons if user isn't already a member
+    if (initiative.members.find(member => member.slackUserId === slackUserId)) {
+      this.actions = Object.values(InitiativeIntent)
+        // Never show the view details button because already on details view
+        .filter(intent => intent !== InitiativeIntent.VIEW_DETAILS)
+        .map(intent => new InitiativeAction(initiative, intent));
+    }
     this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
     this.footer_icon = initiative.createdByIcon;
   }

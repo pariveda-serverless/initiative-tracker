@@ -14,6 +14,6 @@ export class ListResponse implements Message {
       const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
       this.text = `No ${search}initiatives found `;
     }
-    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative, false));
+    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative));
   }
 }
