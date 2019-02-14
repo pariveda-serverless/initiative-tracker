@@ -42,9 +42,9 @@ declare module 'slack' {
 
   export interface SectionBlock {
     type: 'section';
-    text: string;
-    fields: Field[];
-    accessory: Image | Button | StaticSelect;
+    text?: string;
+    fields?: Field[];
+    accessory?: Image | Button | StaticSelect;
   }
 
   export interface ImageBlock {
