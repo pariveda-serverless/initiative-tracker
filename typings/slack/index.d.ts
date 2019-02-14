@@ -1,4 +1,31 @@
 declare module 'slack' {
+  export interface Payload {
+    callback_id: string;
+    type: string;
+    team: {
+      id: string;
+      domain: string;
+    };
+    user: {
+      id: string;
+      team_id: string;
+    };
+    actions: [
+      {
+        action_id: string;
+        block_id: string;
+        text: {
+          type: string;
+          text: string;
+          emoji: string;
+        };
+        value: string;
+        type: string;
+        action_ts: string;
+      }
+    ];
+  }
+
   export interface Message {
     text?: string;
     response_type: 'in_channel' | 'ephemeral';
