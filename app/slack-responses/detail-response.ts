@@ -9,6 +9,7 @@ export class DetailResponse implements Message {
   blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
   constructor(initiative: InitiativeResponse, slackUserId: string) {
     this.channel = slackUserId;
+    this.text = 'Detail response';
     // const initiativeCard = new DetailedInitiativeCard(initiative, slackUserId);
     // const members = initiative.members
     //   .sort(member => (member.champion ? -1 : 1))

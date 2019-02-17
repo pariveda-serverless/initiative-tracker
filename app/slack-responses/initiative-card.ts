@@ -45,6 +45,7 @@ export class DetailedInitiativeBlock implements SectionBlock {
   fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
+    this.text = 'Initiative block';
     const name = new Name(initiative);
     const status = new StatusText(initiative);
     const description = new Description(initiative);
