@@ -1,10 +1,10 @@
-import { Attachment, Message } from 'slack';
+import { Attachment, OldMessage } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { BasicInitiativeCard } from './initiative-card';
 import { Status } from '../status';
 import { STATUS_DISPLAY } from './display';
 
-export class ListResponse implements Message {
+export class ListResponse implements OldMessage {
   text: string;
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];

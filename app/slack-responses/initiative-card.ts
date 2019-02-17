@@ -1,14 +1,15 @@
 import {
-  Attachment,
-  Field,
-  Action,
   SectionBlock,
   StaticSelect,
   Image,
   Button,
   ActionsBlock,
   PlainTextObject,
-  Option
+  Option,
+  Attachment,
+  Field,
+  Action,
+  MarkdownTextObject
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
@@ -28,9 +29,9 @@ export class BasicInitiativeCard implements Attachment {
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
-    const name = new Name(initiative);
+    const name = new NameField(initiative);
     const status = new StatusField(initiative);
-    const description = new Description(initiative);
+    const description = new DescriptionField(initiative);
     this.fields = [name, status, description];
     this.actions = Object.values(InitiativeIntent).map(intent => new InitiativeAction(initiative, intent));
     this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
@@ -40,14 +41,45 @@ export class BasicInitiativeCard implements Attachment {
 
 export class DetailedInitiativeBlock implements SectionBlock {
   type: 'section';
-  fields: Field[];
+  text: string;
+  fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
     const name = new Name(initiative);
-    const status = new StatusField(initiative);
+    const status = new StatusText(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
     this.accessory = new StatusUpdate(initiative);
+  }
+}
+
+class Name implements MarkdownTextObject {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  emoji?: boolean;
+  verbatim?: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.text = `*Name*\n${initiative.name}`;
+  }
+}
+
+class StatusText implements MarkdownTextObject {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  emoji?: boolean;
+  verbatim?: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.text = `*Status*\n${STATUS_DISPLAY[initiative.status].text}`;
+  }
+}
+
+class Description implements MarkdownTextObject {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  emoji?: boolean;
+  verbatim?: boolean;
+  constructor(initiative: InitiativeResponse) {
+    this.text = `*Description*\n${initiative.description}`;
   }
 }
 
@@ -91,9 +123,9 @@ export class DetailedInitiativeCard implements Attachment {
     this.color = STATUS_DISPLAY[initiative.status].color;
     this.attachment_type = 'default'; //TODO what are the other options?
     this.callback_id = ActionType.INITIATIVE_ACTION;
-    const name = new Name(initiative);
+    const name = new NameField(initiative);
     const status = new StatusField(initiative);
-    const description = new Description(initiative);
+    const description = new DescriptionField(initiative);
     this.fields = [name, status, description];
     // Only show the join buttons if user isn't already a member
     if (!initiative.members.find(member => member.slackUserId === slackUserId)) {
@@ -107,7 +139,7 @@ export class DetailedInitiativeCard implements Attachment {
   }
 }
 
-class Description implements Field {
+class DescriptionField implements Field {
   title: string;
   value: string;
   short: boolean;
@@ -129,7 +161,7 @@ class StatusField implements Field {
   }
 }
 
-class Name implements Field {
+class NameField implements Field {
   title: string;
   value: string;
   short: boolean;

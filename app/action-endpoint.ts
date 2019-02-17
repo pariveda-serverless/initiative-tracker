@@ -6,7 +6,7 @@ import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiat
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
-import { Message, Payload } from 'slack';
+import { Message, OldMessage, Payload } from 'slack';
 import { Status } from './status';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -15,7 +15,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   try {
     const payload: Payload = JSON.parse(body.payload);
     const { callback_id: action } = payload;
-    let response: Message;
+    let response: Message | OldMessage;
     switch (action) {
       case ActionType.INITIATIVE_ACTION:
         response = await handleInitiativeActions(payload);
@@ -36,10 +36,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function handleMemberActions(payload: any): Promise<Message> {
+async function handleMemberActions(payload: any): Promise<Message | OldMessage> {
   const intent: MemberIntent = payload.actions[0].name;
   const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-  let response: Message;
+  let response: Message | OldMessage;
   switch (intent) {
     case MemberIntent.MAKE_CHAMPION:
       await joinInitiativeHandler(initiativeId, slackUserId, true);
@@ -60,11 +60,11 @@ async function handleMemberActions(payload: any): Promise<Message> {
   return response;
 }
 
-async function handleInitiativeActions(payload: any): Promise<Message> {
+async function handleInitiativeActions(payload: any): Promise<Message | OldMessage> {
   const intent: InitiativeIntent = payload.actions[0].name;
   const initiativeId = payload.actions[0].value;
   const slackUserId = payload.user.id;
-  let response: Message;
+  let response: Message | OldMessage;
   switch (intent) {
     case InitiativeIntent.JOIN_AS_CHAMPION:
       await joinInitiativeHandler(initiativeId, slackUserId, true);

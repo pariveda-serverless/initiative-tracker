@@ -1,7 +1,7 @@
-import { Message, Attachment } from 'slack';
+import { OldMessage, Attachment } from 'slack';
 import { YELLOW } from './display';
 
-export class NotImplementedResponse implements Message {
+export class NotImplementedResponse implements OldMessage {
   response_type: 'in_channel' | 'ephemeral';
   attachments: Attachment[];
   constructor() {
