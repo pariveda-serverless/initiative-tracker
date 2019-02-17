@@ -8,7 +8,7 @@ export class DetailResponse implements Message {
   text: string;
   blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
   constructor(initiative: InitiativeResponse, slackUserId: string) {
-    this.channel = slackUserId;
+    this.channel = 'CFSV0HX5X';
     this.text = 'Detail response';
     // const initiativeCard = new DetailedInitiativeCard(initiative, slackUserId);
     // const members = initiative.members
