@@ -43,13 +43,13 @@ export class DetailedInitiativeBlock implements SectionBlock {
   type: 'section';
   text: string;
   fields?: (PlainTextObject | MarkdownTextObject)[];
-  accessory: Image | Button | StaticSelect;
+  accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
     const name = new Name(initiative);
     const status = new StatusText(initiative);
     const description = new Description(initiative);
     this.fields = [name, status, description];
-    this.accessory = new StatusUpdate(initiative);
+    // this.accessory = new StatusUpdate(initiative);
   }
 }
 
