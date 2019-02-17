@@ -40,7 +40,7 @@ export class BasicInitiativeCard implements Attachment {
 }
 
 export class DetailedInitiativeBlock implements SectionBlock {
-  type: 'section';
+  type: 'section' = 'section';
   text: string;
   fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
