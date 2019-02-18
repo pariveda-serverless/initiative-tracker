@@ -10,7 +10,8 @@ import {
   Field,
   Action,
   MarkdownTextObject,
-  DividerBlock
+  DividerBlock,
+  ContextBlock
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
@@ -48,7 +49,17 @@ export class InitiativeNameAndStatus implements SectionBlock {
     const name = new Name(initiative);
     const status = new StatusText(initiative);
     this.fields = [name, status];
-    this.accessory = new StatusUpdate(initiative);
+    this.accessory = new StatusUpdate();
+  }
+}
+
+export class MetaInformation implements ContextBlock {
+  type: 'context' = 'context';
+  elements: (Image | PlainTextObject | MarkdownTextObject)[];
+  constructor(initiative: InitiativeResponse) {
+    const createdByIcon = new CreatedByIcon(initiative);
+    const createdBy = new CreatedBy(initiative);
+    this.elements = [createdByIcon, createdBy];
   }
 }
 
@@ -87,10 +98,25 @@ class StatusText implements MarkdownTextObject {
 class Description implements MarkdownTextObject {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
-  emoji?: boolean;
-  verbatim?: boolean;
   constructor(initiative: InitiativeResponse) {
     this.text = `*Description*\n${initiative.description}`;
+  }
+}
+
+class CreatedByIcon implements Image {
+  type: 'image' = 'image';
+  image_url: string;
+  alt_text: string;
+  constructor(initiative: InitiativeResponse) {
+    this.image_url = initiative.createdByIcon;
+  }
+}
+
+class CreatedBy implements MarkdownTextObject {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  constructor(initiative: InitiativeResponse) {
+    this.text = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
   }
 }
 
@@ -99,11 +125,9 @@ export class StatusUpdate implements StaticSelect {
   placeholder: PlainTextObject;
   action_id: string;
   options: Option[];
-  initial_option: Option;
-  constructor(initiative: InitiativeResponse) {
-    this.placeholder = { type: 'plain_text', text: 'Initiative status' };
+  constructor() {
+    this.placeholder = { type: 'plain_text', text: 'pdate status' };
     this.options = Object.values(Status).map(status => new StatusOption(status));
-    this.initial_option = new StatusOption(initiative.status);
   }
 }
 
