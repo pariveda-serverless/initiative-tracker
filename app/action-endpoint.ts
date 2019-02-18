@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { ActionType, InitiativeIntent, MemberIntent, StatusUpdateIntent } from './interactions';
+import { InitiativeIntent, MemberIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
@@ -14,16 +14,23 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const payload: Payload = JSON.parse(body.payload);
-    const { callback_id: action } = payload;
+    const action = payload.actions[0].action_id;
+    const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
     let response: Message | OldMessage;
     switch (action) {
-      case ActionType.INITIATIVE_ACTION:
-        response = await handleInitiativeActions(payload);
+      case InitiativeIntent.JOIN_AS_CHAMPION:
+        await joinInitiativeHandler(initiativeId, slackUserId, true);
+        response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
-      case ActionType.MEMBER_ACTION:
-        response = await handleMemberActions(payload);
+      case InitiativeIntent.JOIN_AS_MEMBER:
+        await joinInitiativeHandler(initiativeId, slackUserId, false);
+        response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
-      case ActionType.STATUS_UPDATE:
+      case MemberIntent.REMOVE_MEMBER:
+        await leaveInitiativeHandler(payload);
+        response = await getInitiativeDetails(initiativeId, slackUserId);
+        break;
+      case InitiativeIntent.VIEW_DETAILS:
         response = await handleStatusUpdateActions(payload);
         break;
       default:
@@ -35,54 +42,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
-
-async function handleMemberActions(payload: any): Promise<Message | OldMessage> {
-  const intent: MemberIntent = payload.actions[0].name;
-  const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-  let response: Message | OldMessage;
-  switch (intent) {
-    case MemberIntent.MAKE_CHAMPION:
-      await joinInitiativeHandler(initiativeId, slackUserId, true);
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    case MemberIntent.MAKE_MEMBER:
-      await joinInitiativeHandler(initiativeId, slackUserId, false);
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    case MemberIntent.REMOVE_MEMBER:
-      await leaveInitiativeHandler(payload);
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    default:
-      response = new NotImplementedResponse();
-      break;
-  }
-  return response;
-}
-
-async function handleInitiativeActions(payload: any): Promise<Message | OldMessage> {
-  const intent: InitiativeIntent = payload.actions[0].name;
-  const initiativeId = payload.actions[0].value;
-  const slackUserId = payload.user.id;
-  let response: Message | OldMessage;
-  switch (intent) {
-    case InitiativeIntent.JOIN_AS_CHAMPION:
-      await joinInitiativeHandler(initiativeId, slackUserId, true);
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    case InitiativeIntent.JOIN_AS_MEMBER:
-      await joinInitiativeHandler(initiativeId, slackUserId, false);
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    case InitiativeIntent.VIEW_DETAILS:
-      response = await getInitiativeDetails(initiativeId, slackUserId);
-      break;
-    default:
-      response = new NotImplementedResponse();
-      break;
-  }
-  return response;
-}
 
 async function handleStatusUpdateActions(payload: any): Promise<Message> {
   const slackUserId = payload.user.id;

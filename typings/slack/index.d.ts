@@ -153,7 +153,6 @@ declare module 'slack' {
 
   // Action payload received on button click
   export interface Payload {
-    callback_id: string;
     type: string;
     team: {
       id: string;
@@ -163,6 +162,11 @@ declare module 'slack' {
       id: string;
       team_id: string;
     };
+    channel: {
+      id: string;
+      name: string;
+    };
+    response_url: string;
     actions: [
       {
         action_id: string;
