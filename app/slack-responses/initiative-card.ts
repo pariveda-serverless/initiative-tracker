@@ -71,6 +71,29 @@ export class InitiativeDescription implements SectionBlock {
   }
 }
 
+export class InitiativeActions implements ActionsBlock {
+  type: 'actions' = 'actions';
+  elements: (StaticSelect | Button)[];
+  constructor(initiative: InitiativeResponse) {
+    this.elements = Object.values(InitiativeIntent).map(intent => new ActionButton(initiative, intent));
+  }
+}
+
+class ActionButton implements Button {
+  type: 'button' = 'button';
+  text: PlainTextObject;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse, intent: InitiativeIntent) {
+    this.action_id = intent;
+    this.value = initiative.initiativeId;
+    this.text = {
+      type: 'plain_text',
+      text: INITIATIVE_INTENT_DISPLAY[intent].text
+    };
+  }
+}
+
 export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
 }
@@ -88,8 +111,6 @@ class Name implements MarkdownTextObject {
 class StatusText implements MarkdownTextObject {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
-  emoji?: boolean;
-  verbatim?: boolean;
   constructor(initiative: InitiativeResponse) {
     this.text = `*Status*\n${STATUS_DISPLAY[initiative.status].text}`;
   }
@@ -127,7 +148,7 @@ export class StatusUpdate implements StaticSelect {
   action_id: string;
   options: Option[];
   constructor() {
-    this.placeholder = { type: 'plain_text', text: 'pdate status' };
+    this.placeholder = { type: 'plain_text', text: 'Update status' };
     this.options = Object.values(Status).map(status => new StatusOption(status));
   }
 }
