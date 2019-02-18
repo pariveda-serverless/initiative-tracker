@@ -1,4 +1,15 @@
-import { Field, Attachment, Action, ConfirmAction } from 'slack';
+import {
+  Field,
+  Attachment,
+  Action,
+  ConfirmAction,
+  SectionBlock,
+  PlainTextObject,
+  MarkdownTextObject,
+  Image,
+  Button,
+  StaticSelect
+} from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_INTENT_DISPLAY } from './display';
@@ -21,6 +32,24 @@ export class MemberCard implements Attachment {
     this.actions = Object.values(MemberIntent)
       .filter(intent => (member.champion ? intent !== MemberIntent.MAKE_CHAMPION : intent !== MemberIntent.MAKE_MEMBER))
       .map(intent => new MemberAction(member, initiative, intent));
+  }
+}
+
+export class MemberSection implements SectionBlock {
+  type: 'section' = 'section';
+  fields?: (PlainTextObject | MarkdownTextObject)[];
+  accessory?: Image | Button | StaticSelect;
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    const name: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Name*\n${member.name}`
+    };
+    const role: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Role*\n${MEMBER_DISPLAY[member.role].text}`
+    };
+    this.fields = [name, role];
+    this.accessory = { type: 'image', image_url: member.icon, alt_text: 'profile' };
   }
 }
 

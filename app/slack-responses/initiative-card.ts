@@ -46,8 +46,14 @@ export class InitiativeNameAndStatus implements SectionBlock {
   fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    const name = new Name(initiative);
-    const status = new StatusText(initiative);
+    const name: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Name*\n${initiative.name}`
+    };
+    const status: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
+    };
     this.fields = [name, status];
     this.accessory = new StatusUpdate();
   }
@@ -57,8 +63,15 @@ export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
   elements: (Image | PlainTextObject | MarkdownTextObject)[];
   constructor(initiative: InitiativeResponse) {
-    const createdByIcon = new CreatedByIcon(initiative);
-    const createdBy = new CreatedBy(initiative);
+    const createdByIcon: Image = {
+      type: 'image',
+      image_url: initiative.createdByIcon,
+      alt_text: 'img'
+    };
+    const createdBy: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `Created by ${initiative.createdBy} on ${initiative.createdAt}`
+    };
     this.elements = [createdByIcon, createdBy];
   }
 }
@@ -67,15 +80,21 @@ export class InitiativeDescription implements SectionBlock {
   type: 'section' = 'section';
   text: PlainTextObject | MarkdownTextObject;
   constructor(initiative: InitiativeResponse) {
-    this.text = new Description(initiative);
+    this.text = {
+      type: 'mrkdwn',
+      text: `*Description*\n${initiative.description}`
+    };
   }
 }
 
-export class InitiativeActions implements ActionsBlock {
+export class InitiativeDetailActions implements ActionsBlock {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeIntent).map(intent => new ActionButton(initiative, intent));
+    this.elements = Object.values(InitiativeIntent)
+      // Don't show view details, already viewing details
+      .filter(intent => intent !== InitiativeIntent.VIEW_DETAILS)
+      .map(intent => new ActionButton(initiative, intent));
   }
 }
 
@@ -98,50 +117,6 @@ export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
 }
 
-class Name implements MarkdownTextObject {
-  type: 'mrkdwn' = 'mrkdwn';
-  text: string;
-  emoji?: boolean;
-  verbatim?: boolean;
-  constructor(initiative: InitiativeResponse) {
-    this.text = `*Name*\n${initiative.name}`;
-  }
-}
-
-class StatusText implements MarkdownTextObject {
-  type: 'mrkdwn' = 'mrkdwn';
-  text: string;
-  constructor(initiative: InitiativeResponse) {
-    this.text = `*Status*\n${STATUS_DISPLAY[initiative.status].text}`;
-  }
-}
-
-class Description implements MarkdownTextObject {
-  type: 'mrkdwn' = 'mrkdwn';
-  text: string;
-  constructor(initiative: InitiativeResponse) {
-    this.text = `*Description*\n${initiative.description}`;
-  }
-}
-
-class CreatedByIcon implements Image {
-  type: 'image' = 'image';
-  image_url: string;
-  alt_text: string;
-  constructor(initiative: InitiativeResponse) {
-    this.image_url = initiative.createdByIcon;
-    this.alt_text = 'img';
-  }
-}
-
-class CreatedBy implements MarkdownTextObject {
-  type: 'mrkdwn' = 'mrkdwn';
-  text: string;
-  constructor(initiative: InitiativeResponse) {
-    this.text = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
-  }
-}
-
 export class StatusUpdate implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainTextObject;
@@ -160,11 +135,6 @@ class StatusOption implements Option {
     this.text = { text: STATUS_DISPLAY[status].text, type: 'plain_text' };
     this.value = status;
   }
-}
-
-export class DetailedInitiativeActions implements ActionsBlock {
-  type: 'actions' = 'actions';
-  elements: (StaticSelect | Button)[];
 }
 
 export class DetailedInitiativeCard implements Attachment {
