@@ -16,7 +16,8 @@ import {
   InitiativeDescription,
   MetaInformation,
   InitiativeDetailActions,
-  Divider
+  Divider,
+  InitiativeListActions
 } from './initiative-card';
 import { Status } from '../status';
 import { STATUS_DISPLAY } from './display';
@@ -37,7 +38,7 @@ export class ListResponse implements Message {
       const nameAndStatus = new InitiativeNameAndStatus(initiative);
       const description = new InitiativeDescription(initiative);
       const metaInformation = new MetaInformation(initiative);
-      const actions = new InitiativeDetailActions(initiative);
+      const actions = new InitiativeListActions(initiative);
       const divider = new Divider();
       return [nameAndStatus, description, metaInformation, actions, divider];
     });

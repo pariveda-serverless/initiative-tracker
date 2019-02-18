@@ -51,6 +51,22 @@ export class BasicInitiative implements SectionBlock {
 export class InitiativeNameAndStatus implements SectionBlock {
   type: 'section' = 'section';
   fields?: (PlainTextObject | MarkdownTextObject)[];
+  constructor(initiative: InitiativeResponse) {
+    const name: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Name*\n${initiative.name}`
+    };
+    const status: MarkdownTextObject = {
+      type: 'mrkdwn',
+      text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
+    };
+    this.fields = [name, status];
+  }
+}
+
+export class InitiativeNameStatusAndUpdateStatus implements SectionBlock {
+  type: 'section' = 'section';
+  fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownTextObject = {
@@ -102,6 +118,14 @@ export class InitiativeDetailActions implements ActionsBlock {
       // Don't show view details, already viewing details
       .filter(intent => intent !== InitiativeIntent.VIEW_DETAILS)
       .map(intent => new ActionButton(initiative, intent));
+  }
+}
+
+export class InitiativeListActions implements ActionsBlock {
+  type: 'actions' = 'actions';
+  elements: (StaticSelect | Button)[];
+  constructor(initiative: InitiativeResponse) {
+    this.elements = Object.values(InitiativeIntent).map(intent => new ActionButton(initiative, intent));
   }
 }
 
