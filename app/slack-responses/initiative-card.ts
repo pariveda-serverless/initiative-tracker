@@ -39,21 +39,23 @@ export class BasicInitiativeCard implements Attachment {
   }
 }
 
-export class DetailedInitiativeBlock implements SectionBlock {
+export class InitiativeNameAndStatus implements SectionBlock {
   type: 'section' = 'section';
-  // text?: PlainTextObject | MarkdownTextObject;
   fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    // this.text = {
-    //   type: 'mrkdwn',
-    //   text: 'Initiative block'
-    // };
     const name = new Name(initiative);
     const status = new StatusText(initiative);
-    const description = new Description(initiative);
-    this.fields = [name, status, description];
+    this.fields = [name, status];
     // this.accessory = new StatusUpdate(initiative);
+  }
+}
+
+export class InitiativeDescription implements SectionBlock {
+  type: 'section' = 'section';
+  text: PlainTextObject | MarkdownTextObject;
+  constructor(initiative: InitiativeResponse) {
+    this.text = new Description(initiative);
   }
 }
 

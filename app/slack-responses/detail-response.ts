@@ -1,14 +1,6 @@
-import {
-  Message,
-  SectionBlock,
-  DividerBlock,
-  ActionsBlock,
-  ContextBlock,
-  MarkdownTextObject,
-  PlainTextObject
-} from 'slack';
+import { Message, SectionBlock, DividerBlock, ActionsBlock, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { DetailedInitiativeBlock } from './initiative-card';
+import { InitiativeNameAndStatus, InitiativeDescription } from './initiative-card';
 import { MemberCard } from './member-card';
 
 export class DetailResponse implements Message {
@@ -21,7 +13,8 @@ export class DetailResponse implements Message {
     //   .sort(member => (member.champion ? -1 : 1))
     //   .map(member => new MemberCard(member, initiative));
     // this.attachments = [initiativeCard, ...members];
-    const initiativeBlock = new DetailedInitiativeBlock(initiative);
-    this.blocks = [initiativeBlock];
+    const nameAndStatus = new InitiativeNameAndStatus(initiative);
+    const description = new InitiativeDescription(initiative);
+    this.blocks = [nameAndStatus, description];
   }
 }
