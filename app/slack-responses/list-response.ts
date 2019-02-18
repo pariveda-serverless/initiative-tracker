@@ -29,15 +29,15 @@ export class ListResponse implements Message {
       this.text = { type: 'mrkdwn', text: `No ${search}initiatives found ` };
     }
 
-    const list = initiatives.map(initiative => {
-      const nameAndStatus = new InitiativeNameAndStatus(initiative);
-      const description = new InitiativeDescription(initiative);
-      const metaInformation = new MetaInformation(initiative);
-      const actions = new InitiativeListActions(initiative);
-      const divider = new Divider();
-      return [nameAndStatus, description, metaInformation, actions, divider];
-    });
-
-    this.blocks = list.reduce((acc, val) => acc.concat(val), []);
+    this.blocks = initiatives
+      .map(initiative => {
+        const nameAndStatus = new InitiativeNameAndStatus(initiative);
+        const description = new InitiativeDescription(initiative);
+        const metaInformation = new MetaInformation(initiative);
+        const actions = new InitiativeListActions(initiative);
+        const divider = new Divider();
+        return [nameAndStatus, description, metaInformation, actions, divider];
+      })
+      .reduce((all, block) => all.concat(block), []);
   }
 }
