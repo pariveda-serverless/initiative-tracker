@@ -62,7 +62,7 @@ declare module 'slack' {
   // https://api.slack.com/reference/messaging/blocks
   export interface SectionBlock {
     type: 'section';
-    text: string;
+    text: PlainTextObject | MarkdownTextObject;
     block_id?: string;
     fields?: (PlainTextObject | MarkdownTextObject)[];
     accessory?: Image | Button | StaticSelect;
