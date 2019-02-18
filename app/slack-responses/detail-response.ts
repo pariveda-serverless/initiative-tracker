@@ -15,10 +15,10 @@ export class DetailResponse implements Message {
     // this.attachments = [initiativeCard, ...members];
     const nameAndStatus = new InitiativeNameAndStatus(initiative);
     const description = new InitiativeDescription(initiative);
-    const metaInformation = new MetaInformation(initiative);
+    // const metaInformation = new MetaInformation(initiative);
     const divider = new Divider();
     // const members = initiative.members.sort(member => (member.champion ? -1 : 1));
     // .map(member => new Member)
-    this.blocks = [nameAndStatus, description, metaInformation, divider];
+    this.blocks = [nameAndStatus, description, divider];
   }
 }
