@@ -1,6 +1,6 @@
 import { Message, SectionBlock, DividerBlock, ActionsBlock, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { InitiativeNameAndStatus, InitiativeDescription, Divider } from './initiative-card';
+import { InitiativeNameAndStatus, InitiativeDescription, Divider, MetaInformation } from './initiative-card';
 import { MemberCard } from './member-card';
 
 export class DetailResponse implements Message {
