@@ -105,7 +105,7 @@ class ActionButton implements Button {
   value?: string;
   constructor(initiative: InitiativeResponse, intent: InitiativeIntent) {
     this.action_id = intent;
-    this.value = JSON.stringify({ initiative: initiative.initiativeId });
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
       text: INITIATIVE_INTENT_DISPLAY[intent].text
