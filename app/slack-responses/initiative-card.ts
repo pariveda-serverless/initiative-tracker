@@ -41,14 +41,14 @@ export class BasicInitiativeCard implements Attachment {
 
 export class DetailedInitiativeBlock implements SectionBlock {
   type: 'section' = 'section';
-  text: PlainTextObject | MarkdownTextObject;
+  // text?: PlainTextObject | MarkdownTextObject;
   fields?: (PlainTextObject | MarkdownTextObject)[];
   accessory?: Image | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    this.text = {
-      type: 'mrkdwn',
-      text: 'Initiative block'
-    };
+    // this.text = {
+    //   type: 'mrkdwn',
+    //   text: 'Initiative block'
+    // };
     const name = new Name(initiative);
     const status = new StatusText(initiative);
     const description = new Description(initiative);
