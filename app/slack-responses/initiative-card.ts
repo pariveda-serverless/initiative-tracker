@@ -12,7 +12,7 @@ import {
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
-import { InitiativeIntent } from '../interactions';
+import { InitiativeIntent, ActionType } from '../interactions';
 import { Status } from '../status';
 
 export class InitiativeNameAndStatus implements SectionBlock {
@@ -45,7 +45,7 @@ export class InitiativeNameStatusAndUpdateStatus implements SectionBlock {
       text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
     };
     this.fields = [name, status];
-    this.accessory = new StatusUpdate();
+    this.accessory = new StatusUpdate(initiative);
   }
 }
 
@@ -120,17 +120,18 @@ export class StatusUpdate implements StaticSelect {
   placeholder: PlainTextObject;
   action_id: string;
   options: Option[];
-  constructor() {
+  constructor(initiative: InitiativeResponse) {
     this.placeholder = { type: 'plain_text', text: 'Update status' };
-    this.options = Object.values(Status).map(status => new StatusOption(status));
+    this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
+    this.action_id = ActionType.STATUS_UPDATE;
   }
 }
 
 class StatusOption implements Option {
   text: PlainTextObject;
   value: string;
-  constructor(status: Status) {
+  constructor(status: Status, initiative: InitiativeResponse) {
     this.text = { text: STATUS_DISPLAY[status].text, type: 'plain_text' };
-    this.value = status;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
   }
 }

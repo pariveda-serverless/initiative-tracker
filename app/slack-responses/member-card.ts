@@ -15,7 +15,7 @@ import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_INTENT_DISPLAY } from './display';
 import { ActionType, MemberIntent } from '../interactions';
 
-export class MemberCard implements Attachment {
+class MemberCard implements Attachment {
   color: string;
   attachment_type: string;
   callback_id: string;
