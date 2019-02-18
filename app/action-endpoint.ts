@@ -1,5 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
+import { post } from 'request-promise';
 import { InitiativeIntent, MemberIntent } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
@@ -39,7 +40,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     console.log(response);
     console.log(JSON.stringify(response));
-    success(response);
+    const params = {
+      url: payload.response_url,
+      method: 'POST',
+      simple: false,
+      body: JSON.stringify(response)
+    };
+    await post(params);
+    success();
   } catch (err) {
     error(err);
   }

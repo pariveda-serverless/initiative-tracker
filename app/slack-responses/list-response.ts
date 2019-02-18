@@ -1,6 +1,4 @@
 import {
-  Attachment,
-  OldMessage,
   PlainTextObject,
   MarkdownTextObject,
   Message,
@@ -11,17 +9,14 @@ import {
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
-  BasicInitiativeCard,
   InitiativeNameAndStatus,
   InitiativeDescription,
   MetaInformation,
-  InitiativeDetailActions,
   Divider,
   InitiativeListActions
 } from './initiative-card';
 import { Status } from '../status';
 import { STATUS_DISPLAY } from './display';
-import { MemberSection } from './member-card';
 
 export class ListResponse implements Message {
   channel: string;
