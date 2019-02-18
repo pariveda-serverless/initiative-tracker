@@ -95,7 +95,7 @@ class Description implements MarkdownTextObject {
 }
 
 export class StatusUpdate implements StaticSelect {
-  type: 'static_select';
+  type: 'static_select' = 'static_select';
   placeholder: PlainTextObject;
   action_id: string;
   options: Option[];
@@ -117,7 +117,7 @@ class StatusOption implements Option {
 }
 
 export class DetailedInitiativeActions implements ActionsBlock {
-  type: 'actions';
+  type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
 }
 
