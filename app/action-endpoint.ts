@@ -37,6 +37,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new NotImplementedResponse();
         break;
     }
+    console.log(response);
+    console.log(JSON.stringify(response));
     success(response);
   } catch (err) {
     error(err);
