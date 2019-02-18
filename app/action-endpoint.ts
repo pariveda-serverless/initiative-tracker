@@ -19,11 +19,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     let response: Message | OldMessage;
     switch (action) {
       case InitiativeIntent.JOIN_AS_CHAMPION:
-        await joinInitiativeHandler(initiativeId, slackUserId, true);
+        await joinInitiativeHandler(initiativeId, payload.user.id, true);
         response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
       case InitiativeIntent.JOIN_AS_MEMBER:
-        await joinInitiativeHandler(initiativeId, slackUserId, false);
+        await joinInitiativeHandler(initiativeId, payload.user.id, false);
         response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
       case MemberIntent.REMOVE_MEMBER:
@@ -31,7 +31,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
       case InitiativeIntent.VIEW_DETAILS:
-        response = await handleStatusUpdateActions(payload);
+        response = await getInitiativeDetails(initiativeId, slackUserId);
         break;
       default:
         response = new NotImplementedResponse();

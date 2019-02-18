@@ -41,6 +41,13 @@ export class BasicInitiativeCard implements Attachment {
   }
 }
 
+export class BasicInitiative implements SectionBlock {
+  type: 'section' = 'section';
+  fields?: (PlainTextObject | MarkdownTextObject)[];
+  accessory?: Image | Button | StaticSelect;
+  constructor(initiative: InitiativeResponse) {}
+}
+
 export class InitiativeNameAndStatus implements SectionBlock {
   type: 'section' = 'section';
   fields?: (PlainTextObject | MarkdownTextObject)[];
