@@ -1,6 +1,6 @@
 import { Message, SectionBlock, DividerBlock, ActionsBlock, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { InitiativeNameAndStatus, InitiativeDescription } from './initiative-card';
+import { InitiativeNameAndStatus, InitiativeDescription, Divider } from './initiative-card';
 import { MemberCard } from './member-card';
 
 export class DetailResponse implements Message {
@@ -15,6 +15,7 @@ export class DetailResponse implements Message {
     // this.attachments = [initiativeCard, ...members];
     const nameAndStatus = new InitiativeNameAndStatus(initiative);
     const description = new InitiativeDescription(initiative);
-    this.blocks = [nameAndStatus, description];
+    const divider = new Divider();
+    this.blocks = [nameAndStatus, description, divider];
   }
 }

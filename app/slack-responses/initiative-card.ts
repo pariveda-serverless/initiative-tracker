@@ -9,7 +9,8 @@ import {
   Attachment,
   Field,
   Action,
-  MarkdownTextObject
+  MarkdownTextObject,
+  DividerBlock
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
@@ -47,7 +48,7 @@ export class InitiativeNameAndStatus implements SectionBlock {
     const name = new Name(initiative);
     const status = new StatusText(initiative);
     this.fields = [name, status];
-    // this.accessory = new StatusUpdate(initiative);
+    this.accessory = new StatusUpdate(initiative);
   }
 }
 
@@ -57,6 +58,10 @@ export class InitiativeDescription implements SectionBlock {
   constructor(initiative: InitiativeResponse) {
     this.text = new Description(initiative);
   }
+}
+
+export class Divider implements DividerBlock {
+  type: 'divider' = 'divider';
 }
 
 class Name implements MarkdownTextObject {
