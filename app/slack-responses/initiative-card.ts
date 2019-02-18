@@ -109,6 +109,7 @@ class CreatedByIcon implements Image {
   alt_text: string;
   constructor(initiative: InitiativeResponse) {
     this.image_url = initiative.createdByIcon;
+    this.alt_text = 'img';
   }
 }
 
