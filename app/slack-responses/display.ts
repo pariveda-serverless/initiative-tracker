@@ -21,6 +21,9 @@ initiativeActions[InitiativeDetailAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
 initiativeActions[InitiativeDetailAction.JOIN_AS_MEMBER] = <ActionDisplay>{
   text: 'Join this initiative'
 };
+initiativeActions[InitiativeDetailAction.UPDATE_STATUS] = <ActionDisplay>{
+  text: 'Update status'
+};
 initiativeActions[InitiativeListAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
   text: 'Champion this initiative'
 };

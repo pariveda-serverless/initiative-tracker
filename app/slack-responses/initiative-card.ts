@@ -81,7 +81,9 @@ export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeDetailAction).map(action => new ActionButton(initiative, action));
+    this.elements = Object.values(InitiativeDetailAction)
+      .filter(action => action === InitiativeDetailAction.UPDATE_STATUS)
+      .map(action => new ActionButton(initiative, action));
   }
 }
 
@@ -118,7 +120,10 @@ export class StatusUpdate implements StaticSelect {
   action_id: string;
   options: Option[];
   constructor(initiative: InitiativeResponse) {
-    this.placeholder = { type: 'plain_text', text: 'Update status' };
+    this.placeholder = {
+      type: 'plain_text',
+      text: INITIATIVE_ACTION_DISPLAY[InitiativeDetailAction.UPDATE_STATUS].text
+    };
     this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
     this.action_id = InitiativeDetailAction.UPDATE_STATUS;
   }
