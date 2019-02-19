@@ -26,7 +26,7 @@ export class StatusUpdateRequest implements Message {
     const description = new InitiativeDescription(initiative);
     const metaInformation = new MetaInformation(initiative);
     const updateActions = new UpdateStatusActions(initiative);
-    this.blocks = [nameAndStatus, description, metaInformation, updateActions];
+    this.blocks = [requestInfo, nameAndStatus, description, metaInformation, updateActions];
   }
 }
 
