@@ -30,6 +30,8 @@ export class ListResponse implements Message {
         const divider = new Divider();
         return [nameAndStatus, description, metaInformation, actions, divider];
       })
-      .reduce((all, block) => all.concat(block), []);
+      .reduce((all, block) => all.concat(block), [])
+      // Remove the last divider block
+      .slice(0, -1);
   }
 }

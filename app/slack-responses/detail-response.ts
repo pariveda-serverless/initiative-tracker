@@ -27,15 +27,7 @@ export class DetailResponse implements Message {
         return [nameAndRole, memberActions, divider];
       })
       .reduce((all, block) => all.concat(block), []);
-    const blocksWithExtraDivider = [
-      nameAndStatus,
-      description,
-      metaInformation,
-      initiativeActions,
-      divider,
-      ...members
-    ];
     // Remove the last divider block
-    this.blocks = blocksWithExtraDivider.slice(0, -1);
+    this.blocks = [nameAndStatus, description, metaInformation, initiativeActions, divider, ...members].slice(0, -1);
   }
 }
