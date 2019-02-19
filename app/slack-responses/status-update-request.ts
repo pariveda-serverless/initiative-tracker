@@ -1,8 +1,8 @@
 import {
-  SectionBlock,
+  Section,
   Message,
   DividerBlock,
-  ActionsBlock,
+  Action,
   ContextBlock,
   PlainText,
   MarkdownText,
@@ -18,7 +18,7 @@ import { STATUS_UPDATE_DISPLAY } from './display';
 export class StatusUpdateRequest implements Message {
   channel: string;
   text;
-  blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
@@ -30,7 +30,7 @@ export class StatusUpdateRequest implements Message {
   }
 }
 
-class RequestInfo implements SectionBlock {
+class RequestInfo implements Section {
   type: 'section' = 'section';
   text: PlainText | MarkdownText;
   constructor(member: MemberResponse) {
@@ -41,7 +41,7 @@ class RequestInfo implements SectionBlock {
   }
 }
 
-class UpdateStatusActions implements ActionsBlock {
+class UpdateStatusActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
