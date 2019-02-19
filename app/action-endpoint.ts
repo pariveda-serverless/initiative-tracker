@@ -35,6 +35,20 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, channel);
         break;
       }
+      case MemberIntent.MAKE_CHAMPION: {
+        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
+        await joinInitiativeHandler(initiativeId, slackUserId, true);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
+        break;
+      }
+      case MemberIntent.MAKE_MEMBER: {
+        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
+        await joinInitiativeHandler(initiativeId, slackUserId, false);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
+        break;
+      }
       case MemberIntent.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, slackUserId);
