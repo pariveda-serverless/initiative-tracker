@@ -12,9 +12,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { name: createdBy, icon: createdByIcon, slackUserId } = await getUserProfile(body.user_id);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
-    const initiative = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
-    await saveInitiative(initiative);
-    const message = await getInitiativeDetails(initiative.initiativeId, slackUserId);
+    const initiativeRequest = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
+    await saveInitiative(initiativeRequest);
+    const initiativeDetails = await getInitiativeDetails(initiativeRequest.initiativeId);
+    const message = new DetailResponse(initiativeDetails);
     console.log(message);
     console.log(JSON.stringify(message));
     success(message);
@@ -29,7 +30,7 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return initiatives.put(params).promise();
 }
 
-async function getInitiativeDetails(initiativeId: string, slackUserId: string): Promise<DetailResponse> {
+async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -48,5 +49,5 @@ async function getInitiativeDetails(initiativeId: string, slackUserId: string): 
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return new DetailResponse(initiative, slackUserId);
+  return initiative;
 }

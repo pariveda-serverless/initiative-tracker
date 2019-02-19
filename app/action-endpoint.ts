@@ -15,6 +15,7 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const payload: Payload = JSON.parse(body.payload);
+    const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
     let response: Message | OldMessage;
     switch (action) {
@@ -22,33 +23,38 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, true);
-        response = await getInitiativeDetails(initiativeId, slackUserId);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
         break;
       }
       case InitiativeIntent.JOIN_AS_MEMBER: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, false);
-        response = await getInitiativeDetails(initiativeId, slackUserId);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
         break;
       }
       case MemberIntent.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, slackUserId);
-        response = await getInitiativeDetails(initiativeId, slackUserId);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
         break;
       }
       case InitiativeIntent.VIEW_DETAILS: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
-        response = await getInitiativeDetails(initiativeId, slackUserId);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
         break;
       }
       case ActionType.STATUS_UPDATE: {
         const { initiativeId, status } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
-        response = await getInitiativeDetails(initiativeId, slackUserId);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
       }
       default: {
         response = new NotImplementedResponse();
@@ -101,7 +107,7 @@ function leaveInitiative(initiativeId: string, slackUserId: string): Promise<any
   return initiatives.delete(params).promise();
 }
 
-async function getInitiativeDetails(initiativeId: string, slackUserId: string): Promise<DetailResponse> {
+async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId',
@@ -120,5 +126,5 @@ async function getInitiativeDetails(initiativeId: string, slackUserId: string): 
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));
-  return new DetailResponse(initiative, slackUserId);
+  return initiative;
 }

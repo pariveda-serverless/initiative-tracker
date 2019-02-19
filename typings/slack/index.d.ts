@@ -51,7 +51,7 @@ declare module 'slack' {
 
   // https://api.slack.com/reference/messaging/payload
   export interface Message {
-    channel: string;
+    channel?: string;
     text?: PlainTextObject | MarkdownTextObject;
     blocks?: any[];
     attachments?: any[];

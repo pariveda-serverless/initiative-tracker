@@ -12,8 +12,8 @@ import { NameAndRole, MemberActions } from './member-card';
 export class DetailResponse implements Message {
   channel: string;
   blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
-  constructor(initiative: InitiativeResponse, slackUserId: string) {
-    this.channel = 'CFSV0HX5X';
+  constructor(initiative: InitiativeResponse, channel?: string) {
+    this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
     const description = new InitiativeDescription(initiative);
     const metaInformation = new MetaInformation(initiative);
