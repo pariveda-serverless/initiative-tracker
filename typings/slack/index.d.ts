@@ -174,11 +174,19 @@ declare module 'slack' {
         text: {
           type: string;
           text: string;
-          emoji: string;
+          emoji: boolean;
         };
         value: string;
         type: string;
         action_ts: string;
+        selected_option: {
+          text: {
+            type: string;
+            text: string;
+            emoji: boolean;
+          };
+          value: string;
+        };
       }
     ];
   }

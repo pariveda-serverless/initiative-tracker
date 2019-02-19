@@ -64,7 +64,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case ActionType.STATUS_UPDATE: {
-        const { initiativeId, status } = JSON.parse(payload.actions[0].value);
+        const { initiativeId, status } = JSON.parse(payload.actions[0].selected_option.value);
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
         const initiative = await getInitiativeDetails(initiativeId);
