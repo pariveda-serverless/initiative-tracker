@@ -85,6 +85,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await updateInitiativeStatus(initiativeId, status);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, channel);
+        break;
       }
       default: {
         response = new NotImplementedResponse(channel);

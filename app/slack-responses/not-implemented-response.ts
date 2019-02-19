@@ -16,7 +16,7 @@ class NotImplementedSection implements Section {
   constructor() {
     this.text = {
       type: 'mrkdwn',
-      text: `:sleep: Oh no, developers asleep on the job!  This command hasn't been implemented in the application yet or is improperly configured`
+      text: `:sleeping: Oh no, the developers are asleep on the job!  This command hasn't been implemented in the application yet or is improperly configured`
     };
   }
 }
