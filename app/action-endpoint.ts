@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { post } from 'request-promise';
-import { InitiativeIntent, MemberIntent, ActionType } from './interactions';
+import { InitiativeListAction, InitiativeDetailAction, MemberAction, StatusUpdateAction } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
@@ -19,7 +19,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const action = payload.actions[0].action_id;
     let response: Message | OldMessage;
     switch (action) {
-      case InitiativeIntent.JOIN_AS_CHAMPION: {
+      case InitiativeListAction.JOIN_AS_CHAMPION: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, true);
@@ -27,7 +27,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case InitiativeIntent.JOIN_AS_MEMBER: {
+      case InitiativeListAction.JOIN_AS_MEMBER: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, false);
@@ -35,35 +35,51 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case MemberIntent.MAKE_CHAMPION: {
+      case InitiativeListAction.VIEW_DETAILS: {
+        const { initiativeId } = JSON.parse(payload.actions[0].value);
+        const slackUserId = payload.user.id;
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
+        break;
+      }
+      case MemberAction.MAKE_CHAMPION: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await joinInitiativeHandler(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case MemberIntent.MAKE_MEMBER: {
+      case MemberAction.MAKE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await joinInitiativeHandler(initiativeId, slackUserId, false);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case MemberIntent.REMOVE_MEMBER: {
+      case MemberAction.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, slackUserId);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case InitiativeIntent.VIEW_DETAILS: {
+      case InitiativeDetailAction.JOIN_AS_CHAMPION: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
+        await joinInitiativeHandler(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, channel);
         break;
       }
-      case ActionType.STATUS_UPDATE: {
+      case InitiativeDetailAction.JOIN_AS_MEMBER: {
+        const { initiativeId } = JSON.parse(payload.actions[0].value);
+        const slackUserId = payload.user.id;
+        await joinInitiativeHandler(initiativeId, slackUserId, false);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, channel);
+        break;
+      }
+      case InitiativeDetailAction.UPDATE_STATUS: {
         const { initiativeId, status } = JSON.parse(payload.actions[0].selected_option.value);
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
@@ -71,7 +87,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, channel);
       }
       default: {
-        response = new NotImplementedResponse();
+        response = new NotImplementedResponse(channel);
         break;
       }
     }

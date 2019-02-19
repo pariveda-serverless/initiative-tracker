@@ -11,8 +11,8 @@ import {
   ContextBlock
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { STATUS_DISPLAY, INITIATIVE_INTENT_DISPLAY } from './display';
-import { InitiativeIntent, ActionType } from '../interactions';
+import { STATUS_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
+import { InitiativeListAction, InitiativeDetailAction } from '../interactions';
 import { Status } from '../status';
 
 export class InitiativeNameAndStatus implements SectionBlock {
@@ -81,10 +81,7 @@ export class InitiativeDetailActions implements ActionsBlock {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeIntent)
-      // Don't show view details, already viewing details
-      .filter(intent => intent !== InitiativeIntent.VIEW_DETAILS)
-      .map(intent => new ActionButton(initiative, intent));
+    this.elements = Object.values(InitiativeDetailAction).map(action => new ActionButton(initiative, action));
   }
 }
 
@@ -92,7 +89,7 @@ export class InitiativeListActions implements ActionsBlock {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeIntent).map(intent => new ActionButton(initiative, intent));
+    this.elements = Object.values(InitiativeListAction).map(action => new ActionButton(initiative, action));
   }
 }
 
@@ -101,12 +98,12 @@ class ActionButton implements Button {
   text: PlainTextObject;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse, intent: InitiativeIntent) {
-    this.action_id = intent;
+  constructor(initiative: InitiativeResponse, action: InitiativeDetailAction | InitiativeListAction) {
+    this.action_id = action;
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
-      text: INITIATIVE_INTENT_DISPLAY[intent].text
+      text: INITIATIVE_ACTION_DISPLAY[action].text
     };
   }
 }
@@ -123,7 +120,7 @@ export class StatusUpdate implements StaticSelect {
   constructor(initiative: InitiativeResponse) {
     this.placeholder = { type: 'plain_text', text: 'Update status' };
     this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
-    this.action_id = ActionType.STATUS_UPDATE;
+    this.action_id = InitiativeDetailAction.UPDATE_STATUS;
   }
 }
 

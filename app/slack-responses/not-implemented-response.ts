@@ -1,30 +1,30 @@
-import { OldMessage, Attachment } from 'slack';
-import { YELLOW } from './display';
+import {
+  SectionBlock,
+  Message,
+  DividerBlock,
+  ActionsBlock,
+  ContextBlock,
+  PlainTextObject,
+  MarkdownTextObject
+} from 'slack';
 
-export class NotImplementedResponse implements OldMessage {
-  response_type: 'in_channel' | 'ephemeral';
-  attachments: Attachment[];
-  constructor() {
-    this.response_type = 'ephemeral';
-    this.attachments = [new NotImplementedCard()];
+export class NotImplementedResponse implements Message {
+  channel: string;
+  blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
+  constructor(channel: string) {
+    this.channel = channel;
+    const notImplementedSection = new NotImplementedSection();
+    this.blocks = [notImplementedSection];
   }
 }
 
-class NotImplementedCard implements Attachment {
-  color: string;
-  attachment_type: string;
-  footer_icon: string;
-  footer: string;
-  title: string;
-  ts: number;
-
+class NotImplementedSection implements SectionBlock {
+  type: 'section' = 'section';
+  text: PlainTextObject | MarkdownTextObject;
   constructor() {
-    this.color = YELLOW;
-    this.attachment_type = 'default'; //TODO what are the other options?
-    this.footer_icon =
-      'https://user-images.githubusercontent.com/2955468/52139934-6e6d2880-261f-11e9-9bbf-cfacd1facf3a.png';
-    this.footer = 'Initiative Tracker';
-    this.title = `Woops!  This command hasn't been implemented in the application yet or is improperly configured`;
-    this.ts = new Date().getTime() / 1000;
+    this.text = {
+      type: 'mrkdwn',
+      text: `:sleep: Oh no, developers asleep on the job!  This command hasn't been implemented in the application yet or is improperly configured`
+    };
   }
 }
