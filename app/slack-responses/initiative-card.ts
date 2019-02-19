@@ -82,7 +82,7 @@ export class InitiativeDetailActions implements Action {
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
     this.elements = Object.values(InitiativeDetailAction)
-      .filter(action => action === InitiativeDetailAction.UPDATE_STATUS)
+      .filter(action => action !== InitiativeDetailAction.UPDATE_STATUS)
       .map(action => new ActionButton(initiative, action));
   }
 }
