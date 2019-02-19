@@ -1,4 +1,4 @@
-import { Message, SectionBlock, DividerBlock, ActionsBlock, ContextBlock } from 'slack';
+import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
   InitiativeNameStatusAndUpdateStatus,
@@ -11,7 +11,7 @@ import { NameAndRole, MemberActions } from './member-card';
 
 export class DetailResponse implements Message {
   channel: string;
-  blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, channel?: string) {
     this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);

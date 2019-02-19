@@ -1,28 +1,19 @@
-import {
-  SectionBlock,
-  PlainTextObject,
-  MarkdownTextObject,
-  Image,
-  Button,
-  StaticSelect,
-  ActionsBlock,
-  Confirmation
-} from 'slack';
+import { Section, PlainText, MarkdownText, ImageContext, Button, StaticSelect, Action, Confirmation } from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
 import { MemberAction } from '../interactions';
 
-export class NameAndRole implements SectionBlock {
+export class NameAndRole implements Section {
   type: 'section' = 'section';
-  fields?: (PlainTextObject | MarkdownTextObject)[];
-  accessory?: Image | Button | StaticSelect;
+  fields?: (PlainText | MarkdownText)[];
+  accessory?: ImageContext | Button | StaticSelect;
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    const name: MarkdownTextObject = {
+    const name: MarkdownText = {
       type: 'mrkdwn',
       text: `*Name*\n${member.name}`
     };
-    const role: MarkdownTextObject = {
+    const role: MarkdownText = {
       type: 'mrkdwn',
       text: `*Role*\n${MEMBER_DISPLAY[member.role].text}`
     };
@@ -31,7 +22,7 @@ export class NameAndRole implements SectionBlock {
   }
 }
 
-export class MemberActions implements ActionsBlock {
+export class MemberActions implements Action {
   type: 'actions' = 'actions';
   elements: Button[];
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
@@ -43,7 +34,7 @@ export class MemberActions implements ActionsBlock {
 
 class ActionButton implements Button {
   type: 'button' = 'button';
-  text: PlainTextObject;
+  text: PlainText;
   action_id: string;
   value?: string;
   confirm?: Confirmation;
@@ -59,10 +50,10 @@ class ActionButton implements Button {
 }
 
 class ConfirmAction implements Confirmation {
-  title: PlainTextObject;
-  text: PlainTextObject | MarkdownTextObject;
-  confirm: PlainTextObject;
-  deny: PlainTextObject;
+  title: PlainText;
+  text: PlainText | MarkdownText;
+  confirm: PlainText;
+  deny: PlainText;
   constructor(member: MemberResponse, action: MemberAction) {
     const { verb, noun, title } = MEMBER_ACTION_DISPLAY[action].confirmation;
     this.title = {

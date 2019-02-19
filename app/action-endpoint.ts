@@ -7,7 +7,7 @@ import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiat
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
-import { Message, OldMessage, Payload } from 'slack';
+import { Message, Payload } from 'slack';
 import { Status } from './status';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -17,7 +17,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const payload: Payload = JSON.parse(body.payload);
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
-    let response: Message | OldMessage;
+    let response: Message;
     switch (action) {
       case InitiativeListAction.JOIN_AS_CHAMPION: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);

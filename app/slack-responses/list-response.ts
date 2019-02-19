@@ -1,12 +1,4 @@
-import {
-  PlainTextObject,
-  MarkdownTextObject,
-  Message,
-  SectionBlock,
-  DividerBlock,
-  ActionsBlock,
-  ContextBlock
-} from 'slack';
+import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
   InitiativeNameAndStatus,
@@ -20,8 +12,8 @@ import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
   channel: string;
-  text?: PlainTextObject | MarkdownTextObject;
-  blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
+  text?: PlainText | MarkdownText;
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiatives: InitiativeResponse[], status?: Status) {
     this.channel = 'CFSV0HX5X';
     if (!initiatives || !initiatives.length) {

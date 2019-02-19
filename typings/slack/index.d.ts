@@ -2,7 +2,7 @@ declare module 'slack' {
   // https://api.slack.com/reference/messaging/payload
   export interface Message {
     channel?: string;
-    text?: PlainTextObject | MarkdownTextObject;
+    text?: PlainText | MarkdownText;
     blocks?: any[];
     attachments?: any[];
     thread_ts?: string;
@@ -10,12 +10,12 @@ declare module 'slack' {
   }
 
   // https://api.slack.com/reference/messaging/blocks
-  export interface SectionBlock {
+  export interface Section {
     type: 'section';
-    text?: PlainTextObject | MarkdownTextObject;
+    text?: PlainText | MarkdownText;
     block_id?: string;
-    fields?: (PlainTextObject | MarkdownTextObject)[];
-    accessory?: Image | Button | StaticSelect;
+    fields?: (PlainText | MarkdownText)[];
+    accessory?: ImageContext | Button | StaticSelect;
   }
 
   export interface DividerBlock {
@@ -23,7 +23,7 @@ declare module 'slack' {
     block_id?: string;
   }
 
-  export interface ImageBlock {
+  export interface Image {
     type: 'image';
     image_url: string;
     alt_text: string;
@@ -31,7 +31,7 @@ declare module 'slack' {
     block_id?: string;
   }
 
-  export interface ActionsBlock {
+  export interface Action {
     type: 'actions';
     elements: (StaticSelect | Button)[];
     block_id?: string;
@@ -39,12 +39,12 @@ declare module 'slack' {
 
   export interface ContextBlock {
     type: 'context';
-    elements: (Image | PlainTextObject | MarkdownTextObject)[];
+    elements: (ImageContext | PlainText | MarkdownText)[];
     block_id?: string;
   }
 
   // https://api.slack.com/reference/messaging/block-elements
-  export interface Image {
+  export interface ImageContext {
     type: 'image';
     image_url: string;
     alt_text: string;
@@ -52,7 +52,7 @@ declare module 'slack' {
 
   export interface Button {
     type: 'button';
-    text: PlainTextObject;
+    text: PlainText;
     action_id: string;
     url?: string;
     value?: string;
@@ -61,7 +61,7 @@ declare module 'slack' {
 
   export interface StaticSelect {
     type: 'static_select';
-    placeholder: PlainTextObject | MarkdownTextObject;
+    placeholder: PlainText | MarkdownText;
     action_id: string;
     options: Option[];
     option_groups?: OptionGroup[];
@@ -70,14 +70,14 @@ declare module 'slack' {
   }
 
   // https://api.slack.com/reference/messaging/composition-objects
-  export interface PlainTextObject {
+  export interface PlainText {
     type: 'plain_text';
     text: string;
     emoji?: boolean;
     varbatim?: boolean;
   }
 
-  export interface MarkdownTextObject {
+  export interface MarkdownText {
     type: 'mrkdwn';
     text: string;
     emoji?: boolean;
@@ -85,19 +85,19 @@ declare module 'slack' {
   }
 
   export interface Confirmation {
-    title: PlainTextObject;
-    text: PlainTextObject | MarkdownTextObject;
-    confirm: PlainTextObject;
-    deny: PlainTextObject;
+    title: PlainText;
+    text: PlainText | MarkdownText;
+    confirm: PlainText;
+    deny: PlainText;
   }
 
   export interface Option {
-    text: PlainTextObject;
+    text: PlainText;
     value: string;
   }
 
   export interface OptionGroup {
-    label: PlainTextObject;
+    label: PlainText;
     options: Option[];
   }
 

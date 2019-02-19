@@ -1,16 +1,8 @@
-import {
-  SectionBlock,
-  Message,
-  DividerBlock,
-  ActionsBlock,
-  ContextBlock,
-  PlainTextObject,
-  MarkdownTextObject
-} from 'slack';
+import { Section, Message, DividerBlock, Action, ContextBlock, PlainText, MarkdownText } from 'slack';
 
 export class NotImplementedResponse implements Message {
   channel: string;
-  blocks: (SectionBlock | DividerBlock | ActionsBlock | ContextBlock)[];
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(channel: string) {
     this.channel = channel;
     const notImplementedSection = new NotImplementedSection();
@@ -18,9 +10,9 @@ export class NotImplementedResponse implements Message {
   }
 }
 
-class NotImplementedSection implements SectionBlock {
+class NotImplementedSection implements Section {
   type: 'section' = 'section';
-  text: PlainTextObject | MarkdownTextObject;
+  text: PlainText | MarkdownText;
   constructor() {
     this.text = {
       type: 'mrkdwn',

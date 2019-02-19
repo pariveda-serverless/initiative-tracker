@@ -4,8 +4,8 @@ import {
   DividerBlock,
   ActionsBlock,
   ContextBlock,
-  PlainTextObject,
-  MarkdownTextObject,
+  PlainText,
+  MarkdownText,
   StaticSelect,
   Button
 } from 'slack';
@@ -32,7 +32,7 @@ export class StatusUpdateRequest implements Message {
 
 class RequestInfo implements SectionBlock {
   type: 'section' = 'section';
-  text: PlainTextObject | MarkdownTextObject;
+  text: PlainText | MarkdownText;
   constructor(member: MemberResponse) {
     this.text = {
       type: 'mrkdwn',
@@ -51,7 +51,7 @@ class UpdateStatusActions implements ActionsBlock {
 
 class ActionButton implements Button {
   type: 'button' = 'button';
-  text: PlainTextObject;
+  text: PlainText;
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {

@@ -1,12 +1,12 @@
 import {
-  SectionBlock,
+  Section,
   StaticSelect,
-  Image,
+  ImageContext,
   Button,
-  ActionsBlock,
-  PlainTextObject,
+  Action,
+  PlainText,
   Option,
-  MarkdownTextObject,
+  MarkdownText,
   DividerBlock,
   ContextBlock
 } from 'slack';
@@ -15,15 +15,15 @@ import { STATUS_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
 import { InitiativeListAction, InitiativeDetailAction } from '../interactions';
 import { Status } from '../status';
 
-export class InitiativeNameAndStatus implements SectionBlock {
+export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
-  fields?: (PlainTextObject | MarkdownTextObject)[];
+  fields?: (PlainText | MarkdownText)[];
   constructor(initiative: InitiativeResponse) {
-    const name: MarkdownTextObject = {
+    const name: MarkdownText = {
       type: 'mrkdwn',
       text: `*Name*\n${initiative.name}`
     };
-    const status: MarkdownTextObject = {
+    const status: MarkdownText = {
       type: 'mrkdwn',
       text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
     };
@@ -31,16 +31,16 @@ export class InitiativeNameAndStatus implements SectionBlock {
   }
 }
 
-export class InitiativeNameStatusAndUpdateStatus implements SectionBlock {
+export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
-  fields?: (PlainTextObject | MarkdownTextObject)[];
-  accessory?: Image | Button | StaticSelect;
+  fields?: (PlainText | MarkdownText)[];
+  accessory?: ImageContext | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    const name: MarkdownTextObject = {
+    const name: MarkdownText = {
       type: 'mrkdwn',
       text: `*Name*\n${initiative.name}`
     };
-    const status: MarkdownTextObject = {
+    const status: MarkdownText = {
       type: 'mrkdwn',
       text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
     };
@@ -51,14 +51,14 @@ export class InitiativeNameStatusAndUpdateStatus implements SectionBlock {
 
 export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
-  elements: (Image | PlainTextObject | MarkdownTextObject)[];
+  elements: (ImageContext | PlainText | MarkdownText)[];
   constructor(initiative: InitiativeResponse) {
-    const createdByIcon: Image = {
+    const createdByIcon: ImageContext = {
       type: 'image',
       image_url: initiative.createdByIcon,
       alt_text: 'img'
     };
-    const createdBy: MarkdownTextObject = {
+    const createdBy: MarkdownText = {
       type: 'mrkdwn',
       text: `Created by ${initiative.createdBy} on ${initiative.createdAt}`
     };
@@ -66,9 +66,9 @@ export class MetaInformation implements ContextBlock {
   }
 }
 
-export class InitiativeDescription implements SectionBlock {
+export class InitiativeDescription implements Section {
   type: 'section' = 'section';
-  text: PlainTextObject | MarkdownTextObject;
+  text: PlainText | MarkdownText;
   constructor(initiative: InitiativeResponse) {
     this.text = {
       type: 'mrkdwn',
@@ -77,7 +77,7 @@ export class InitiativeDescription implements SectionBlock {
   }
 }
 
-export class InitiativeDetailActions implements ActionsBlock {
+export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
@@ -85,7 +85,7 @@ export class InitiativeDetailActions implements ActionsBlock {
   }
 }
 
-export class InitiativeListActions implements ActionsBlock {
+export class InitiativeListActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
@@ -95,7 +95,7 @@ export class InitiativeListActions implements ActionsBlock {
 
 class ActionButton implements Button {
   type: 'button' = 'button';
-  text: PlainTextObject;
+  text: PlainText;
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse, action: InitiativeDetailAction | InitiativeListAction) {
@@ -114,7 +114,7 @@ export class Divider implements DividerBlock {
 
 export class StatusUpdate implements StaticSelect {
   type: 'static_select' = 'static_select';
-  placeholder: PlainTextObject;
+  placeholder: PlainText;
   action_id: string;
   options: Option[];
   constructor(initiative: InitiativeResponse) {
@@ -125,7 +125,7 @@ export class StatusUpdate implements StaticSelect {
 }
 
 class StatusOption implements Option {
-  text: PlainTextObject;
+  text: PlainText;
   value: string;
   constructor(status: Status, initiative: InitiativeResponse) {
     this.text = { text: STATUS_DISPLAY[status].text, type: 'plain_text' };
