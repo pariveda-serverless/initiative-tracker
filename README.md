@@ -16,8 +16,8 @@ Initiative Tracker is a slackbot which helps teams track the internal initiative
 
 Available slash commands are:
 
-- `/register-initiative [initiative name], [optional initiative description]`
-- `/list-initiatives [optional initiative status: 'active' | 'abandoned' | 'complete' | 'on hold']`
+- `/add-initiative [initiative name], [optional initiative description]`
+- `/show-initiatives [optional initiative status: 'active' | 'abandoned' | 'complete' | 'on hold']`
 
 ## Architecture diagram
 
@@ -44,10 +44,9 @@ Available slash commands are:
 ## Slack development resources
 
 - [Slack API documentation](https://api.slack.com/methods)
-- [Slack blocks](https://api.slack.com/tools/block-kit-builder)
 - [Slack message formatting](https://api.slack.com/docs/message-formatting)
-- [Slack message attachments](https://api.slack.com/docs/message-attachments)
 - [Slack interactive message documentation](https://api.slack.com/interactive-messages)
+- [Slack block builder](https://api.slack.com/tools/block-kit-builder)
 
 [build-badge]: https://circleci.com/gh/pariveda-serverless/initiative-tracker.svg?style=shield&circle-token=1e1369bd1b5bec6e28eaf499a98f8af0dc3dbe3e
 [build-badge-url]: https://circleci.com/gh/pariveda-serverless/initiative-tracker
