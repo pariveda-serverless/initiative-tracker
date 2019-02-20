@@ -1,48 +1,143 @@
 declare module 'slack' {
+  // https://api.slack.com/reference/messaging/payload
   export interface Message {
-    text?: string;
-    response_type: 'in_channel' | 'ephemeral';
+    channel?: string;
+    text?: PlainText | MarkdownText;
+    blocks?: any[];
+    attachments?: any[];
+    thread_ts?: string;
     mrkdwn?: boolean;
-    attachments?: Attachment[];
   }
 
-  export interface Attachment {
-    title?: string;
-    title_link?: string;
-    pretext?: string;
-    text?: string;
-    color?: string;
-    mrkdwn_in?: string[];
-    image_url?: string;
-    thumb_url?: string;
-    footer?: string;
-    footer_icon?: string;
-    attachment_type: string;
-    callback_id?: string;
-    fields?: Field[];
-    actions?: Action[];
-    ts?: number;
+  // https://api.slack.com/reference/messaging/blocks
+  export interface Section {
+    type: 'section';
+    text?: PlainText | MarkdownText;
+    block_id?: string;
+    fields?: (PlainText | MarkdownText)[];
+    accessory?: ImageContext | Button | StaticSelect;
   }
 
-  export interface Field {
+  export interface DividerBlock {
+    type: 'divider';
+    block_id?: string;
+  }
+
+  export interface Image {
+    type: 'image';
+    image_url: string;
+    alt_text: string;
     title: string;
-    value: string;
-    short: boolean;
+    block_id?: string;
   }
 
   export interface Action {
-    name: string;
-    text: string;
-    value: string;
-    type: string;
-    style: string;
-    confirm?: ConfirmAction;
+    type: 'actions';
+    elements: (StaticSelect | Button)[];
+    block_id?: string;
   }
 
-  export interface ConfirmAction {
-    title: string;
+  export interface ContextBlock {
+    type: 'context';
+    elements: (ImageContext | PlainText | MarkdownText)[];
+    block_id?: string;
+  }
+
+  // https://api.slack.com/reference/messaging/block-elements
+  export interface ImageContext {
+    type: 'image';
+    image_url: string;
+    alt_text: string;
+  }
+
+  export interface Button {
+    type: 'button';
+    text: PlainText;
+    action_id: string;
+    url?: string;
+    value?: string;
+    confirm?: Confirmation;
+  }
+
+  export interface StaticSelect {
+    type: 'static_select';
+    placeholder: PlainText | MarkdownText;
+    action_id: string;
+    options: Option[];
+    option_groups?: OptionGroup[];
+    initial_option?: Option;
+    confirm?: Confirmation;
+  }
+
+  // https://api.slack.com/reference/messaging/composition-objects
+  export interface PlainText {
+    type: 'plain_text';
     text: string;
-    ok_text: string;
-    dismiss_text: string;
+    emoji?: boolean;
+    varbatim?: boolean;
+  }
+
+  export interface MarkdownText {
+    type: 'mrkdwn';
+    text: string;
+    emoji?: boolean;
+    verbatim?: boolean;
+  }
+
+  export interface Confirmation {
+    title: PlainText;
+    text: PlainText | MarkdownText;
+    confirm: PlainText;
+    deny: PlainText;
+  }
+
+  export interface Option {
+    text: PlainText;
+    value: string;
+  }
+
+  export interface OptionGroup {
+    label: PlainText;
+    options: Option[];
+  }
+
+  // Action payload received on button click
+  export interface Payload {
+    type: string;
+    team: {
+      id: string;
+      domain: string;
+    };
+    user: {
+      id: string;
+      team_id: string;
+    };
+    channel: {
+      id: string;
+      name: string;
+    };
+    response_url: string;
+    actions: [
+      {
+        action_id: string;
+        block_id: string;
+        text: {
+          type: string;
+          text: string;
+          emoji: boolean;
+        };
+        value: string;
+        type: string;
+        action_ts: string;
+        selected_option: {
+          text: {
+            type: string;
+            text: string;
+            emoji: boolean;
+          };
+          value: string;
+        };
+      }
+    ];
   }
 }

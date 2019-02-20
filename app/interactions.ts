@@ -1,22 +1,22 @@
-export enum ActionType {
-  INITIATIVE_ACTION = 'INITIATIVE_ACTION',
-  MEMBER_ACTION = 'MEMBER_ACTION',
-  STATUS_UPDATE = 'STATUS_UPDATE'
-}
-
-export enum InitiativeIntent {
+export enum InitiativeListAction {
   JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
   JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
   VIEW_DETAILS = 'VIEW_DETAILS'
 }
 
-export enum MemberIntent {
+export enum InitiativeDetailAction {
+  JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
+  JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
+  UPDATE_STATUS = 'UPDATE_STATUS'
+}
+
+export enum MemberAction {
   MAKE_CHAMPION = 'MAKE_CHAMPION',
   MAKE_MEMBER = 'MAKE_MEMBER',
   REMOVE_MEMBER = 'REMOVE_MEMBER'
 }
 
-export enum StatusUpdateIntent {
+export enum StatusUpdateAction {
   MARK_ACTIVE = 'MARK_ACTIVE',
   MARK_ON_HOLD = 'MARK_ON_HOLD',
   MARK_COMPLETE = 'MARK_COMPLETE',

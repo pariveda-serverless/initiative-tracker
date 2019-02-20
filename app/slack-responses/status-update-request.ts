@@ -1,77 +1,69 @@
-import { Attachment, Field, Action } from 'slack';
+import {
+  Section,
+  Message,
+  DividerBlock,
+  Action,
+  ContextBlock,
+  PlainText,
+  MarkdownText,
+  StaticSelect,
+  Button
+} from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { StatusUpdateIntent, ActionType } from '../interactions';
-import { STATUS_DISPLAY, STATUS_UPDATE_DISPLAY } from './display';
+import { InitiativeNameAndStatus, InitiativeDescription, MetaInformation } from './initiative-card';
+import { MemberResponse } from '../member';
+import { StatusUpdateAction } from '../interactions';
+import { STATUS_UPDATE_DISPLAY } from './display';
+import { Status } from '../status';
 
-export class StatusUpdateRequest implements Attachment {
-  color: string;
-  attachment_type: string;
-  callback_id: string;
-  fields: Field[];
-  actions: Action[];
-  footer: string;
-  footer_icon: string;
-
-  constructor(initiative: InitiativeResponse) {
-    this.color = STATUS_DISPLAY[initiative.status].color;
-    this.attachment_type = 'default'; //TODO what are the other options?
-    this.callback_id = ActionType.STATUS_UPDATE;
-    const name = new Name(initiative);
-    const status = new Status(initiative);
-    const description = new Description(initiative);
-    this.fields = [name, status, description];
-    this.actions = Object.values(StatusUpdateIntent).map(intent => new StatusUpdateAction(initiative, intent));
-    this.footer = `Created by ${initiative.createdBy} on ${initiative.createdAt}`;
-    this.footer_icon = initiative.createdByIcon;
+export class StatusUpdateRequest implements Message {
+  channel: string;
+  text;
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
+  constructor(initiative: InitiativeResponse, member: MemberResponse) {
+    this.channel = member.slackUserId;
+    const requestInfo = new RequestInfo(member);
+    const nameAndStatus = new InitiativeNameAndStatus(initiative);
+    const description = new InitiativeDescription(initiative);
+    const metaInformation = new MetaInformation(initiative);
+    const updateActions = new UpdateStatusActions(initiative);
+    this.blocks = [requestInfo, nameAndStatus, description, metaInformation, updateActions];
   }
 }
 
-class Description implements Field {
-  title: string;
-  value: string;
-  short: boolean;
-  constructor(initiative: InitiativeResponse) {
-    this.title = 'Description';
-    this.value = initiative.description;
-    this.short = false;
+class RequestInfo implements Section {
+  type: 'section' = 'section';
+  text: PlainText | MarkdownText;
+  constructor(member: MemberResponse) {
+    this.text = {
+      type: 'mrkdwn',
+      text: `Hey ${member.name.split(' ')[0]}, what's the status of this initiative?`
+    };
   }
 }
 
-class Status implements Field {
-  title: string;
-  value: string;
-  short: boolean;
+class UpdateStatusActions implements Action {
+  type: 'actions' = 'actions';
+  elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.title = 'Status';
-    this.value = STATUS_DISPLAY[initiative.status].text;
-    this.short = true;
+    this.elements = Object.values(StatusUpdateAction).map(action => new ActionButton(initiative, action));
   }
 }
 
-class Name implements Field {
-  title: string;
-  value: string;
-  short: boolean;
-  constructor(initiative: InitiativeResponse) {
-    this.title = 'Name';
-    this.value = initiative.name;
-    this.short = true;
-  }
-}
-
-class StatusUpdateAction implements Action {
-  name: string;
-  text: string;
-  value: string;
-  type: string;
-  style: string;
-
-  constructor(initiative: InitiativeResponse, intent: StatusUpdateIntent) {
-    const { style, text, status } = STATUS_UPDATE_DISPLAY[intent];
-    this.name = intent;
-    this.style = style;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
-    this.text = text;
-    this.type = 'button'; //TODO what are the other options?
+class ActionButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {
+    this.action_id = action;
+    this.value = JSON.stringify({
+      initiativeId: initiative.initiativeId,
+      status: STATUS_UPDATE_DISPLAY[action].status
+    });
+    this.text = {
+      type: 'plain_text',
+      text: STATUS_UPDATE_DISPLAY[action].text
+    };
   }
 }

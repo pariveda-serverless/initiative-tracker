@@ -10,13 +10,15 @@ export async function getUserProfile(user: string): Promise<Profile> {
   console.log('Received profile result from Slack', profile);
   return {
     name: profile.real_name_normalized,
-    icon: profile.image_original ? profile.image_original : profile.image_512
+    icon: profile.image_original ? profile.image_original : profile.image_512,
+    slackUserId: user
   };
 }
 
 interface Profile {
   name: string;
   icon: string;
+  slackUserId: string;
 }
 
 interface ProfileResult extends WebAPICallResult {

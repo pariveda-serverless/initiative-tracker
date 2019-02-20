@@ -1,19 +1,38 @@
-import { Attachment, Message } from 'slack';
+import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { BasicInitiativeCard } from './initiative-card';
+import {
+  InitiativeNameStatusAndViewDetails,
+  InitiativeDescription,
+  MetaInformation,
+  Divider,
+  InitiativeListActions
+} from './initiative-card';
 import { Status } from '../status';
 import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
-  text: string;
-  response_type: 'in_channel' | 'ephemeral';
-  attachments: Attachment[];
+  channel: string;
+  text?: PlainText | MarkdownText;
+  blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiatives: InitiativeResponse[], status?: Status) {
-    this.response_type = 'ephemeral';
+    this.channel = 'CFSV0HX5X';
     if (!initiatives || !initiatives.length) {
       const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
-      this.text = `No ${search}initiatives found `;
+      this.text = { type: 'mrkdwn', text: `No ${search}initiatives found ` };
     }
-    this.attachments = initiatives.map(initiative => new BasicInitiativeCard(initiative, false));
+
+    this.blocks = initiatives
+      .map(initiative => {
+        const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
+        const description = new InitiativeDescription(initiative);
+        const metaInformation = new MetaInformation(initiative);
+        // const actions = new InitiativeListActions(initiative);
+        const divider = new Divider();
+        return [nameAndStatus, description, metaInformation, divider];
+        // return [nameAndStatus, description, metaInformation, actions, divider];
+      })
+      .reduce((all, block) => all.concat(block), [])
+      // Remove the last divider block
+      .slice(0, -1);
   }
 }

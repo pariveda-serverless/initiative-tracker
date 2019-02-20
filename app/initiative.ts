@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import * as id from 'nanoid';
 import { Status } from './status';
 import { MemberResponse } from './member';
 
@@ -28,7 +28,7 @@ export class CreateInitiativeRequest {
   createdAt: string;
 
   constructor({ name, description, createdBy, createdByIcon }: CreateInitiativeRequestProperties) {
-    this.initiativeId = v4();
+    this.initiativeId = id();
     this.name = name;
     this.description = description ? description : null;
     this.type = `${INITIATIVE_TYPE}`;

@@ -19,6 +19,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log('status', status);
     const initiatives = await getInitiatives(status);
     const message = new ListResponse(initiatives, status);
+    console.log(message);
+    console.log(JSON.stringify(message));
     success(message);
   } catch (err) {
     error(err);

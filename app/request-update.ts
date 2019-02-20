@@ -10,9 +10,12 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
     const initiative = await getInitiativeDetails(message.initiativeId);
-    const statusUpdateRequest = new StatusUpdateRequest(initiative);
     const champions = initiative.members.filter(member => member.champion);
-    await Promise.all(champions.map(champion => requestStatusUpdate(statusUpdateRequest, champion)));
+    await Promise.all(
+      champions
+        .map(champion => new StatusUpdateRequest(initiative, champion))
+        .map(request => requestStatusUpdate(request))
+    );
     success();
   } catch (err) {
     error(err);
