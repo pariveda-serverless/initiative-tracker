@@ -18,7 +18,7 @@ export class NameAndRole implements Section {
       text: `*Role*\n${MEMBER_DISPLAY[member.role].text}`
     };
     this.fields = [name, role];
-    this.accessory = { type: 'image', image_url: member.icon, alt_text: 'profile' };
+    // this.accessory = { type: 'image', image_url: member.icon, alt_text: 'profile' };
   }
 }
 
