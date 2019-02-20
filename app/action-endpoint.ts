@@ -88,7 +88,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case StatusUpdateAction.UPDATE_STATUS: {
+      case StatusUpdateAction.MARK_COMPLETE:
+      case StatusUpdateAction.MARK_ABANDONED:
+      case StatusUpdateAction.MARK_COMPLETE:
+      case StatusUpdateAction.MARK_ACTIVE: {
         const { initiativeId, status } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
@@ -96,7 +99,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-
       default: {
         response = new NotImplementedResponse(channel);
         break;

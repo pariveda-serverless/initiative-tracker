@@ -46,7 +46,7 @@ class UpdateStatusActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(Status).map(status => new ActionButton(initiative, status));
+    this.elements = Object.values(StatusUpdateAction).map(action => new ActionButton(initiative, action));
   }
 }
 
@@ -55,12 +55,15 @@ class ActionButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse, status: Status) {
-    this.action_id = StatusUpdateAction.UPDATE_STATUS;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
+  constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {
+    this.action_id = action;
+    this.value = JSON.stringify({
+      initiativeId: initiative.initiativeId,
+      status: STATUS_UPDATE_DISPLAY[action].status
+    });
     this.text = {
       type: 'plain_text',
-      text: STATUS_UPDATE_DISPLAY[status].text
+      text: STATUS_UPDATE_DISPLAY[action].text
     };
   }
 }
