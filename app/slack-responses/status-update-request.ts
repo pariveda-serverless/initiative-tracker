@@ -13,7 +13,8 @@ import { InitiativeResponse } from '../initiative';
 import { InitiativeNameAndStatus, InitiativeDescription, MetaInformation } from './initiative-card';
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
-import { STATUS_UPDATE_DISPLAY } from './display';
+import { STATUS_DISPLAY } from './display';
+import { Status } from '../status';
 
 export class StatusUpdateRequest implements Message {
   channel: string;
@@ -45,7 +46,7 @@ class UpdateStatusActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(StatusUpdateAction).map(intent => new ActionButton(initiative, intent));
+    this.elements = Object.values(Status).map(status => new ActionButton(initiative, status));
   }
 }
 
@@ -54,12 +55,12 @@ class ActionButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {
-    this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
+  constructor(initiative: InitiativeResponse, status: Status) {
+    this.action_id = StatusUpdateAction.UPDATE_STATUS;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
     this.text = {
       type: 'plain_text',
-      text: STATUS_UPDATE_DISPLAY[action].text
+      text: STATUS_DISPLAY[status].text
     };
   }
 }

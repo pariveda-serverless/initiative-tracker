@@ -17,8 +17,5 @@ export enum MemberAction {
 }
 
 export enum StatusUpdateAction {
-  MARK_ACTIVE = 'MARK_ACTIVE',
-  MARK_ON_HOLD = 'MARK_ON_HOLD',
-  MARK_COMPLETE = 'MARK_COMPLETE',
-  MARK_ABANDONED = 'MARK_ABANDONED'
+  UPDATE_STATUS = 'UPDATE_STATUS'
 }
