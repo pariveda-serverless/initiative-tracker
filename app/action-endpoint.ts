@@ -1,6 +1,5 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { post } from 'request-promise';
 import { InitiativeListAction, InitiativeDetailAction, MemberAction, StatusUpdateAction } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse } from './initiative';
@@ -9,12 +8,14 @@ import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { Message, Payload } from 'slack';
 import { Status } from './status';
+import { send } from './slack-calls/send-message';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const payload: Payload = JSON.parse(body.payload);
+    const responseUrl = payload.response_url;
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
     let response: Message;
@@ -101,15 +102,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    console.log(response);
-    console.log(JSON.stringify(response));
-    const params = {
-      url: payload.response_url,
-      method: 'POST',
-      simple: false,
-      body: JSON.stringify(response)
-    };
-    await post(params);
+    await send(responseUrl, response);
     success();
   } catch (err) {
     error(err);
