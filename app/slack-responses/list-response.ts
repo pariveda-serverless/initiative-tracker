@@ -1,7 +1,7 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
-  InitiativeNameAndStatus,
+  InitiativeNameStatusAndViewDetails,
   InitiativeDescription,
   MetaInformation,
   Divider,
@@ -23,12 +23,13 @@ export class ListResponse implements Message {
 
     this.blocks = initiatives
       .map(initiative => {
-        const nameAndStatus = new InitiativeNameAndStatus(initiative);
+        const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
         const description = new InitiativeDescription(initiative);
         const metaInformation = new MetaInformation(initiative);
-        const actions = new InitiativeListActions(initiative);
+        // const actions = new InitiativeListActions(initiative);
         const divider = new Divider();
-        return [nameAndStatus, description, metaInformation, actions, divider];
+        return [nameAndStatus, description, metaInformation, divider];
+        // return [nameAndStatus, description, metaInformation, actions, divider];
       })
       .reduce((all, block) => all.concat(block), [])
       // Remove the last divider block

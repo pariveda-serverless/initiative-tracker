@@ -31,6 +31,24 @@ export class InitiativeNameAndStatus implements Section {
   }
 }
 
+export class InitiativeNameStatusAndViewDetails implements Section {
+  type: 'section' = 'section';
+  fields?: (PlainText | MarkdownText)[];
+  accessory?: ImageContext | Button | StaticSelect;
+  constructor(initiative: InitiativeResponse) {
+    const name: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*Name*\n${initiative.name}`
+    };
+    const status: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
+    };
+    this.fields = [name, status];
+    this.accessory = new ActionButton(initiative, InitiativeListAction.VIEW_DETAILS);
+  }
+}
+
 export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
   fields?: (PlainText | MarkdownText)[];
