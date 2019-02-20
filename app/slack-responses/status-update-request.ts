@@ -13,7 +13,7 @@ import { InitiativeResponse } from '../initiative';
 import { InitiativeNameAndStatus, InitiativeDescription, MetaInformation } from './initiative-card';
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
-import { STATUS_DISPLAY } from './display';
+import { STATUS_UPDATE_DISPLAY } from './display';
 import { Status } from '../status';
 
 export class StatusUpdateRequest implements Message {
@@ -60,7 +60,7 @@ class ActionButton implements Button {
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
     this.text = {
       type: 'plain_text',
-      text: STATUS_DISPLAY[status].text
+      text: STATUS_UPDATE_DISPLAY[status].text
     };
   }
 }

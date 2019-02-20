@@ -24,7 +24,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case InitiativeListAction.JOIN_AS_MEMBER: {
@@ -32,35 +32,35 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, false);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case InitiativeListAction.VIEW_DETAILS: {
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case MemberAction.MAKE_CHAMPION: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await joinInitiativeHandler(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case MemberAction.MAKE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await joinInitiativeHandler(initiativeId, slackUserId, false);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case MemberAction.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, slackUserId);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case InitiativeDetailAction.JOIN_AS_CHAMPION: {
@@ -68,7 +68,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case InitiativeDetailAction.JOIN_AS_MEMBER: {
@@ -76,7 +76,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         await joinInitiativeHandler(initiativeId, slackUserId, false);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case InitiativeDetailAction.UPDATE_STATUS: {
@@ -84,14 +84,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case StatusUpdateAction.UPDATE_STATUS: {
         const { initiativeId, status } = JSON.parse(payload.actions[0].value);
+        const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, status);
         const initiative = await getInitiativeDetails(initiativeId);
-        response = new DetailResponse(initiative, channel);
+        response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
 

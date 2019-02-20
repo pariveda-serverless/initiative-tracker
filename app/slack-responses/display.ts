@@ -49,19 +49,19 @@ memberActions[MemberAction.MAKE_MEMBER] = <ActionDisplay>{
 };
 
 const statusUpdateIntents: ActionDisplay[] = [];
-statusUpdateIntents[StatusUpdateAction.MARK_ABANDONED] = <ActionDisplay>{
+statusUpdateIntents[Status.ABANDONED] = <ActionDisplay>{
   text: `Not being worked on`,
   status: Status.ABANDONED
 };
-statusUpdateIntents[StatusUpdateAction.MARK_COMPLETE] = <ActionDisplay>{
+statusUpdateIntents[Status.COMPLETE] = <ActionDisplay>{
   text: `Completed`,
   status: Status.COMPLETE
 };
-statusUpdateIntents[StatusUpdateAction.MARK_ACTIVE] = <ActionDisplay>{
+statusUpdateIntents[Status.ACTIVE] = <ActionDisplay>{
   text: `Actively being worked on`,
   status: Status.ACTIVE
 };
-statusUpdateIntents[StatusUpdateAction.MARK_ON_HOLD] = <ActionDisplay>{
+statusUpdateIntents[Status.ON_HOLD] = <ActionDisplay>{
   text: `On hold`,
   status: Status.ON_HOLD
 };

@@ -12,12 +12,14 @@ import { NameAndRole, MemberActions } from './member-card';
 export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: InitiativeResponse, channel?: string) {
+  constructor(initiative: InitiativeResponse, slackUserId: string, channel?: string) {
     this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
     const description = new InitiativeDescription(initiative);
     const metaInformation = new MetaInformation(initiative);
+
     const initiativeActions = new InitiativeDetailActions(initiative);
+
     const divider = new Divider();
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
