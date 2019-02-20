@@ -15,7 +15,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const initiativeRequest = new CreateInitiativeRequest({ name, description, createdBy, createdByIcon });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(initiativeRequest.initiativeId);
-    const message = new DetailResponse(initiativeDetails);
+    const message = new DetailResponse(initiativeDetails, slackUserId);
     console.log(message);
     console.log(JSON.stringify(message));
     success(message);
