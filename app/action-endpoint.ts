@@ -88,7 +88,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case StatusUpdateAction.MARK_COMPLETE:
+      case StatusUpdateAction.MARK_ON_HOLD:
       case StatusUpdateAction.MARK_ABANDONED:
       case StatusUpdateAction.MARK_COMPLETE:
       case StatusUpdateAction.MARK_ACTIVE: {
