@@ -8,7 +8,7 @@ export async function send(url: string, message: Message) {
     simple: false,
     body: JSON.stringify(message)
   };
-  console.log('Replying to message with params', params);
+  console.log('Replying to message with params', JSON.stringify(params));
   const response = await post(params);
   console.log('Received response', response);
 }
