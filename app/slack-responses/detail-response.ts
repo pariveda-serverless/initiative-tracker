@@ -13,14 +13,20 @@ export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, slackUserId: string, channel?: string) {
+    let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
     this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
     const description = new InitiativeDescription(initiative);
     const metaInformation = new MetaInformation(initiative);
-
-    const initiativeActions = new InitiativeDetailActions(initiative);
-
     const divider = new Divider();
+    blocks = [nameAndStatus, description, metaInformation];
+
+    // Only add the join buttons if the user isn't already a member
+    if (!initiative.members.find(member => member.slackUserId === slackUserId)) {
+      const initiativeActions = new InitiativeDetailActions(initiative);
+      blocks.push(initiativeActions);
+    }
+
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
@@ -30,6 +36,6 @@ export class DetailResponse implements Message {
       })
       .reduce((all, block) => all.concat(block), []);
     // Remove the last divider block
-    this.blocks = [nameAndStatus, description, metaInformation, initiativeActions, divider, ...members].slice(0, -1);
+    this.blocks = [...blocks, divider, ...members].slice(0, -1);
   }
 }
