@@ -10,5 +10,5 @@ export async function send(url: string, message: Message) {
   };
   console.log('Replying to message with params', JSON.stringify(params));
   const response = await post(params);
-  console.log('Received response', response);
+  console.log('Received response', JSON.stringify(response));
 }
