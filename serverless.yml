@@ -71,7 +71,7 @@ functions:
     handler: app/initiate-update-request.handler
     events:
       - schedule: cron(0 15 ? * MON *) # 3PM UTC (10 AM EST) every Monday
-      - schedule: cron(0/5 * * * ? *) # every 5 minutes for testing
+      # - schedule: cron(0/5 * * * ? *) # every 5 minutes for testing
 
   request-update:
     handler: app/request-update.handler
