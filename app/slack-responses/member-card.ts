@@ -11,7 +11,7 @@ export class NameAndRole implements Section {
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Name*\n${member.name}`
+      text: `*Name*\n<@${member.slackUserId}>`
     };
     const role: MarkdownText = {
       type: 'mrkdwn',
