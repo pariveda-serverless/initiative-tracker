@@ -73,11 +73,11 @@ export class CreatedBy implements ContextBlock {
     const createdByIcon: ImageContext = {
       type: 'image',
       image_url: initiative.createdBy.icon,
-      alt_text: 'img'
+      alt_text: initiative.createdBy.name
     };
     const createdBy: MarkdownText = {
       type: 'mrkdwn',
-      text: `<@${initiative.createdBy.slackUserId}> added this initiative on ${initiative.createdAt}`
+      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
     };
     this.elements = [createdByIcon, createdBy];
   }
