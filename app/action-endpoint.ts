@@ -36,28 +36,28 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case MemberAction.MAKE_MEMBER:
+      // case MemberAction.MAKE_MEMBER:
+      // case MemberAction.MAKE_CHAMPION: {
+      //   const { initiativeId, slackUserId, champion } = JSON.parse(payload.actions[0].value);
+      //   await changeMembership(initiativeId, slackUserId, champion);
+      //   const initiative = await getInitiativeDetails(initiativeId);
+      //   response = new DetailResponse(initiative, slackUserId, channel);
+      //   break;
+      // }
       case MemberAction.MAKE_CHAMPION: {
-        const { initiativeId, slackUserId, champion } = JSON.parse(payload.actions[0].value);
-        await changeMembership(initiativeId, slackUserId, champion);
+        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
+        await changeMembership(initiativeId, slackUserId, true);
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      // case MemberAction.MAKE_CHAMPION: {
-      //   const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-      //   await joinInitiativeHandler(initiativeId, slackUserId, true);
-      //   const initiative = await getInitiativeDetails(initiativeId);
-      //   response = new DetailResponse(initiative, slackUserId, channel);
-      //   break;
-      // }
-      // case MemberAction.MAKE_MEMBER: {
-      //   const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-      //   await joinInitiativeHandler(initiativeId, slackUserId, false);
-      //   const initiative = await getInitiativeDetails(initiativeId);
-      //   response = new DetailResponse(initiative, slackUserId, channel);
-      //   break;
-      // }
+      case MemberAction.MAKE_MEMBER: {
+        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
+        await changeMembership(initiativeId, slackUserId, false);
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new DetailResponse(initiative, slackUserId, channel);
+        break;
+      }
       case MemberAction.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, slackUserId);

@@ -66,9 +66,8 @@ class ChangeMembershipActionButton implements Button {
   confirm?: Confirmation;
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
-    const champion = action === MemberAction.MAKE_MEMBER;
     this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId, champion });
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
     this.text = {
       type: 'plain_text',
       text: MEMBER_ACTION_DISPLAY[action].text

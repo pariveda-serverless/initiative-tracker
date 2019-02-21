@@ -13,18 +13,18 @@ export class ListResponse implements Message {
     if (!initiatives || !initiatives.length) {
       const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
       this.text = { type: 'mrkdwn', text: `No ${search}initiatives found ` };
+    } else {
+      this.blocks = initiatives
+        .map(initiative => {
+          const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
+          const description = new InitiativeDescription(initiative);
+          const metaInformation = new CreatedBy(initiative);
+          const divider = new Divider();
+          return [nameAndStatus, description, metaInformation, divider];
+        })
+        .reduce((all, block) => all.concat(block), [])
+        // Remove the last divider block
+        .slice(0, -1);
     }
-
-    this.blocks = initiatives
-      .map(initiative => {
-        const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
-        const description = new InitiativeDescription(initiative);
-        const metaInformation = new CreatedBy(initiative);
-        const divider = new Divider();
-        return [nameAndStatus, description, metaInformation, divider];
-      })
-      .reduce((all, block) => all.concat(block), [])
-      // Remove the last divider block
-      .slice(0, -1);
   }
 }
