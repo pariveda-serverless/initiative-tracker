@@ -20,18 +20,18 @@ export class NameAndRole implements ContextBlock {
   constructor(member: MemberResponse) {
     const role: MarkdownText = {
       type: 'mrkdwn',
-      text: `*${MEMBER_DISPLAY[member.role].text}*`
+      text: `*${MEMBER_DISPLAY[member.role].text}:*`
+    };
+    const joined: MarkdownText = {
+      type: 'mrkdwn',
+      text: `<@${member.slackUserId}> joined this initiative on ${member.joinedAt}`
     };
     const icon: ImageContext = {
       type: 'image',
       image_url: member.icon,
       alt_text: 'img'
     };
-    const joined: MarkdownText = {
-      type: 'mrkdwn',
-      text: `<@${member.slackUserId}> joined this initiative on ${member.joinedAt}`
-    };
-    this.elements = [role, icon, joined];
+    this.elements = [role, joined, icon];
   }
 }
 
