@@ -1,4 +1,44 @@
 declare module 'slack' {
+  export type ActionResponse = Dialog | Message;
+  // https://api.slack.com/dialogs#implementation
+  export interface Dialog {
+    title: string;
+    callback_id: string;
+    elements: (TextElement | SelectElement)[];
+    state?: string;
+    submit_label?: string;
+    notify_on_cancel?: string;
+  }
+
+  // https://api.slack.com/dialogs#elements
+  export interface TextElement {
+    label: string;
+    name: string;
+    type: string;
+    max_length?: number;
+    min_length?: number;
+    optional?: boolean;
+    hint?: string;
+    subtype?: string;
+    value?: string;
+    placeholder?: string;
+  }
+
+  // https://api.slack.com/dialogs#elements
+  export interface SelectElement {
+    label: string;
+    name: string;
+    type?: string;
+    data_source?: 'users' | 'channels' | 'conversations' | 'external';
+    min_query_length?: number;
+    placeholder?: string;
+    optional?: boolean;
+    value?: string;
+    selected_options?: string[];
+    options?: string[];
+    option_groups?: string[];
+  }
+
   // https://api.slack.com/reference/messaging/payload
   export interface Message {
     channel?: string;
@@ -119,6 +159,7 @@ declare module 'slack' {
     actions: [
       {
         action_id: string;
+        callback_id: string;
         block_id: string;
         text: {
           type: string;

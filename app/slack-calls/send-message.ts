@@ -1,7 +1,7 @@
 import { post } from 'request-promise';
-import { Message } from 'slack';
+import { ActionResponse } from 'slack';
 
-export async function send(url: string, message: Message) {
+export async function send(url: string, message: ActionResponse) {
   const params = {
     url,
     method: 'POST',

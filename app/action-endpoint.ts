@@ -1,10 +1,11 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Message, Payload } from 'slack';
+import { Message, Payload, Dialog, ActionResponse } from 'slack';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
+import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
 import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { send } from './slack-calls/send-message';
@@ -17,7 +18,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
-    let response: Message;
+    let response: ActionResponse;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
@@ -33,6 +34,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        break;
+      }
+      case InitiativeAction.OPEN_EDIT_DIALOG: {
+        const { initiativeId } = JSON.parse(payload.actions[0].value);
+        const callback_id = payload.actions[0].callback_id;
+        // const slackUserId = payload.user.id;
+        const initiative = await getInitiativeDetails(initiativeId);
+        response = new EditInitiativeDialogResponse(initiative, callback_id);
         break;
       }
       case MemberAction.MAKE_CHAMPION: {
