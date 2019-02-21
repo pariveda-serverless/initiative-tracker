@@ -67,8 +67,9 @@ custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
   customDomain:
-    domainName: api.initiative.ninja
+    basePath: ${opt:stage, self:provider.stage}
     certificateName: '*.initiative.ninja'
+    domainName: api.initiative.ninja
 
 functions:
   initiate-update-request:
