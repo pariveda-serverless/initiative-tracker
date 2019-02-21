@@ -14,37 +14,24 @@ import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
 import { MemberAction } from '../interactions';
 
-export class NameAndRole implements Section {
-  type: 'section' = 'section';
-  fields?: (PlainText | MarkdownText)[];
-  accessory?: ImageContext | Button | StaticSelect;
-  constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    const name: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*\n<@${member.slackUserId}>`
-    };
-    const role: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Role*\n${MEMBER_DISPLAY[member.role].text}`
-    };
-    this.fields = [name, role];
-  }
-}
-
-export class Joined implements ContextBlock {
+export class NameAndRole implements ContextBlock {
   type: 'context' = 'context';
   elements: (ImageContext | PlainText | MarkdownText)[];
   constructor(member: MemberResponse) {
-    const createdByIcon: ImageContext = {
+    const role: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*${MEMBER_DISPLAY[member.role].text}*`
+    };
+    const icon: ImageContext = {
       type: 'image',
       image_url: member.icon,
       alt_text: 'img'
     };
-    const createdBy: MarkdownText = {
+    const joined: MarkdownText = {
       type: 'mrkdwn',
-      text: `${member.name} joined this initiative on ${member.joinedAt}`
+      text: `<@${member.slackUserId}> joined this initiative on ${member.joinedAt}`
     };
-    this.elements = [createdByIcon, createdBy];
+    this.elements = [role, icon, joined];
   }
 }
 

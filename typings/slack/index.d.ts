@@ -80,7 +80,6 @@ declare module 'slack' {
   export interface MarkdownText {
     type: 'mrkdwn';
     text: string;
-    emoji?: boolean;
     verbatim?: boolean;
   }
 

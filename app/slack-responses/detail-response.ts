@@ -7,7 +7,7 @@ import {
   CreatedBy,
   InitiativeDetailActions
 } from './initiative-card';
-import { NameAndRole, MemberActions, Joined } from './member-card';
+import { NameAndRole, MemberActions } from './member-card';
 
 export class DetailResponse implements Message {
   channel: string;
@@ -30,10 +30,9 @@ export class DetailResponse implements Message {
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
-        const nameAndRole = new NameAndRole(member, initiative);
-        const joined = new Joined(member);
+        const nameAndRole = new NameAndRole(member);
         const memberActions = new MemberActions(member, initiative);
-        return [nameAndRole, joined, memberActions, divider];
+        return [nameAndRole, memberActions, divider];
       })
       .reduce((all, block) => all.concat(block), []);
     // Remove the last divider block
