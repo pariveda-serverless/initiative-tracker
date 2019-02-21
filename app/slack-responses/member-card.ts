@@ -1,24 +1,37 @@
-import { Section, PlainText, MarkdownText, ImageContext, Button, StaticSelect, Action, Confirmation } from 'slack';
+import {
+  Section,
+  PlainText,
+  MarkdownText,
+  ImageContext,
+  Button,
+  StaticSelect,
+  Action,
+  Confirmation,
+  ContextBlock
+} from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
 import { MemberAction } from '../interactions';
 
-export class NameAndRole implements Section {
-  type: 'section' = 'section';
-  fields?: (PlainText | MarkdownText)[];
-  accessory?: ImageContext | Button | StaticSelect;
-  constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    const name: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*\n${member.name}`
-    };
+export class NameAndRole implements ContextBlock {
+  type: 'context' = 'context';
+  elements: (ImageContext | PlainText | MarkdownText)[];
+  constructor(member: MemberResponse) {
     const role: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Role*\n${MEMBER_DISPLAY[member.role].text}`
+      text: `*${MEMBER_DISPLAY[member.role].text}*`
     };
-    this.fields = [name, role];
-    this.accessory = { type: 'image', image_url: member.icon, alt_text: 'profile' };
+    const icon: ImageContext = {
+      type: 'image',
+      image_url: member.icon,
+      alt_text: member.name
+    };
+    const joined: MarkdownText = {
+      type: 'mrkdwn',
+      text: `<@${member.slackUserId}> joined on ${member.joinedAt}`
+    };
+    this.elements = [role, icon, joined];
   }
 }
 
@@ -26,19 +39,38 @@ export class MemberActions implements Action {
   type: 'actions' = 'actions';
   elements: Button[];
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    this.elements = Object.values(MemberAction)
-      .filter(intent => (member.champion ? intent !== MemberAction.MAKE_CHAMPION : intent !== MemberAction.MAKE_MEMBER))
-      .map(intent => new ActionButton(member, initiative, intent));
+    const changeMembership = new ChangeMembershipActionButton(member, initiative);
+    const remove = new RemoveMembershipActionButton(member, initiative);
+    this.elements = [changeMembership, remove];
   }
 }
 
-class ActionButton implements Button {
+class ChangeMembershipActionButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
   value?: string;
   confirm?: Confirmation;
-  constructor(member: MemberResponse, initiative: InitiativeResponse, action: MemberAction) {
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
+    this.action_id = action;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+    this.text = {
+      type: 'plain_text',
+      text: MEMBER_ACTION_DISPLAY[action].text
+    };
+    this.confirm = new ConfirmAction(member, action);
+  }
+}
+
+class RemoveMembershipActionButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  confirm?: Confirmation;
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    const action = MemberAction.REMOVE_MEMBER;
     this.action_id = action;
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
     this.text = {

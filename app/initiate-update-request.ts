@@ -1,8 +1,7 @@
 import { SNS } from 'aws-sdk';
 import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeResponse } from './initiative';
+import { InitiativeResponse, Status } from './initiative';
 import { getInitiatives } from './list-initiatives';
-import { Status } from './status';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
 

@@ -4,7 +4,7 @@ import {
   InitiativeNameStatusAndUpdateStatus,
   InitiativeDescription,
   Divider,
-  MetaInformation,
+  CreatedBy,
   InitiativeDetailActions
 } from './initiative-card';
 import { NameAndRole, MemberActions } from './member-card';
@@ -17,7 +17,7 @@ export class DetailResponse implements Message {
     this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
     const description = new InitiativeDescription(initiative);
-    const metaInformation = new MetaInformation(initiative);
+    const metaInformation = new CreatedBy(initiative);
     const divider = new Divider();
     blocks = [nameAndStatus, description, metaInformation];
 
@@ -30,7 +30,7 @@ export class DetailResponse implements Message {
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
-        const nameAndRole = new NameAndRole(member, initiative);
+        const nameAndRole = new NameAndRole(member);
         const memberActions = new MemberActions(member, initiative);
         return [nameAndRole, memberActions, divider];
       })

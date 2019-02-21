@@ -6,6 +6,7 @@ plugins:
   - serverless-webpack
   - serverless-plugin-iam-checker
   - serverless-cloudformation-resource-counter
+  - serverless-domain-manager
 
 provider:
   name: aws
@@ -65,6 +66,10 @@ provider:
 custom:
   typeIndex: TYPE_INDEX
   statusIndex: STATUS_INDEX
+  customDomain:
+    basePath: ${opt:stage, self:provider.stage}
+    certificateName: initiative.ninja
+    domainName: initiative.ninja
 
 functions:
   initiate-update-request:
@@ -78,19 +83,19 @@ functions:
     events:
       - sns: request-update-${opt:stage, self:provider.stage}
 
-  create-initiative:
-    handler: app/create-initiative.handler
+  add-initiative:
+    handler: app/add-initiative.handler
     events:
       - http:
           method: post
-          path: initiatives/create
+          path: add
 
   list-initiatives:
     handler: app/list-initiatives.handler
     events:
       - http:
           method: post
-          path: initiatives/list
+          path: list
 
   action-endpoint:
     handler: app/action-endpoint.handler

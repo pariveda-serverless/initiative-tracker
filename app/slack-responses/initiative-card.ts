@@ -10,10 +10,9 @@ import {
   DividerBlock,
   ContextBlock
 } from 'slack';
-import { InitiativeResponse } from '../initiative';
+import { InitiativeResponse, Status } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
-import { InitiativeListAction, InitiativeDetailAction } from '../interactions';
-import { Status } from '../status';
+import { InitiativeAction } from '../interactions';
 
 export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
@@ -45,7 +44,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
       text: `*Status*\n${STATUS_DISPLAY[initiative.status].text}`
     };
     this.fields = [name, status];
-    this.accessory = new ActionButton(initiative, InitiativeListAction.VIEW_DETAILS);
+    this.accessory = new ViewDetailsActionButton(initiative);
   }
 }
 
@@ -67,18 +66,18 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
   }
 }
 
-export class MetaInformation implements ContextBlock {
+export class CreatedBy implements ContextBlock {
   type: 'context' = 'context';
   elements: (ImageContext | PlainText | MarkdownText)[];
   constructor(initiative: InitiativeResponse) {
     const createdByIcon: ImageContext = {
       type: 'image',
-      image_url: initiative.createdByIcon,
-      alt_text: 'img'
+      image_url: initiative.createdBy.icon,
+      alt_text: initiative.createdBy.name
     };
     const createdBy: MarkdownText = {
       type: 'mrkdwn',
-      text: `Created by ${initiative.createdBy} on ${initiative.createdAt}`
+      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
     };
     this.elements = [createdByIcon, createdBy];
   }
@@ -99,28 +98,37 @@ export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeDetailAction)
-      .filter(action => action !== InitiativeDetailAction.UPDATE_STATUS)
-      .map(action => new ActionButton(initiative, action));
+    const joinAsMember = new JoinActionButton(initiative, false);
+    const joinAsChampion = new JoinActionButton(initiative, true);
+    this.elements = [joinAsMember, joinAsChampion];
   }
 }
 
-export class InitiativeListActions implements Action {
-  type: 'actions' = 'actions';
-  elements: (StaticSelect | Button)[];
-  constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(InitiativeListAction).map(action => new ActionButton(initiative, action));
-  }
-}
-
-class ActionButton implements Button {
+class ViewDetailsActionButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse, action: InitiativeDetailAction | InitiativeListAction) {
+  constructor(initiative: InitiativeResponse) {
+    const action = InitiativeAction.VIEW_DETAILS;
     this.action_id = action;
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
+    this.text = {
+      type: 'plain_text',
+      text: INITIATIVE_ACTION_DISPLAY[action].text
+    };
+  }
+}
+
+class JoinActionButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse, champion: boolean) {
+    const action = champion ? InitiativeAction.JOIN_AS_CHAMPION : InitiativeAction.JOIN_AS_MEMBER;
+    this.action_id = action;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, champion });
     this.text = {
       type: 'plain_text',
       text: INITIATIVE_ACTION_DISPLAY[action].text
@@ -140,10 +148,10 @@ export class StatusUpdate implements StaticSelect {
   constructor(initiative: InitiativeResponse) {
     this.placeholder = {
       type: 'plain_text',
-      text: INITIATIVE_ACTION_DISPLAY[InitiativeDetailAction.UPDATE_STATUS].text
+      text: INITIATIVE_ACTION_DISPLAY[InitiativeAction.UPDATE_STATUS].text
     };
     this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
-    this.action_id = InitiativeDetailAction.UPDATE_STATUS;
+    this.action_id = InitiativeAction.UPDATE_STATUS;
   }
 }
 

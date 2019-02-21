@@ -1,13 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse } from '../initiative';
-import {
-  InitiativeNameStatusAndViewDetails,
-  InitiativeDescription,
-  MetaInformation,
-  Divider,
-  InitiativeListActions
-} from './initiative-card';
-import { Status } from '../status';
+import { InitiativeResponse, Status } from '../initiative';
+import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiative-card';
 import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
@@ -19,20 +12,18 @@ export class ListResponse implements Message {
     if (!initiatives || !initiatives.length) {
       const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
       this.text = { type: 'mrkdwn', text: `No ${search}initiatives found ` };
+    } else {
+      this.blocks = initiatives
+        .map(initiative => {
+          const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
+          const description = new InitiativeDescription(initiative);
+          const metaInformation = new CreatedBy(initiative);
+          const divider = new Divider();
+          return [nameAndStatus, description, metaInformation, divider];
+        })
+        .reduce((all, block) => all.concat(block), [])
+        // Remove the last divider block
+        .slice(0, -1);
     }
-
-    this.blocks = initiatives
-      .map(initiative => {
-        const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
-        const description = new InitiativeDescription(initiative);
-        const metaInformation = new MetaInformation(initiative);
-        // const actions = new InitiativeListActions(initiative);
-        const divider = new Divider();
-        return [nameAndStatus, description, metaInformation, divider];
-        // return [nameAndStatus, description, metaInformation, actions, divider];
-      })
-      .reduce((all, block) => all.concat(block), [])
-      // Remove the last divider block
-      .slice(0, -1);
   }
 }

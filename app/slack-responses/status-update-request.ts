@@ -10,11 +10,10 @@ import {
   Button
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { InitiativeNameAndStatus, InitiativeDescription, MetaInformation } from './initiative-card';
+import { InitiativeNameAndStatus, InitiativeDescription, CreatedBy } from './initiative-card';
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
 import { STATUS_UPDATE_DISPLAY } from './display';
-import { Status } from '../status';
 
 export class StatusUpdateRequest implements Message {
   channel: string;
@@ -25,7 +24,7 @@ export class StatusUpdateRequest implements Message {
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new InitiativeNameAndStatus(initiative);
     const description = new InitiativeDescription(initiative);
-    const metaInformation = new MetaInformation(initiative);
+    const metaInformation = new CreatedBy(initiative);
     const updateActions = new UpdateStatusActions(initiative);
     this.blocks = [requestInfo, nameAndStatus, description, metaInformation, updateActions];
   }
