@@ -1,6 +1,12 @@
 import * as id from 'nanoid';
-import { Status } from './status';
 import { MemberResponse } from './member';
+
+export enum Status {
+  ACTIVE = 'ACTIVE',
+  COMPLETE = 'COMPLETE',
+  ABANDONED = 'ABANDONED',
+  ON_HOLD = 'ON_HOLD'
+}
 
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 

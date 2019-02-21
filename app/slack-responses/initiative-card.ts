@@ -10,10 +10,9 @@ import {
   DividerBlock,
   ContextBlock
 } from 'slack';
-import { InitiativeResponse } from '../initiative';
+import { InitiativeResponse, Status } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
 import { InitiativeAction } from '../interactions';
-import { Status } from '../status';
 
 export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';

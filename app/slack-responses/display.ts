@@ -1,4 +1,4 @@
-import { Status } from '../status';
+import { Status } from '../initiative';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from '../interactions';
 
 export const YELLOW = '#FCF500';
