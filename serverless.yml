@@ -88,14 +88,14 @@ functions:
     events:
       - http:
           method: post
-          path: add-initiative
+          path: add
 
-  show-initiatives:
-    handler: app/show-initiatives.handler
+  list-initiatives:
+    handler: app/list-initiatives.handler
     events:
       - http:
           method: post
-          path: show-initiatives
+          path: list
 
   action-endpoint:
     handler: app/action-endpoint.handler
