@@ -68,7 +68,7 @@ custom:
   statusIndex: STATUS_INDEX
   customDomain:
     domainName: api.initiative.ninja
-    certificateName: '*initiative.ninja'
+    certificateName: '*.initiative.ninja'
 
 functions:
   initiate-update-request:
