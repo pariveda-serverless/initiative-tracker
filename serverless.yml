@@ -30,16 +30,7 @@ provider:
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
     SLACK_ACCESS_TOKEN: ${env:SLACK_ACCESS_TOKEN}
-    SLACK_REDIRECT_URI:
-      Fn::Join:
-        - ''
-        - - 'https://'
-          - { Ref: ApiGatewayRestApi }
-          - '.execute-api.'
-          - { Ref: AWS::Region }
-          - '.'
-          - { Ref: AWS::URLSuffix }
-          - '/${opt:stage, self:provider.stage}/redirect'
+    SLACK_REDIRECT_URI: 'https://initiative.ninja/${opt:stage, self:provider.stage}/auth/redirect'
   iamRoleStatements:
     - Effect: Allow
       Action:
