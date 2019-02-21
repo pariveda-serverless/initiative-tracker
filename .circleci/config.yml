@@ -55,10 +55,16 @@ anchors:
       - *load-dependency-cache
       - *configure-aws-access
       - run:
-          name: Deploy stack
+          name: Deploy custom domain stage
           command: |
             [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
-            echo Deploying for stage $STAGE
+            echo Deploying custom domain stage for stage $STAGE
+            npm run deploy-domain -- --stage $STAGE
+      - run:
+          name: Deploy API
+          command: |
+            [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
+            echo Deploying API for stage $STAGE
             npm run deploy -- --stage $STAGE
       # - persist_to_workspace:
       #     root: .
