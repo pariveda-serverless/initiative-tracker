@@ -1,12 +1,7 @@
-export enum InitiativeListAction {
+export enum InitiativeAction {
   JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
   JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
-  VIEW_DETAILS = 'VIEW_DETAILS'
-}
-
-export enum InitiativeDetailAction {
-  JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
-  JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
+  VIEW_DETAILS = 'VIEW_DETAILS',
   UPDATE_STATUS = 'UPDATE_STATUS'
 }
 

@@ -7,6 +7,7 @@ export class CreateMemberRequest {
   slackUserId: string;
   champion: boolean;
   icon: string;
+  joinedAt: string;
 
   constructor({ initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
     this.initiativeId = initiativeId;
@@ -15,6 +16,7 @@ export class CreateMemberRequest {
     this.slackUserId = slackUserId;
     this.champion = champion;
     this.icon = icon;
+    this.joinedAt = new Date().toDateString();
   }
 }
 
@@ -33,6 +35,7 @@ export class MemberResponse {
   role: string;
   slackUserId: string;
   icon: string;
+  joinedAt: string;
 
   constructor(record: any) {
     this.initiativeId = record.initaitiveId;
@@ -41,6 +44,7 @@ export class MemberResponse {
     this.role = record.champion ? 'CHAMPION' : 'MEMBER';
     this.slackUserId = record.slackUserId;
     this.icon = record.icon;
+    this.joinedAt = record.joinedAt;
   }
 }
 

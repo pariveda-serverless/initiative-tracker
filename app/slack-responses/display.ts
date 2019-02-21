@@ -1,5 +1,5 @@
 import { Status } from '../status';
-import { InitiativeListAction, InitiativeDetailAction, MemberAction, StatusUpdateAction } from '../interactions';
+import { InitiativeAction, MemberAction, StatusUpdateAction } from '../interactions';
 
 export const YELLOW = '#FCF500';
 export const PINK = '#FF1C7D';
@@ -15,22 +15,16 @@ statuses[Status.ABANDONED] = <StatusDisplay>{ color: PINK, text: 'Abandoned' };
 statuses[Status.ON_HOLD] = <StatusDisplay>{ color: ORANGE, text: 'On hold' };
 
 const initiativeActions: ActionDisplay[] = [];
-initiativeActions[InitiativeDetailAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
+initiativeActions[InitiativeAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
   text: 'Champion this initiative'
 };
-initiativeActions[InitiativeDetailAction.JOIN_AS_MEMBER] = <ActionDisplay>{
+initiativeActions[InitiativeAction.JOIN_AS_MEMBER] = <ActionDisplay>{
   text: 'Join this initiative'
 };
-initiativeActions[InitiativeDetailAction.UPDATE_STATUS] = <ActionDisplay>{
+initiativeActions[InitiativeAction.UPDATE_STATUS] = <ActionDisplay>{
   text: 'Update status'
 };
-initiativeActions[InitiativeListAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
-  text: 'Champion this initiative'
-};
-initiativeActions[InitiativeListAction.JOIN_AS_MEMBER] = <ActionDisplay>{
-  text: 'Join this initiative'
-};
-initiativeActions[InitiativeListAction.VIEW_DETAILS] = <ActionDisplay>{
+initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
   text: 'View initiative details'
 };
 

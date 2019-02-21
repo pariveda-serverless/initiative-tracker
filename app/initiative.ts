@@ -13,8 +13,11 @@ export interface InitiativeRecord {
 interface CreateInitiativeRequestProperties {
   name: string;
   description?: string;
-  createdBy: string;
-  createdByIcon: string;
+  createdBy: {
+    slackUserId: string;
+    name: string;
+    icon: string;
+  };
 }
 
 export class CreateInitiativeRequest {
@@ -23,18 +26,21 @@ export class CreateInitiativeRequest {
   name: string;
   description: string;
   status: Status;
-  createdBy: string;
-  createdByIcon: string;
+  createdBy: {
+    slackUserId: string;
+    name: string;
+    icon: string;
+  };
+  createdBySlackUserId: string;
   createdAt: string;
 
-  constructor({ name, description, createdBy, createdByIcon }: CreateInitiativeRequestProperties) {
+  constructor({ name, description, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = id();
     this.name = name;
     this.description = description ? description : null;
     this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
-    this.createdByIcon = createdByIcon;
     this.createdAt = new Date().toDateString();
   }
 }
@@ -45,8 +51,11 @@ export class InitiativeResponse {
   description: string;
   status: Status;
   members?: MemberResponse[];
-  createdBy: string;
-  createdByIcon: string;
+  createdBy: {
+    slackUserId: string;
+    name: string;
+    icon: string;
+  };
   createdAt: number;
 
   constructor(record: InitiativeRecord) {
@@ -56,6 +65,5 @@ export class InitiativeResponse {
     this.status = record.status;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
-    this.createdByIcon = record.createdByIcon;
   }
 }

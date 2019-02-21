@@ -4,10 +4,10 @@ import {
   InitiativeNameStatusAndUpdateStatus,
   InitiativeDescription,
   Divider,
-  MetaInformation,
+  CreatedBy,
   InitiativeDetailActions
 } from './initiative-card';
-import { NameAndRole, MemberActions } from './member-card';
+import { NameAndRole, MemberActions, Joined } from './member-card';
 
 export class DetailResponse implements Message {
   channel: string;
@@ -17,7 +17,7 @@ export class DetailResponse implements Message {
     this.channel = channel;
     const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
     const description = new InitiativeDescription(initiative);
-    const metaInformation = new MetaInformation(initiative);
+    const metaInformation = new CreatedBy(initiative);
     const divider = new Divider();
     blocks = [nameAndStatus, description, metaInformation];
 
@@ -31,8 +31,9 @@ export class DetailResponse implements Message {
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
         const nameAndRole = new NameAndRole(member, initiative);
+        const joined = new Joined(member);
         const memberActions = new MemberActions(member, initiative);
-        return [nameAndRole, memberActions, divider];
+        return [nameAndRole, joined, memberActions, divider];
       })
       .reduce((all, block) => all.concat(block), []);
     // Remove the last divider block
