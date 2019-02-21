@@ -69,7 +69,7 @@ custom:
   customDomain:
     basePath: ${opt:stage, self:provider.stage}
     certificateName: '*.initiative.ninja'
-    domainName: api.initiative.ninja
+    domainName: initiative.ninja
 
 functions:
   initiate-update-request:
