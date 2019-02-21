@@ -1,6 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { InitiativeNameStatusAndViewDetails, InitiativeDescription, MetaInformation, Divider } from './initiative-card';
+import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiative-card';
 import { Status } from '../status';
 import { STATUS_DISPLAY } from './display';
 
@@ -19,7 +19,7 @@ export class ListResponse implements Message {
       .map(initiative => {
         const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
         const description = new InitiativeDescription(initiative);
-        const metaInformation = new MetaInformation(initiative);
+        const metaInformation = new CreatedBy(initiative);
         const divider = new Divider();
         return [nameAndStatus, description, metaInformation, divider];
       })
