@@ -108,14 +108,14 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: initiativeId
+          - AttributeName: grouping
             AttributeType: S
           - AttributeName: type
             AttributeType: S
           - AttributeName: status
             AttributeType: S
         KeySchema:
-          - AttributeName: initiativeId
+          - AttributeName: grouping
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
@@ -125,7 +125,7 @@ resources:
             KeySchema:
               - AttributeName: type
                 KeyType: HASH
-              - AttributeName: initiativeId
+              - AttributeName: grouping
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

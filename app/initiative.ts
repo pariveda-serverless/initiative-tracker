@@ -11,13 +11,14 @@ export enum Status {
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 
 export interface InitiativeRecord {
-  initiativeId: string;
+  grouping: string;
   type: string;
   [key: string]: any;
 }
 
 interface CreateInitiativeRequestProperties {
   name: string;
+  teamId: string;
   description?: string;
   createdBy: {
     slackUserId: string;
@@ -27,8 +28,10 @@ interface CreateInitiativeRequestProperties {
 }
 
 export class CreateInitiativeRequest {
-  initiativeId: string;
+  grouping: string;
   type: string;
+  teamId: string;
+  initiativeId: string;
   name: string;
   description: string;
   status: Status;
@@ -40,11 +43,14 @@ export class CreateInitiativeRequest {
   createdBySlackUserId: string;
   createdAt: string;
 
-  constructor({ name, description, createdBy }: CreateInitiativeRequestProperties) {
-    this.initiativeId = id();
+  constructor({ name, teamId, description, createdBy }: CreateInitiativeRequestProperties) {
+    const initiativeId = id();
+    this.grouping = `${teamId}:${initiativeId}`;
+    this.type = `${INITIATIVE_TYPE}`;
+    this.teamId = teamId;
+    this.initiativeId = initiativeId;
     this.name = name;
     this.description = description ? description : null;
-    this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
     this.createdAt = new Date().toDateString();

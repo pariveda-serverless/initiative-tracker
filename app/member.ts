@@ -1,17 +1,19 @@
 export const MEMBER_TYPE: string = 'MEMBER:';
 
 export class CreateMemberRequest {
-  initiativeId: string;
+  grouping: string;
   type: string;
+  initiativeId: string;
   name: string;
   slackUserId: string;
   champion: boolean;
   icon: string;
   joinedAt: string;
 
-  constructor({ initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
-    this.initiativeId = initiativeId;
+  constructor({ teamId, initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
+    this.grouping = `${teamId}:${initiativeId}`;
     this.type = `${MEMBER_TYPE}${slackUserId}`;
+    this.initiativeId = initiativeId;
     this.name = name;
     this.slackUserId = slackUserId;
     this.champion = champion;
@@ -21,6 +23,7 @@ export class CreateMemberRequest {
 }
 
 interface CreateMemberRequestProperties {
+  teamId: string;
   initiativeId: string;
   name: string;
   slackUserId: string;

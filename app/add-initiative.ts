@@ -9,12 +9,13 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    const teamId = body.team_id;
     const createdBy = await getUserProfile(body.user_id);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
-    const initiativeRequest = new CreateInitiativeRequest({ name, description, createdBy });
+    const initiativeRequest = new CreateInitiativeRequest({ name, teamId, description, createdBy });
     await saveInitiative(initiativeRequest);
-    const initiativeDetails = await getInitiativeDetails(initiativeRequest.initiativeId);
+    const initiativeDetails = await getInitiativeDetails(teamId, initiativeRequest.initiativeId);
     const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
     console.log(message);
     console.log(JSON.stringify(message));
@@ -30,12 +31,12 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return initiatives.put(params).promise();
 }
 
-async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    KeyConditionExpression: '#initiativeId = :initiativeId',
-    ExpressionAttributeNames: { '#initiativeId': 'initiativeId' },
-    ExpressionAttributeValues: { ':initiativeId': initiativeId }
+    KeyConditionExpression: '#grouping = :grouping',
+    ExpressionAttributeNames: { '#grouping': 'grouping' },
+    ExpressionAttributeValues: { ':grouping': `${teamId}:${initiativeId}` }
   };
   console.log('Getting initiative details with params', params);
   const records = await initiatives
