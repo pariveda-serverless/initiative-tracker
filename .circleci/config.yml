@@ -57,7 +57,7 @@ anchors:
       - run:
           name: Deploy custom domain stage
           command: |
-            [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
+            [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_USERNAME
             echo Deploying custom domain stage for stage $STAGE
             npm run deploy-domain -- --stage $STAGE
       - run:
