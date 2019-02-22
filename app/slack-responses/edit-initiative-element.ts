@@ -20,7 +20,7 @@ export class EditInitiativeDescription implements TextElement {
     type: string;
     value: string;
     constructor(initiative: InitiativeResponse) {
-      this.name = 'initiative_name';
+      this.name = 'initiative_description';
       this.label = 'Enter a new description for this initiative';
       this.value = initiative.description;
       this.type = 'text';

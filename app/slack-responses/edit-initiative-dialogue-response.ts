@@ -7,7 +7,7 @@ export class EditInitiativeDialogResponse implements Dialog {
   callback_id: string;
   elements: (TextElement | SelectElement)[];
   constructor(initiative: InitiativeResponse, callback_id: string) {
-    this.title = 'Update Initiative Name and/or Description';
+    this.title = 'Update Initiative';
     this.callback_id = 'editcallbacktest'; //callback_id;
     const nameField = new EditInitiativeName(initiative);
     const descriptionField = new EditInitiativeDescription(initiative);
