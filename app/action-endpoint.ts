@@ -8,7 +8,7 @@ import { DetailResponse } from './slack-responses/detail-response';
 import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
 import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
-import { send } from './slack-calls/send-message';
+import { send, sendDialogue } from './slack-calls/send-message';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -20,6 +20,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
+    let dialogResponse = false;
     let response: ActionResponse;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
@@ -39,6 +40,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
+        dialogResponse = true;
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const callback_id = payload.actions[0].callback_id;
         // const slackUserId = payload.user.id;
@@ -85,7 +87,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    await send(responseUrl, response);
+    if (dialogResponse) {
+      await sendDialogue(responseUrl, response);
+    } else {
+      await send(responseUrl, response);
+    }
     success();
   } catch (err) {
     error(err);
