@@ -14,6 +14,8 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    console.log('body', body)
+    console.log('pl', body.payload);
     const payload: Payload = JSON.parse(body.payload);
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
