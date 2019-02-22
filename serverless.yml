@@ -10,7 +10,7 @@ plugins:
 
 provider:
   name: aws
-  stage: ${opt:stage, self:provider.stage, 'local'}
+  stage: ${opt:stage, 'local'}
   runtime: nodejs8.10
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
