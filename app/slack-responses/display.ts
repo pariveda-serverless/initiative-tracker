@@ -27,6 +27,9 @@ initiativeActions[InitiativeAction.UPDATE_STATUS] = <ActionDisplay>{
 initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
   text: 'View initiative details'
 };
+initiativeActions[InitiativeAction.OPEN_EDIT_DIALOG] = <ActionDisplay>{
+  text: 'Edit Initiative'
+};
 
 const memberActions: ActionDisplay[] = [];
 memberActions[MemberAction.REMOVE_MEMBER] = <ActionDisplay>{
