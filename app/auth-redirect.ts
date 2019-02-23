@@ -31,9 +31,13 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
   }
 });
 
+export function getAccessTokenParameterPath(teamId: string) {
+  return `/initiative-trackers/${process.env.STAGE}/teams/${teamId}/access-token`;
+}
+
 async function saveAccessToken(token: AccessTokenResponse): Promise<any> {
   const params = {
-    Name: `/initiative-trackers/${process.env.STAGE}/teams/${token.team_id}/access-token`,
+    Name: getAccessTokenParameterPath(token.team_id),
     Type: 'SecureString',
     Value: token.access_token,
     Description: `${token.team_name} Slack access token for the ${process.env.STAGE} Initiative Tracker`
