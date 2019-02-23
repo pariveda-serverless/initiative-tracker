@@ -19,6 +19,7 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
     };
     console.log('Authorizing app with params', params);
     const response: AccessTokenResponse = await get(params);
+    console.log('Authorizing app response', response);
     if (response.ok) {
       await saveAccessToken(response);
       success('Initiative tracker was successfully added!');
