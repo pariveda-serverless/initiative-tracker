@@ -11,7 +11,7 @@ import {
   getTeamIdentifier,
   getMemberIdentifiers
 } from './member';
-import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
+import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack-calls/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
@@ -93,7 +93,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { initiativeId, type: `${TEAM}${teamId}${INITIATIVE_TYPE}` },
+    Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
     UpdateExpression: 'set #status = :status',
     ExpressionAttributeNames: { '#status': 'status' },
     ExpressionAttributeValues: { ':status': status }
