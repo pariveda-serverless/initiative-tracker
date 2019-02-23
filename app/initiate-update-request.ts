@@ -3,7 +3,7 @@ import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
-const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION, apiVersion: '2012-08-10' });
+const poop = new DynamoDB.DocumentClient({ region: process.env.REGION, apiVersion: '2012-08-10' });
 
 export const handler = wrapper(async ({ event, success, error }: WrapperSignature) => {
   try {
@@ -31,7 +31,7 @@ async function getAllInitiatives(): Promise<InitiativeResponse[]> {
     ExpressionAttributeValues
   };
   console.log('Getting all initiatives with params', params);
-  const records = await initiatives
+  const records = await poop
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
