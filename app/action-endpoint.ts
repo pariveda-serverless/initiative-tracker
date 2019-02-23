@@ -20,8 +20,8 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const teamId = body.team_id;
     const payload: Payload = JSON.parse(body.payload);
+    const teamId = payload.team.id;
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
@@ -151,11 +151,7 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
-  let initiative: InitiativeResponse = new InitiativeResponse(
-    records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
-  );
-  initiative.members = records
-    .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
-    .map(record => new MemberResponse(record));
+  let initiative: InitiativeResponse = new InitiativeResponse(records.find(record => record.type === INITIATIVE_TYPE));
+  initiative.members = records.filter(record => record.type === MEMBER_TYPE).map(record => new MemberResponse(record));
   return initiative;
 }

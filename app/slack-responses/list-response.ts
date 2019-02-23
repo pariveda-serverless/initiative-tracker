@@ -33,7 +33,7 @@ class NoResults implements Section {
     const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
     this.text = {
       type: 'mrkdwn',
-      text: `:thinking_face: Darn, we couldn't find any ${search}initiatives - maybe you should add one! :muscle:`
+      text: `Darn, we couldn't find any ${search}initiatives :thinking_face:... maybe you should add one! :muscle:`
     };
   }
 }
