@@ -24,6 +24,7 @@ export async function getToken(teamId: string): Promise<string> {
     Name: `/initiative-trackers/${process.env.STAGE}/teams/${teamId}/access-tokens`,
     WithDecryption: true
   };
+  console.log('Getting access token with params', params);
   return ssm
     .getParameter(params)
     .promise()
