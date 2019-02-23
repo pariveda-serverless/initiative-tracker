@@ -10,7 +10,8 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const teamId = body.team_id;
-    const createdBy = await getUserProfile(body.user_id);
+    const slackUserId = body.user_id;
+    const createdBy = await getUserProfile(slackUserId, teamId);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
     const initiativeRequest = new CreateInitiativeRequest({ name, teamId, description, createdBy });

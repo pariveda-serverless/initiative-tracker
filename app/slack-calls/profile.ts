@@ -1,11 +1,14 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
+import { SSM } from 'aws-sdk';
+const slack = new WebClient();
 
-const slack = new WebClient(process.env.SLACK_ACCESS_TOKEN);
+const ssm = new SSM({ apiVersion: '2014-11-06' });
 
-export async function getUserProfile(user: string): Promise<Profile> {
+export async function getUserProfile(user: string, teamId: string): Promise<Profile> {
   console.log('Getting user profile information', user);
+  const token = await getToken(teamId);
   const profile = await slack.users.profile
-    .get({ user })
+    .get({ user, token })
     .then(raw => raw as ProfileResult)
     .then(result => result.profile);
   console.log('Received profile result from Slack', profile);
@@ -14,6 +17,17 @@ export async function getUserProfile(user: string): Promise<Profile> {
     icon: profile.image_original ? profile.image_original : profile.image_512,
     slackUserId: user
   };
+}
+
+async function getToken(teamId: string): Promise<string> {
+  const params = {
+    Name: `/initiative-trackers/${process.env.STAGE}/teams/${teamId}/access-tokens`,
+    WithDecryption: true
+  };
+  return ssm
+    .getParameter(params)
+    .promise()
+    .then(res => res.Parameter.Value);
 }
 
 interface Profile {

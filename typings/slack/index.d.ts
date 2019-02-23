@@ -139,4 +139,11 @@ declare module 'slack' {
       }
     ];
   }
+
+  export interface AccessTokenResponse {
+    ok: boolean;
+    access_token: string;
+    team_name: string;
+    team_id: string;
+  }
 }

@@ -7,7 +7,6 @@ import {
   MEMBER_TYPE,
   MemberResponse,
   DeleteMemberRequest,
-  TEAM,
   getTeamIdentifier,
   getMemberIdentifiers
 } from './member';
@@ -108,7 +107,7 @@ async function joinInitiative(
   slackUserId: string,
   champion: boolean
 ): Promise<any> {
-  const { name, icon } = await getUserProfile(slackUserId);
+  const { name, icon } = await getUserProfile(slackUserId, teamId);
   const member = new CreateMemberRequest({ teamId, initiativeId, slackUserId, name, champion, icon });
   const params = { TableName: process.env.INITIATIVES_TABLE, Item: member };
   console.log('Adding member to initiative with params', params);
