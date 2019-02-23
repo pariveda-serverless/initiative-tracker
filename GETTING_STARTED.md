@@ -30,5 +30,5 @@ Slack app setup
    1. Command /<GitHub username>-add with the add endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/add)
 1. If you want to distribute your app to another workspace you'll need to setup a Redirect Url under OAuth and Permissions (by default this will be https://initiative.ninja/<GitHub username>/auth/redirect)
 1. Add the following scopes to enable reading basic profile information and direct messaging users
-   1. chat:write:bot to send direct messages
+   1. chat:write:bot and chat:write:user to send direct messages
    1. user:profile:read to read basic profile information

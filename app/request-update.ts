@@ -2,7 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from './initiative';
 import { MemberResponse, MEMBER_TYPE } from './member';
-import { requestStatusUpdate } from './slack-calls/status-update';
+import { send } from './slack/messages';
 import { StatusUpdateRequest } from './slack-responses/status-update-request';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -14,7 +14,7 @@ export const handler = snsWrapper(async ({ message, success, error }: SnsSignatu
     await Promise.all(
       champions
         .map(champion => new StatusUpdateRequest(initiative, champion))
-        .map(request => requestStatusUpdate(request))
+        .map(request => send(request, initiative.teamId))
     );
     success();
   } catch (err) {

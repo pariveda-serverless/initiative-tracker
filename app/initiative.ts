@@ -65,6 +65,7 @@ export class InitiativeResponse {
   name: string;
   description: string;
   status: Status;
+  teamId: string;
   members?: MemberResponse[];
   createdBy: {
     slackUserId: string;
@@ -78,6 +79,7 @@ export class InitiativeResponse {
     this.name = record.name;
     this.description = record.description;
     this.status = record.status;
+    this.teamId = record.teamId;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
   }

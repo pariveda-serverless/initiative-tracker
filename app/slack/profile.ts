@@ -1,7 +1,7 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
 import { SSM } from 'aws-sdk';
-const slack = new WebClient();
 
+const slack = new WebClient();
 const ssm = new SSM({ apiVersion: '2014-11-06' });
 
 export async function getUserProfile(user: string, teamId: string): Promise<Profile> {
@@ -19,7 +19,7 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
   };
 }
 
-async function getToken(teamId: string): Promise<string> {
+export async function getToken(teamId: string): Promise<string> {
   const params = {
     Name: `/initiative-trackers/${process.env.STAGE}/teams/${teamId}/access-tokens`,
     WithDecryption: true

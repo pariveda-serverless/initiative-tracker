@@ -12,9 +12,9 @@ import {
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
-import { getUserProfile } from './slack-calls/profile';
+import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
-import { send } from './slack-calls/send-message';
+import { reply } from './slack/send-message';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -82,7 +82,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    await send(responseUrl, response);
+    await reply(responseUrl, response);
     success();
   } catch (err) {
     error(err);
