@@ -2,7 +2,7 @@ export const MEMBER_TYPE: string = 'MEMBER';
 export const TEAM: string = 'TEAM';
 
 export function getMemberIdentifiers(teamId: string, slackUserId: string): string {
-  return `${TEAM}:${teamId}-${MEMBER_TYPE}:${slackUserId}`;
+  return `${TEAM}:${teamId}|${MEMBER_TYPE}:${slackUserId}`;
 }
 
 export function getTeamIdentifier(teamId: string): string {
@@ -12,6 +12,7 @@ export function getTeamIdentifier(teamId: string): string {
 export class CreateMemberRequest {
   initiativeId: string;
   identifiers: string;
+  teamId: string;
   type: string;
   name: string;
   slackUserId: string;
@@ -23,6 +24,7 @@ export class CreateMemberRequest {
     this.initiativeId = `${initiativeId}`;
     this.identifiers = getMemberIdentifiers(teamId, slackUserId);
     this.type = MEMBER_TYPE;
+    this.teamId = teamId;
     this.initiativeId = initiativeId;
     this.name = name;
     this.slackUserId = slackUserId;
