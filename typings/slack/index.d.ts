@@ -100,6 +100,19 @@ declare module 'slack' {
     options: Option[];
   }
 
+  // Slash command body
+  export interface Command {
+    command: string;
+    text: string;
+    response_url: string;
+    trigger_id: string;
+    user_id: string;
+    team_id: string;
+    team_name: string;
+    channel_id: string;
+    channel_name: string;
+  }
+
   // Action payload received on button click
   export interface Payload {
     type: string;
@@ -138,5 +151,12 @@ declare module 'slack' {
         };
       }
     ];
+  }
+
+  export interface AccessTokenResponse {
+    ok: boolean;
+    access_token: string;
+    team_name: string;
+    team_id: string;
   }
 }

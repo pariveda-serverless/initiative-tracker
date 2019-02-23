@@ -1,20 +1,22 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
-import { getUserProfile } from './slack-calls/profile';
+import { getUserProfile } from './slack/profile';
 import { DetailResponse } from './slack-responses/detail-response';
-import { MemberResponse, MEMBER_TYPE } from './member';
+import { MemberResponse, MEMBER_TYPE, TEAM, getTeamIdentifier } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const createdBy = await getUserProfile(body.user_id);
+    const slackUserId = body.user_id;
+    const team = { id: body.team_id, domain: body.team_domain };
+    const createdBy = await getUserProfile(slackUserId, team.id);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
-    const initiativeRequest = new CreateInitiativeRequest({ name, description, createdBy });
+    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, createdBy });
     await saveInitiative(initiativeRequest);
-    const initiativeDetails = await getInitiativeDetails(initiativeRequest.initiativeId);
+    const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
     const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
     console.log(message);
     console.log(JSON.stringify(message));
@@ -30,12 +32,12 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return initiatives.put(params).promise();
 }
 
-async function getInitiativeDetails(initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    KeyConditionExpression: '#initiativeId = :initiativeId',
-    ExpressionAttributeNames: { '#initiativeId': 'initiativeId' },
-    ExpressionAttributeValues: { ':initiativeId': initiativeId }
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#identifiers': 'identifiers' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
   const records = await initiatives
