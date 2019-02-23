@@ -18,7 +18,7 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
       simple: false
     };
     console.log('Authorizing app with params', params);
-    const response: AccessTokenResponse = await get(params);
+    const response: AccessTokenResponse = JSON.parse(await get(params));
     console.log('Authorizing app response', response);
     if (response.ok) {
       await saveAccessToken(response);
