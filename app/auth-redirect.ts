@@ -40,7 +40,8 @@ async function saveAccessToken(token: AccessTokenResponse): Promise<any> {
     Name: getAccessTokenParameterPath(token.team_id),
     Type: 'SecureString',
     Value: token.access_token,
-    Description: `${token.team_name} Slack access token for the ${process.env.STAGE} Initiative Tracker`
+    Description: `${token.team_name} Slack access token for the ${process.env.STAGE} Initiative Tracker`,
+    Overwrite: true
   };
   return ssm.putParameter(params).promise();
 }
