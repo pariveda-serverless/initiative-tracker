@@ -14,7 +14,7 @@ export const handler = snsWrapper(async ({ message, success, error }: SnsSignatu
     await Promise.all(
       champions
         .map(champion => new StatusUpdateRequest(initiative, champion))
-        .map(request => send(request, initiative.teamId))
+        .map(request => send(request, initiative.team.id))
     );
     success();
   } catch (err) {

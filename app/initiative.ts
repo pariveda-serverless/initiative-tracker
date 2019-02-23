@@ -22,7 +22,10 @@ export interface InitiativeRecord {
 
 interface CreateInitiativeRequestProperties {
   name: string;
-  teamId: string;
+  team: {
+    id: string;
+    domain: string;
+  };
   description?: string;
   createdBy: {
     slackUserId: string;
@@ -35,7 +38,10 @@ export class CreateInitiativeRequest {
   initiativeId: string;
   identifiers: string;
   type: string;
-  teamId: string;
+  team: {
+    id: string;
+    domain: string;
+  };
   name: string;
   description: string;
   status: Status;
@@ -47,11 +53,11 @@ export class CreateInitiativeRequest {
   createdBySlackUserId: string;
   createdAt: string;
 
-  constructor({ name, teamId, description, createdBy }: CreateInitiativeRequestProperties) {
+  constructor({ name, team, description, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = id();
-    this.identifiers = getInitiativeIdentifiers(teamId);
+    this.identifiers = getInitiativeIdentifiers(team.id);
     this.type = INITIATIVE_TYPE;
-    this.teamId = teamId;
+    this.team = team;
     this.name = name;
     this.description = description ? description : null;
     this.status = Status.ACTIVE;
@@ -65,7 +71,10 @@ export class InitiativeResponse {
   name: string;
   description: string;
   status: Status;
-  teamId: string;
+  team: {
+    id: string;
+    domain: string;
+  };
   members?: MemberResponse[];
   createdBy: {
     slackUserId: string;
@@ -79,7 +88,7 @@ export class InitiativeResponse {
     this.name = record.name;
     this.description = record.description;
     this.status = record.status;
-    this.teamId = record.teamId;
+    this.team = record.team;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
   }

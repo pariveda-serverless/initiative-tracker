@@ -9,14 +9,14 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const teamId = body.team_id;
     const slackUserId = body.user_id;
-    const createdBy = await getUserProfile(slackUserId, teamId);
+    const team = { id: body.team_id, domain: body.team_domain };
+    const createdBy = await getUserProfile(slackUserId, team.id);
     const [name, ...remaining] = body.text.split(',');
     const description = remaining.join(',').trim();
-    const initiativeRequest = new CreateInitiativeRequest({ name, teamId, description, createdBy });
+    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, createdBy });
     await saveInitiative(initiativeRequest);
-    const initiativeDetails = await getInitiativeDetails(teamId, initiativeRequest.initiativeId);
+    const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
     const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
     console.log(message);
     console.log(JSON.stringify(message));
