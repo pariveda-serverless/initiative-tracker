@@ -1,5 +1,5 @@
 import * as id from 'nanoid';
-import { MemberResponse } from './member';
+import { MemberResponse, TEAM } from './member';
 
 export enum Status {
   ACTIVE = 'ACTIVE',
@@ -11,7 +11,7 @@ export enum Status {
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 
 export interface InitiativeRecord {
-  grouping: string;
+  initiativeId: string;
   type: string;
   [key: string]: any;
 }
@@ -28,10 +28,9 @@ interface CreateInitiativeRequestProperties {
 }
 
 export class CreateInitiativeRequest {
-  grouping: string;
+  initiativeId: string;
   type: string;
   teamId: string;
-  initiativeId: string;
   name: string;
   description: string;
   status: Status;
@@ -44,11 +43,9 @@ export class CreateInitiativeRequest {
   createdAt: string;
 
   constructor({ name, teamId, description, createdBy }: CreateInitiativeRequestProperties) {
-    const initiativeId = id();
-    this.grouping = `${teamId}:${initiativeId}`;
-    this.type = `${INITIATIVE_TYPE}`;
+    this.initiativeId = id();
+    this.type = `${TEAM}${teamId}${INITIATIVE_TYPE}`;
     this.teamId = teamId;
-    this.initiativeId = initiativeId;
     this.name = name;
     this.description = description ? description : null;
     this.status = Status.ACTIVE;

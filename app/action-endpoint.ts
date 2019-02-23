@@ -2,7 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, Payload } from 'slack';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
-import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest } from './member';
+import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest, TEAM } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack-calls/profile';
@@ -38,21 +38,21 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case MemberAction.MAKE_CHAMPION: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await changeMembership(initiativeId, slackUserId, true);
+        await changeMembership(initiativeId, teamId, slackUserId, true);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case MemberAction.MAKE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await changeMembership(initiativeId, slackUserId, false);
+        await changeMembership(initiativeId, teamId, slackUserId, false);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
       case MemberAction.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await leaveInitiative(initiativeId, slackUserId);
+        await leaveInitiative(initiativeId, teamId, slackUserId);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
@@ -65,7 +65,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const value = payload.actions[0].value ? payload.actions[0].value : payload.actions[0].selected_option.value;
         const { initiativeId, status } = JSON.parse(value);
         const slackUserId = payload.user.id;
-        await updateInitiativeStatus(initiativeId, status);
+        await updateInitiativeStatus(initiativeId, teamId, status);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
@@ -82,10 +82,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function updateInitiativeStatus(initiativeId: string, status: Status): Promise<any> {
+async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { initiativeId, type: INITIATIVE_TYPE },
+    Key: { initiativeId, type: `${TEAM}${teamId}${INITIATIVE_TYPE}` },
     UpdateExpression: 'set #status = :status',
     ExpressionAttributeNames: { '#status': 'status' },
     ExpressionAttributeValues: { ':status': status }
@@ -107,10 +107,15 @@ async function joinInitiative(
   await initiatives.put(params).promise();
 }
 
-async function changeMembership(initiativeId: string, slackUserId: string, champion: boolean): Promise<any> {
+async function changeMembership(
+  initiativeId: string,
+  teamId: string,
+  slackUserId: string,
+  champion: boolean
+): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { initiativeId, type: `${MEMBER_TYPE}${slackUserId}` },
+    Key: { initiativeId, type: `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}` },
     UpdateExpression: 'set #champion = :champion',
     ExpressionAttributeNames: { '#champion': 'champion' },
     ExpressionAttributeValues: { ':champion': champion }
@@ -119,8 +124,8 @@ async function changeMembership(initiativeId: string, slackUserId: string, champ
   await initiatives.update(params).promise();
 }
 
-function leaveInitiative(initiativeId: string, slackUserId: string): Promise<any> {
-  const Key = new DeleteMemberRequest({ initiativeId, slackUserId });
+function leaveInitiative(initiativeId: string, teamId: string, slackUserId: string): Promise<any> {
+  const Key = new DeleteMemberRequest({ initiativeId, teamId, slackUserId });
   const params = { TableName: process.env.INITIATIVES_TABLE, Key };
   console.log('Removing member from initiative with params', params);
   return initiatives.delete(params).promise();
@@ -129,9 +134,9 @@ function leaveInitiative(initiativeId: string, slackUserId: string): Promise<any
 async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    KeyConditionExpression: '#grouping = :grouping',
-    ExpressionAttributeNames: { '#grouping': 'grouping' },
-    ExpressionAttributeValues: { ':grouping': `${teamId}:${initiativeId}` }
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#type, :type)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#type': 'type' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':type': `${TEAM}${teamId}` }
   };
   console.log('Getting initiative details with params', params);
   const records = await initiatives

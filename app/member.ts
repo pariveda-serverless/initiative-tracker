@@ -1,9 +1,9 @@
 export const MEMBER_TYPE: string = 'MEMBER:';
+export const TEAM: string = 'TEAM:';
 
 export class CreateMemberRequest {
-  grouping: string;
-  type: string;
   initiativeId: string;
+  type: string;
   name: string;
   slackUserId: string;
   champion: boolean;
@@ -11,8 +11,8 @@ export class CreateMemberRequest {
   joinedAt: string;
 
   constructor({ teamId, initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
-    this.grouping = `${teamId}:${initiativeId}`;
-    this.type = `${MEMBER_TYPE}${slackUserId}`;
+    this.initiativeId = `${initiativeId}`;
+    this.type = `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}`;
     this.initiativeId = initiativeId;
     this.name = name;
     this.slackUserId = slackUserId;
@@ -54,13 +54,14 @@ export class MemberResponse {
 export class DeleteMemberRequest {
   initiativeId: string;
   type: string;
-  constructor({ initiativeId, slackUserId }: DeleteMemberRequestProperties) {
+  constructor({ initiativeId, teamId, slackUserId }: DeleteMemberRequestProperties) {
     this.initiativeId = initiativeId;
-    this.type = `${MEMBER_TYPE}${slackUserId}`;
+    this.type = `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}`;
   }
 }
 
 interface DeleteMemberRequestProperties {
   initiativeId: string;
+  teamId: string;
   slackUserId: string;
 }
