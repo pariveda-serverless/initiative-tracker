@@ -26,8 +26,8 @@ Slack app setup
 
 1. Activate Interactive Components and put in the action endpoint Lambda URL (by default this will be https://initiative.ninja/\<GitHub username\>/actions)
 1. Create the following Slash Commands:
-   1. Command /\<GitHub username\>-show with the list endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/list)
-   1. Command /\<GitHub username\>-add with the add endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/add)
+   1. Command /\<GitHub username\>-show with the list endpoint Lambda URL (by default this will be https://initiative.ninja/\<GitHub username\>/list)
+   1. Command /\<GitHub username\>-add with the add endpoint Lambda URL (by default this will be https://initiative.ninja/\<GitHub username\>/add)
 1. If you want to distribute your app to another workspace you'll need to setup a Redirect Url under OAuth and Permissions (by default this will be https://initiative.ninja/\<GitHub username\>/auth/redirect)
 1. Add the following scopes to enable reading basic profile information and direct messaging users
    1. chat:write:bot and chat:write:user to send direct messages
