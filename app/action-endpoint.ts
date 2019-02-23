@@ -2,7 +2,14 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, Payload } from 'slack';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
-import { CreateMemberRequest, MEMBER_TYPE, MemberResponse, DeleteMemberRequest, TEAM } from './member';
+import {
+  CreateMemberRequest,
+  MEMBER_TYPE,
+  MemberResponse,
+  DeleteMemberRequest,
+  TEAM,
+  getTeamIdentifier
+} from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack-calls/profile';
@@ -134,9 +141,9 @@ function leaveInitiative(initiativeId: string, teamId: string, slackUserId: stri
 async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#type, :type)',
-    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#type': 'type' },
-    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':type': `${TEAM}${teamId}` }
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#identifiers': 'identifiers' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
   const records = await initiatives

@@ -1,8 +1,17 @@
-export const MEMBER_TYPE: string = 'MEMBER:';
-export const TEAM: string = 'TEAM:';
+export const MEMBER_TYPE: string = 'MEMBER';
+export const TEAM: string = 'TEAM';
+
+export function getMemberIdentifiers(teamId: string, slackUserId: string): string {
+  return `${TEAM}:${teamId}${MEMBER_TYPE}:${slackUserId}`;
+}
+
+export function getTeamIdentifier(teamId: string): string {
+  return `${TEAM}:${teamId}`;
+}
 
 export class CreateMemberRequest {
   initiativeId: string;
+  identifiers: string;
   type: string;
   name: string;
   slackUserId: string;
@@ -12,7 +21,8 @@ export class CreateMemberRequest {
 
   constructor({ teamId, initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
     this.initiativeId = `${initiativeId}`;
-    this.type = `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}`;
+    this.identifiers = getMemberIdentifiers(teamId, slackUserId);
+    this.type = MEMBER_TYPE;
     this.initiativeId = initiativeId;
     this.name = name;
     this.slackUserId = slackUserId;
@@ -53,10 +63,10 @@ export class MemberResponse {
 
 export class DeleteMemberRequest {
   initiativeId: string;
-  type: string;
+  identifiers: string;
   constructor({ initiativeId, teamId, slackUserId }: DeleteMemberRequestProperties) {
     this.initiativeId = initiativeId;
-    this.type = `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}`;
+    this.identifiers = getMemberIdentifiers(teamId, slackUserId);
   }
 }
 

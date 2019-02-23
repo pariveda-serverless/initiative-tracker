@@ -1,9 +1,9 @@
-import { SNS } from 'aws-sdk';
+import { SNS, DynamoDB } from 'aws-sdk';
 import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeResponse, Status } from './initiative';
-import { getInitiatives } from './list-initiatives';
+import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
+const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = wrapper(async ({ event, success, error }: WrapperSignature) => {
   try {
@@ -18,6 +18,26 @@ export const handler = wrapper(async ({ event, success, error }: WrapperSignatur
     error(err);
   }
 });
+
+async function getInitiatives(): Promise<InitiativeResponse[]> {
+  const KeyConditionExpression = '#type = :type';
+  const ExpressionAttributeNames = { '#type': 'type' };
+  const ExpressionAttributeValues = { ':type': INITIATIVE_TYPE };
+  const params = {
+    TableName: process.env.INITIATIVES_TABLE,
+    IndexName: process.env.INITIATIVES_TABLE_TYPE_INDEX,
+    KeyConditionExpression,
+    ExpressionAttributeNames,
+    ExpressionAttributeValues
+  };
+  console.log('Getting all initiatives with params', params);
+  const records = await initiatives
+    .query(params)
+    .promise()
+    .then(res => <InitiativeRecord[]>res.Items);
+  console.log('Received initiatives', records);
+  return records.map(initiative => new InitiativeResponse(initiative));
+}
 
 async function publishInitiativeForStatusUpdateRequest(initiative: InitiativeResponse): Promise<any> {
   const params = {

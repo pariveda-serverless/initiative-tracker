@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
+import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { ListResponse } from './slack-responses/list-response';
 import { TEAM } from './member';
 
@@ -29,11 +29,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 });
 
 export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
-  const KeyConditionExpression = status ? '#type = :type and #status = :status' : '#type = :type';
-  const ExpressionAttributeNames = status ? { '#type': 'type', '#status': 'status' } : { '#type': 'type' };
+  const KeyConditionExpression = status
+    ? '#identifiers = :identifiers and #status = :status'
+    : '#identifiers = :identifiers';
+  const ExpressionAttributeNames = status
+    ? { '#identifiers': 'identifiers', '#status': 'status' }
+    : { '#identifiers': 'identifiers' };
   const ExpressionAttributeValues = status
-    ? { ':type': `${TEAM}${teamId}${INITIATIVE_TYPE}`, ':status': status }
-    : { ':type': `${TEAM}${teamId}${INITIATIVE_TYPE}` };
+    ? { ':identifiers': getInitiativeIdentifiers(teamId), ':status': status }
+    : { ':identifiers': getInitiativeIdentifiers(teamId) };
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     IndexName: process.env.INITIATIVES_TABLE_STATUS_INDEX,

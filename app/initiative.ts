@@ -10,9 +10,13 @@ export enum Status {
 
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 
+export function getInitiativeIdentifiers(teamId: string): string {
+  return `${TEAM}:${teamId}${INITIATIVE_TYPE}`;
+}
+
 export interface InitiativeRecord {
   initiativeId: string;
-  type: string;
+  identifiers: string;
   [key: string]: any;
 }
 
@@ -29,6 +33,7 @@ interface CreateInitiativeRequestProperties {
 
 export class CreateInitiativeRequest {
   initiativeId: string;
+  identifiers: string;
   type: string;
   teamId: string;
   name: string;
@@ -44,7 +49,8 @@ export class CreateInitiativeRequest {
 
   constructor({ name, teamId, description, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = id();
-    this.type = `${TEAM}${teamId}${INITIATIVE_TYPE}`;
+    this.identifiers = getInitiativeIdentifiers(teamId);
+    this.type = INITIATIVE_TYPE;
     this.teamId = teamId;
     this.name = name;
     this.description = description ? description : null;

@@ -3,7 +3,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 import { getUserProfile } from './slack-calls/profile';
 import { DetailResponse } from './slack-responses/detail-response';
-import { MemberResponse, MEMBER_TYPE, TEAM } from './member';
+import { MemberResponse, MEMBER_TYPE, TEAM, getTeamIdentifier } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -34,9 +34,9 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
 async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#type, :type)',
-    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#type': 'type' },
-    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':type': `${TEAM}${teamId}` }
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#identifiers': 'identifiers' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
   const records = await initiatives
