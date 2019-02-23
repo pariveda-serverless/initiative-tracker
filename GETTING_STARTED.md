@@ -20,15 +20,15 @@ Steps for setting up your slack app with Circle CI deployments
    1. SLACK_CLIENT_ID
    1. SLACK_CLIENT_SECRET
    1. SLACK_SIGNING_SECRET
-1. The best place to set these environment variables is in context specified in the ./circle-ci/config.yml file (initiative-tracker at the time of writing)
+1. The best place to set these environment variables is in the Circle CI context specified in the ./circle-ci/config.yml file (initiative-tracker at the time of writing)
 
 Slack app setup
 
-1. Activate Interactive Components and put in the action endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/actions)
+1. Activate Interactive Components and put in the action endpoint Lambda URL (by default this will be https://initiative.ninja/\<GitHub username\>/actions)
 1. Create the following Slash Commands:
    1. Command /\<GitHub username\>-show with the list endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/list)
    1. Command /\<GitHub username\>-add with the add endpoint Lambda URL (by default this will be https://initiative.ninja/<GitHub username>/add)
-1. If you want to distribute your app to another workspace you'll need to setup a Redirect Url under OAuth and Permissions (by default this will be https://initiative.ninja/<GitHub username>/auth/redirect)
+1. If you want to distribute your app to another workspace you'll need to setup a Redirect Url under OAuth and Permissions (by default this will be https://initiative.ninja/\<GitHub username\>/auth/redirect)
 1. Add the following scopes to enable reading basic profile information and direct messaging users
    1. chat:write:bot and chat:write:user to send direct messages
    1. user:profile:read to read basic profile information
