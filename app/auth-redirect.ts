@@ -13,6 +13,7 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
       method: 'GET',
       simple: false
     };
+    console.log('Authorizing app with params', params);
     const response = await get(params);
     console.log(response);
     success(response);
