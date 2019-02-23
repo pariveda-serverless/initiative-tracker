@@ -5,13 +5,11 @@ import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
   channel: string;
-  text?: PlainText | MarkdownText;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiatives: InitiativeResponse[], status?: Status) {
     this.channel = 'CFSV0HX5X';
     if (!initiatives || !initiatives.length) {
-      const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
-      this.text = { type: 'mrkdwn', text: `No ${search}initiatives found ` };
+      this.blocks = [new NoResults(status)];
     } else {
       this.blocks = initiatives
         .map(initiative => {
@@ -25,5 +23,17 @@ export class ListResponse implements Message {
         // Remove the last divider block
         .slice(0, -1);
     }
+  }
+}
+
+class NoResults implements Section {
+  type: 'section' = 'section';
+  text: PlainText | MarkdownText;
+  constructor(status?: Status) {
+    const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
+    this.text = {
+      type: 'mrkdwn',
+      text: `No ${search}initiatives found`
+    };
   }
 }
