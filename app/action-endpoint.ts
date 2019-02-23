@@ -14,7 +14,7 @@ import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getIniti
 import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
-import { reply } from './slack/send-message';
+import { reply } from './slack/messages';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
