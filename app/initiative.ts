@@ -11,7 +11,7 @@ export enum Status {
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 
 export function getInitiativeIdentifiers(teamId: string): string {
-  return `${TEAM}:${teamId}${INITIATIVE_TYPE}`;
+  return `${TEAM}:${teamId}-${INITIATIVE_TYPE}`;
 }
 
 export interface InitiativeRecord {

@@ -2,7 +2,7 @@ export const MEMBER_TYPE: string = 'MEMBER';
 export const TEAM: string = 'TEAM';
 
 export function getMemberIdentifiers(teamId: string, slackUserId: string): string {
-  return `${TEAM}:${teamId}${MEMBER_TYPE}:${slackUserId}`;
+  return `${TEAM}:${teamId}-${MEMBER_TYPE}:${slackUserId}`;
 }
 
 export function getTeamIdentifier(teamId: string): string {

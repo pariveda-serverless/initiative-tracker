@@ -8,7 +8,8 @@ import {
   MemberResponse,
   DeleteMemberRequest,
   TEAM,
-  getTeamIdentifier
+  getTeamIdentifier,
+  getMemberIdentifiers
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
@@ -122,7 +123,7 @@ async function changeMembership(
 ): Promise<any> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { initiativeId, type: `${TEAM}${teamId}${MEMBER_TYPE}${slackUserId}` },
+    Key: { initiativeId, identifiers: getMemberIdentifiers(teamId, slackUserId) },
     UpdateExpression: 'set #champion = :champion',
     ExpressionAttributeNames: { '#champion': 'champion' },
     ExpressionAttributeValues: { ':champion': champion }
