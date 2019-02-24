@@ -1,7 +1,18 @@
-export const MEMBER_TYPE: string = 'MEMBER:';
+export const MEMBER_TYPE: string = 'MEMBER';
+export const TEAM: string = 'TEAM';
+
+export function getMemberIdentifiers(teamId: string, slackUserId: string): string {
+  return `${TEAM}:${teamId}|${MEMBER_TYPE}:${slackUserId}`;
+}
+
+export function getTeamIdentifier(teamId: string): string {
+  return `${TEAM}:${teamId}`;
+}
 
 export class CreateMemberRequest {
   initiativeId: string;
+  identifiers: string;
+  teamId: string;
   type: string;
   name: string;
   slackUserId: string;
@@ -9,9 +20,12 @@ export class CreateMemberRequest {
   icon: string;
   joinedAt: string;
 
-  constructor({ initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
+  constructor({ teamId, initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
+    this.initiativeId = `${initiativeId}`;
+    this.identifiers = getMemberIdentifiers(teamId, slackUserId);
+    this.type = MEMBER_TYPE;
+    this.teamId = teamId;
     this.initiativeId = initiativeId;
-    this.type = `${MEMBER_TYPE}${slackUserId}`;
     this.name = name;
     this.slackUserId = slackUserId;
     this.champion = champion;
@@ -21,6 +35,7 @@ export class CreateMemberRequest {
 }
 
 interface CreateMemberRequestProperties {
+  teamId: string;
   initiativeId: string;
   name: string;
   slackUserId: string;
@@ -50,14 +65,15 @@ export class MemberResponse {
 
 export class DeleteMemberRequest {
   initiativeId: string;
-  type: string;
-  constructor({ initiativeId, slackUserId }: DeleteMemberRequestProperties) {
+  identifiers: string;
+  constructor({ initiativeId, teamId, slackUserId }: DeleteMemberRequestProperties) {
     this.initiativeId = initiativeId;
-    this.type = `${MEMBER_TYPE}${slackUserId}`;
+    this.identifiers = getMemberIdentifiers(teamId, slackUserId);
   }
 }
 
 interface DeleteMemberRequestProperties {
   initiativeId: string;
+  teamId: string;
   slackUserId: string;
 }

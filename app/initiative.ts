@@ -1,5 +1,5 @@
 import * as id from 'nanoid';
-import { MemberResponse } from './member';
+import { MemberResponse, TEAM } from './member';
 
 export enum Status {
   ACTIVE = 'ACTIVE',
@@ -10,14 +10,22 @@ export enum Status {
 
 export const INITIATIVE_TYPE: string = 'INITIATIVE';
 
+export function getInitiativeIdentifiers(teamId: string): string {
+  return `${TEAM}:${teamId}|${INITIATIVE_TYPE}`;
+}
+
 export interface InitiativeRecord {
   initiativeId: string;
-  type: string;
+  identifiers: string;
   [key: string]: any;
 }
 
 interface CreateInitiativeRequestProperties {
   name: string;
+  team: {
+    id: string;
+    domain: string;
+  };
   description?: string;
   createdBy: {
     slackUserId: string;
@@ -28,7 +36,12 @@ interface CreateInitiativeRequestProperties {
 
 export class CreateInitiativeRequest {
   initiativeId: string;
+  identifiers: string;
   type: string;
+  team: {
+    id: string;
+    domain: string;
+  };
   name: string;
   description: string;
   status: Status;
@@ -40,11 +53,13 @@ export class CreateInitiativeRequest {
   createdBySlackUserId: string;
   createdAt: string;
 
-  constructor({ name, description, createdBy }: CreateInitiativeRequestProperties) {
+  constructor({ name, team, description, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = id();
+    this.identifiers = getInitiativeIdentifiers(team.id);
+    this.type = INITIATIVE_TYPE;
+    this.team = team;
     this.name = name;
     this.description = description ? description : null;
-    this.type = `${INITIATIVE_TYPE}`;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
     this.createdAt = new Date().toDateString();
@@ -56,6 +71,10 @@ export class InitiativeResponse {
   name: string;
   description: string;
   status: Status;
+  team: {
+    id: string;
+    domain: string;
+  };
   members?: MemberResponse[];
   createdBy: {
     slackUserId: string;
@@ -69,6 +88,7 @@ export class InitiativeResponse {
     this.name = record.name;
     this.description = record.description;
     this.status = record.status;
+    this.team = record.team;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
   }

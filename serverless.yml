@@ -10,11 +10,12 @@ plugins:
 
 provider:
   name: aws
-  stage: local
+  stage: ${opt:stage, 'local'}
   runtime: nodejs8.10
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     INITIATIVES_TABLE: { Ref: InitiativesTable }
+    INITIATIVES_TABLE_IDENTIFIERS_INDEX: ${self:custom.identifiersIndex}
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
     INITIATIVES_TABLE_STATUS_INDEX: ${self:custom.statusIndex}
     REQUEST_UPDATE_SNS:
@@ -23,14 +24,14 @@ provider:
         - - arn:aws:sns
           - Ref: AWS::Region
           - Ref: AWS::AccountId
-          - request-update-${opt:stage, self:provider.stage}
+          - request-update-${self:provider.stage}
     REVISION: ${file(infrastructure/helper.js):revision}
-    STAGE: ${opt:stage, self:provider.stage}
-    SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
-    SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
-    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
-    SLACK_ACCESS_TOKEN: ${env:SLACK_ACCESS_TOKEN}
-    SLACK_REDIRECT_URI: 'https://initiative.ninja/${opt:stage, self:provider.stage}/auth/redirect'
+    STAGE: ${self:provider.stage}
+    SLACK_CLIENT_ID: ${env:${self:provider.stage}_SLACK_CLIENT_ID, env:SLACK_CLIENT_ID}
+    SLACK_CLIENT_SECRET: ${env:${self:provider.stage}_SLACK_CLIENT_SECRET, env:SLACK_CLIENT_SECRET}
+    SLACK_SIGNING_SECRET: ${env:${self:provider.stage}_SLACK_SIGNING_SECRET, env:SLACK_SIGNING_SECRET}
+    SLACK_ACCESS_TOKEN: ${env:${self:provider.stage}_SLACK_ACCESS_TOKEN, env:SLACK_ACCESS_TOKEN}
+    SLACK_REDIRECT_URI: https://initiative.ninja/${self:provider.stage}/auth/redirect
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -45,6 +46,17 @@ provider:
         - { Fn::GetAtt: [InitiativesTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
     - Effect: Allow
+      Action:
+        - ssm:PutParameter
+        - ssm:GetParameter
+      Resource:
+        Fn::Join:
+          - ':'
+          - - arn:aws:ssm
+            - Ref: AWS::Region
+            - Ref: AWS::AccountId
+            - parameter/initiative-trackers*
+    - Effect: Allow
       Action: sns:Publish
       Resource:
         Fn::Join:
@@ -52,13 +64,14 @@ provider:
           - - arn:aws:sns
             - Ref: AWS::Region
             - Ref: AWS::AccountId
-            - request-update-${opt:stage, self:provider.stage}
+            - request-update-${self:provider.stage}
 
 custom:
-  typeIndex: TYPE_INDEX
+  identifiersIndex: IDENTIFIERS_INDEX
   statusIndex: STATUS_INDEX
+  typeIndex: TYPE_INDEX
   customDomain:
-    basePath: ${opt:stage, self:provider.stage}
+    basePath: ${self:provider.stage}
     certificateName: initiative.ninja
     domainName: initiative.ninja
 
@@ -72,7 +85,7 @@ functions:
   request-update:
     handler: app/request-update.handler
     events:
-      - sns: request-update-${opt:stage, self:provider.stage}
+      - sns: request-update-${self:provider.stage}
 
   add-initiative:
     handler: app/add-initiative.handler
@@ -110,20 +123,22 @@ resources:
         AttributeDefinitions:
           - AttributeName: initiativeId
             AttributeType: S
-          - AttributeName: type
+          - AttributeName: identifiers
             AttributeType: S
           - AttributeName: status
+            AttributeType: S
+          - AttributeName: type
             AttributeType: S
         KeySchema:
           - AttributeName: initiativeId
             KeyType: HASH
-          - AttributeName: type
+          - AttributeName: identifiers
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          - IndexName: ${self:custom.typeIndex}
+          - IndexName: ${self:custom.identifiersIndex}
             KeySchema:
-              - AttributeName: type
+              - AttributeName: identifiers
                 KeyType: HASH
               - AttributeName: initiativeId
                 KeyType: RANGE
@@ -131,9 +146,17 @@ resources:
               ProjectionType: ALL
           - IndexName: ${self:custom.statusIndex}
             KeySchema:
-              - AttributeName: type
+              - AttributeName: identifiers
                 KeyType: HASH
               - AttributeName: status
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: ${self:custom.typeIndex}
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+              - AttributeName: initiativeId
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

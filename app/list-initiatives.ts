@@ -1,12 +1,14 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status } from './initiative';
+import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { ListResponse } from './slack-responses/list-response';
+import { TEAM } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
+    const teamId = body.team_id;
     const text = body.text
       ? body.text
           .toUpperCase()
@@ -16,7 +18,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log('status argument', text);
     const status: Status | undefined = <any>Status[text];
     console.log('status', status);
-    const initiatives = await getInitiatives(status);
+    const initiatives = await getInitiatives(teamId, status);
     const message = new ListResponse(initiatives, status);
     console.log(message);
     console.log(JSON.stringify(message));
@@ -26,12 +28,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-export async function getInitiatives(status?: Status): Promise<InitiativeResponse[]> {
-  const KeyConditionExpression = status ? '#type = :type and #status = :status' : '#type = :type';
-  const ExpressionAttributeNames = status ? { '#type': 'type', '#status': 'status' } : { '#type': 'type' };
+export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
+  const KeyConditionExpression = status
+    ? '#identifiers = :identifiers and #status = :status'
+    : '#identifiers = :identifiers';
+  const ExpressionAttributeNames = status
+    ? { '#identifiers': 'identifiers', '#status': 'status' }
+    : { '#identifiers': 'identifiers' };
   const ExpressionAttributeValues = status
-    ? { ':type': INITIATIVE_TYPE, ':status': status }
-    : { ':type': INITIATIVE_TYPE };
+    ? { ':identifiers': getInitiativeIdentifiers(teamId), ':status': status }
+    : { ':identifiers': getInitiativeIdentifiers(teamId) };
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     IndexName: process.env.INITIATIVES_TABLE_STATUS_INDEX,
