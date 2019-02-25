@@ -15,6 +15,7 @@ import { DetailResponse } from './slack-responses/detail-response';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { reply } from './slack/messages';
+import { parseValue } from './slack-responses/id-helper';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -51,7 +52,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case MemberAction.UPDATE_MEMBERSHIP: {
-        const { initiativeId, slackUserId, champion, remove } = JSON.parse(payload.actions[0].selected_option.value);
+        const { initiativeId, slackUserId, champion, remove } = parseValue(payload.actions[0].selected_option.value);
+        // const { initiativeId, slackUserId, champion, remove } = JSON.parse(payload.actions[0].selected_option.value);
         if (remove) {
           await leaveInitiative(initiativeId, teamId, slackUserId);
         } else {
