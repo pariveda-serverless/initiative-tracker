@@ -37,12 +37,29 @@ class MemberOverflowActions implements Overflow {
   options: Option[];
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     this.action_id = MemberAction.UPDATE_MEMBERSHIP;
+    const changeMembership = new ChangeMembershipOption(member, initiative);
+    const remove = new RemoveOption(member, initiative);
+    this.options = [changeMembership, remove];
+  }
+}
+
+class ChangeMembershipOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
-    const option: Option = {
-      text: { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' },
-      value: JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId })
-    };
-    this.options = [option];
+    this.text = { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' };
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+  }
+}
+
+class RemoveOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    const action = MemberAction.REMOVE_MEMBER;
+    this.text = { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' };
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
   }
 }
 
