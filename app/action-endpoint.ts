@@ -64,6 +64,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
+      case MemberAction.UPDATE_MEMBERSHIP: {
+        const { id, userId, champion, remove } = JSON.parse(payload.actions[0].value);
+        if (remove) {
+          await leaveInitiative(id, teamId, userId);
+        } else {
+          await changeMembership(id, teamId, userId, champion);
+        }
+        const initiative = await getInitiativeDetails(teamId, id);
+        response = new DetailResponse(initiative, userId, channel);
+      }
       case InitiativeAction.UPDATE_STATUS:
       case StatusUpdateAction.MARK_ON_HOLD:
       case StatusUpdateAction.MARK_ABANDONED:

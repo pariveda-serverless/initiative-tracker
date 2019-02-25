@@ -48,8 +48,9 @@ class ChangeMembershipOption implements Option {
   value: string;
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
+    const champion = action === MemberAction.MAKE_CHAMPION;
     this.text = { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' };
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+    this.value = JSON.stringify({ id: initiative.initiativeId, userId: member.slackUserId, champion });
   }
 }
 
@@ -59,7 +60,7 @@ class RemoveOption implements Option {
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = MemberAction.REMOVE_MEMBER;
     this.text = { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' };
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+    this.value = JSON.stringify({ id: initiative.initiativeId, userId: member.slackUserId, remove: true });
   }
 }
 
