@@ -25,7 +25,7 @@ initiativeActions[InitiativeAction.UPDATE_STATUS] = <ActionDisplay>{
   text: 'Update status'
 };
 initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
-  text: 'View initiative details'
+  text: 'View details'
 };
 
 const memberActions: ActionDisplay[] = [];
