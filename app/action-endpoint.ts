@@ -65,16 +65,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case MemberAction.UPDATE_MEMBERSHIP: {
-        // const { id, userId, champion, remove } = JSON.parse(payload.actions[0].value);
-        let actions = JSON.parse(payload.actions[0].value);
-        console.log(actions);
-        // if (remove) {
-        //   await leaveInitiative(id, teamId, userId);
-        // } else {
-        //   await changeMembership(id, teamId, userId, champion);
-        // }
-        // const initiative = await getInitiativeDetails(teamId, id);
-        // response = new DetailResponse(initiative, userId, channel);
+        const { id, userId, champion, remove } = JSON.parse(payload.actions[0].selected_option.value);
+        if (remove) {
+          await leaveInitiative(id, teamId, userId);
+        } else {
+          await changeMembership(id, teamId, userId, champion);
+        }
+        const initiative = await getInitiativeDetails(teamId, id);
+        response = new DetailResponse(initiative, userId, channel);
       }
       case InitiativeAction.UPDATE_STATUS:
       case StatusUpdateAction.MARK_ON_HOLD:
