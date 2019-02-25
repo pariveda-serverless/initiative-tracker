@@ -73,6 +73,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         }
         const initiative = await getInitiativeDetails(teamId, id);
         response = new DetailResponse(initiative, userId, channel);
+        break;
       }
       case InitiativeAction.UPDATE_STATUS:
       case StatusUpdateAction.MARK_ON_HOLD:
