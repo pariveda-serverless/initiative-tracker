@@ -14,6 +14,7 @@ import { InitiativeNameAndStatus, InitiativeDescription, CreatedBy } from './ini
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
 import { STATUS_UPDATE_DISPLAY } from './display';
+import { stringifyValue } from './id-helper';
 
 export class StatusUpdateRequest implements Message {
   channel: string;
@@ -56,7 +57,7 @@ class ActionButton implements Button {
   value?: string;
   constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {
     this.action_id = action;
-    this.value = JSON.stringify({
+    this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
       status: STATUS_UPDATE_DISPLAY[action].status
     });

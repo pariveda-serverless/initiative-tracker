@@ -13,6 +13,7 @@ import {
 import { InitiativeResponse, Status } from '../initiative';
 import { STATUS_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
 import { InitiativeAction } from '../interactions';
+import { stringifyValue } from './id-helper';
 
 export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
@@ -112,7 +113,7 @@ class ViewDetailsActionButton implements Button {
   constructor(initiative: InitiativeResponse) {
     const action = InitiativeAction.VIEW_DETAILS;
     this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
       text: INITIATIVE_ACTION_DISPLAY[action].text
@@ -128,7 +129,7 @@ class JoinActionButton implements Button {
   constructor(initiative: InitiativeResponse, champion: boolean) {
     const action = champion ? InitiativeAction.JOIN_AS_CHAMPION : InitiativeAction.JOIN_AS_MEMBER;
     this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, champion });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, champion });
     this.text = {
       type: 'plain_text',
       text: INITIATIVE_ACTION_DISPLAY[action].text
@@ -160,6 +161,6 @@ class StatusOption implements Option {
   value: string;
   constructor(status: Status, initiative: InitiativeResponse) {
     this.text = { text: STATUS_DISPLAY[status].text, type: 'plain_text' };
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, status });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, status });
   }
 }

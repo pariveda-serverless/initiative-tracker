@@ -4,7 +4,6 @@ import {
   MarkdownText,
   ImageContext,
   Button,
-  StaticSelect,
   Action,
   Confirmation,
   ContextBlock,
@@ -52,7 +51,6 @@ class ChangeMembershipOption implements Option {
     const champion = action === MemberAction.MAKE_CHAMPION;
     this.text = { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' };
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId, champion });
-    // this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId, champion });
   }
 }
 
@@ -67,11 +65,6 @@ class RemoveOption implements Option {
       slackUserId: member.slackUserId,
       remove: true
     });
-    // this.value = JSON.stringify({
-    //   initiativeId: initiative.initiativeId,
-    //   slackUserId: member.slackUserId,
-    //   remove: true
-    // });
   }
 }
 
@@ -115,7 +108,7 @@ class ChangeMembershipActionButton implements Button {
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
     this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
     this.text = {
       type: 'plain_text',
       text: MEMBER_ACTION_DISPLAY[action].text
@@ -133,7 +126,7 @@ class RemoveMembershipActionButton implements Button {
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const action = MemberAction.REMOVE_MEMBER;
     this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId });
     this.text = {
       type: 'plain_text',
       text: MEMBER_ACTION_DISPLAY[action].text
