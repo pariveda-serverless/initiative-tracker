@@ -7,12 +7,44 @@ import {
   StaticSelect,
   Action,
   Confirmation,
-  ContextBlock
+  ContextBlock,
+  Overflow,
+  Option
 } from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
 import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
 import { MemberAction } from '../interactions';
+
+export class NameAndRoleSection implements Section {
+  type: 'section' = 'section';
+  text: PlainText | MarkdownText;
+  accessory: Overflow;
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    const nameAndRole: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*${MEMBER_DISPLAY[member.role].text}*  <@${member.slackUserId}> joined on ${member.joinedAt}`
+    };
+    this.text = nameAndRole;
+    const memberActions = new MemberOverflowActions(member, initiative);
+    this.accessory = memberActions;
+  }
+}
+
+class MemberOverflowActions implements Overflow {
+  type: 'overflow' = 'overflow';
+  action_id: string;
+  options: Option[];
+  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+    this.action_id = MemberAction.UPDATE_MEMBERSHIP;
+    const action = member.champion ? MemberAction.MAKE_MEMBER : MemberAction.MAKE_CHAMPION;
+    const option: Option = {
+      text: { text: MEMBER_ACTION_DISPLAY[action].text, type: 'plain_text' },
+      value: JSON.stringify({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId })
+    };
+    this.options = [option];
+  }
+}
 
 export class NameAndRole implements ContextBlock {
   type: 'context' = 'context';
