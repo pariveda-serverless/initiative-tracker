@@ -44,13 +44,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case MemberAction.MAKE_CHAMPION: {
-        const { initiativeId, slackUserId } = parseValue(payload.actions[0].value);
-        await changeMembership(initiativeId, teamId, slackUserId, true);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
-        break;
-      }
       case MemberAction.UPDATE_MEMBERSHIP: {
         const { initiativeId, slackUserId, champion, remove } = parseValue(payload.actions[0].selected_option.value);
         if (remove) {
