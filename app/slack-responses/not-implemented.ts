@@ -5,8 +5,7 @@ export class NotImplementedResponse implements Message {
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(channel: string) {
     this.channel = channel;
-    const notImplementedSection = new NotImplementedSection();
-    this.blocks = [notImplementedSection];
+    this.blocks = [new NotImplementedSection()];
   }
 }
 

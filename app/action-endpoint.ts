@@ -11,9 +11,9 @@ import {
   getMemberIdentifiers
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
-import { DetailResponse } from './slack-responses/detail-response';
+import { DetailResponse } from './slack-responses/initiative-details';
 import { getUserProfile } from './slack/profile';
-import { NotImplementedResponse } from './slack-responses/not-implemented-response';
+import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
 import { parseValue } from './slack-responses/id-helper';
 

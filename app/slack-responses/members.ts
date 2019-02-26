@@ -16,7 +16,7 @@ import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
 import { MemberAction } from '../interactions';
 import { stringifyValue } from './id-helper';
 
-export class NameAndRoleSection implements Section {
+export class MemberSection implements Section {
   type: 'section' = 'section';
   text: PlainText | MarkdownText;
   accessory: Overflow;

@@ -1,3 +1,7 @@
+// This is needed because Slack places a hard limit of 74 characters
+// in the value field of all display elements.  In order to capture
+// the relevant values for an action (ids and also action intents)
+// we need to use as short of a stringified json payload as possible
 const keyMappings = {
   initiativeId: 'iid',
   slackUserId: 'suid',

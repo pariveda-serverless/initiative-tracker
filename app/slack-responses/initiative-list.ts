@@ -1,6 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse, Status } from '../initiative';
-import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiative-card';
+import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiatives';
 import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {

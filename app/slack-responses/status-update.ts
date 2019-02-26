@@ -10,7 +10,7 @@ import {
   Button
 } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import { InitiativeNameAndStatus, InitiativeDescription, CreatedBy } from './initiative-card';
+import { InitiativeNameAndStatus, InitiativeDescription, CreatedBy } from './initiatives';
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
 import { STATUS_UPDATE_DISPLAY } from './display';

@@ -3,7 +3,7 @@ import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from './initiative';
 import { MemberResponse, MEMBER_TYPE } from './member';
 import { send } from './slack/messages';
-import { StatusUpdateRequest } from './slack-responses/status-update-request';
+import { StatusUpdateRequest } from './slack-responses/status-update';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
