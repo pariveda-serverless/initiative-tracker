@@ -13,6 +13,6 @@ export async function sendDialogue(teamId: string, triggerId: string, message: a
   }
   dialogMessage.token = await getToken(teamId);
   console.log('Replying to message with params', JSON.stringify(dialogMessage));
-  const response = await slack.dialog.open(message);
+  const response = await slack.dialog.open(dialogMessage);
   console.log('Received response', JSON.stringify(response));
 }
