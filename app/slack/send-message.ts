@@ -6,15 +6,13 @@ import { getToken } from './profile';
 const slack = new WebClient();
 
 export async function sendDialogue(teamId: string, triggerId: string, message: any) {
-  // const params = {
-  //   url,
-  //   method: 'POST',
-  //   simple: false,
-  //   body: JSON.stringify({ dialog: message})
-  // };
-  message.token = await getToken(teamId);
-  message.trigger_id = triggerId;
-  console.log('Replying to message with params', JSON.stringify(message));
+  const dialogMessage = {
+    trigger_id: triggerId, 
+    dialog: message,
+    token: '',
+  }
+  dialogMessage.token = await getToken(teamId);
+  console.log('Replying to message with params', JSON.stringify(dialogMessage));
   const response = await slack.dialog.open(message);
   console.log('Received response', JSON.stringify(response));
 }
