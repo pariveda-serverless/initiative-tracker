@@ -7,7 +7,6 @@ export class ListResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiatives: InitiativeResponse[], status?: Status) {
-    this.channel = 'CFSV0HX5X';
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
     } else {

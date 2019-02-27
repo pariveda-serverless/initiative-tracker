@@ -1,5 +1,5 @@
 import { Status } from '../initiative';
-import { InitiativeAction, MemberAction, StatusUpdateAction } from '../interactions';
+import { InitiativeAction, StatusUpdateAction } from '../interactions';
 
 export const YELLOW = '#FCF500';
 export const PINK = '#FF1C7D';
@@ -8,60 +8,44 @@ export const ORANGE = '#FF7F0D';
 export const PURPLE = '#CC38CE';
 export const BLACK = '#000000';
 
-const statuses: StatusDisplay[] = [];
-statuses[Status.ACTIVE] = <StatusDisplay>{ color: GREEN, text: 'Active' };
-statuses[Status.COMPLETE] = <StatusDisplay>{ color: BLACK, text: 'Complete' };
-statuses[Status.ABANDONED] = <StatusDisplay>{ color: PINK, text: 'Abandoned' };
-statuses[Status.ON_HOLD] = <StatusDisplay>{ color: ORANGE, text: 'On hold' };
+const statuses: Display[] = [];
+statuses[Status.ACTIVE] = <Display>{ text: 'Active' };
+statuses[Status.COMPLETE] = <Display>{ text: 'Complete' };
+statuses[Status.ABANDONED] = <Display>{ text: 'Abandoned' };
+statuses[Status.ON_HOLD] = <Display>{ text: 'On hold' };
 
-const initiativeActions: ActionDisplay[] = [];
-initiativeActions[InitiativeAction.JOIN_AS_CHAMPION] = <ActionDisplay>{
-  text: 'Champion this initiative'
+const initiativeActions: Display[] = [];
+initiativeActions[InitiativeAction.JOIN_AS_CHAMPION] = <Display>{
+  text: 'Champion initiative'
 };
-initiativeActions[InitiativeAction.JOIN_AS_MEMBER] = <ActionDisplay>{
-  text: 'Join this initiative'
+initiativeActions[InitiativeAction.JOIN_AS_MEMBER] = <Display>{
+  text: 'Join initiative'
 };
-initiativeActions[InitiativeAction.UPDATE_STATUS] = <ActionDisplay>{
+initiativeActions[InitiativeAction.UPDATE_STATUS] = <Display>{
   text: 'Update status'
 };
-initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
+initiativeActions[InitiativeAction.VIEW_DETAILS] = <Display>{
   text: 'View details'
 };
 
-const statusUpdateIntents: ActionDisplay[] = [];
-statusUpdateIntents[StatusUpdateAction.MARK_ABANDONED] = <ActionDisplay>{
-  text: `Not being worked on`,
-  status: Status.ABANDONED
+const statusUpdateIntents: Display[] = [];
+statusUpdateIntents[StatusUpdateAction.MARK_ABANDONED] = <Display>{
+  text: `Not being worked on`
 };
-statusUpdateIntents[StatusUpdateAction.MARK_COMPLETE] = <ActionDisplay>{
-  text: `Completed`,
-  status: Status.COMPLETE
+statusUpdateIntents[StatusUpdateAction.MARK_COMPLETE] = <Display>{
+  text: `Completed`
 };
-statusUpdateIntents[StatusUpdateAction.MARK_ACTIVE] = <ActionDisplay>{
-  text: `Actively being worked on`,
-  status: Status.ACTIVE
+statusUpdateIntents[StatusUpdateAction.MARK_ACTIVE] = <Display>{
+  text: `Actively being worked on`
 };
-statusUpdateIntents[StatusUpdateAction.MARK_ON_HOLD] = <ActionDisplay>{
-  text: `On hold`,
-  status: Status.ON_HOLD
+statusUpdateIntents[StatusUpdateAction.MARK_ON_HOLD] = <Display>{
+  text: `On hold`
 };
 
-interface StatusDisplay {
-  color: string;
+interface Display {
   text: string;
 }
 
-interface ActionDisplay {
-  text: string;
-  confirmation?: ConfirmationDisplay;
-}
-
-interface ConfirmationDisplay {
-  title: string;
-  verb: string;
-  noun: string;
-}
-
-export const STATUS_DISPLAY: StatusDisplay[] = statuses;
-export const INITIATIVE_ACTION_DISPLAY: ActionDisplay[] = initiativeActions;
-export const STATUS_UPDATE_DISPLAY: ActionDisplay[] = statusUpdateIntents;
+export const STATUS_DISPLAY: Display[] = statuses;
+export const INITIATIVE_ACTION_DISPLAY: Display[] = initiativeActions;
+export const STATUS_UPDATE_DISPLAY: Display[] = statusUpdateIntents;
