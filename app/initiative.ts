@@ -61,8 +61,8 @@ export class CreateInitiativeRequest {
     this.type = INITIATIVE_TYPE;
     this.team = team;
     this.name = name;
-    this.description = description ? description : null;
-    this.channel = channel ? channel : null;
+    this.description = description ? description.trim() : null;
+    this.channel = channel ? channel.trim() : null;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
     this.createdAt = new Date().toDateString();
