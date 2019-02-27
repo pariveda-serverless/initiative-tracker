@@ -1,6 +1,6 @@
 import { post } from 'request-promise';
 import { WebClient } from '@slack/client';
-import { Message, ActionResponse } from 'slack';
+import { Message } from 'slack';
 import { getToken } from './profile';
 
 const slack = new WebClient();
@@ -23,16 +23,4 @@ export async function send(message: any, teamId: string): Promise<any> {
   const response = await slack.chat.postMessage(message);
   console.log('Received response', JSON.stringify(response));
   return response;
-}
-
-export async function sendDialogue(url: string, message: ActionResponse) {
-  const params = {
-    url,
-    method: 'POST',
-    simple: false,
-    body: JSON.stringify({ dialog: message})
-  };
-  console.log('Replying to message with params', JSON.stringify(params));
-  const response = await post(params);
-  console.log('Received response', JSON.stringify(response));
 }

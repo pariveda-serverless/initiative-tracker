@@ -1,5 +1,4 @@
 declare module 'slack' {
-  export type ActionResponse = Dialog | Message;
   // https://api.slack.com/dialogs#implementation
   export interface Dialog {
     title: string;

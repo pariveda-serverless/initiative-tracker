@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Message, Payload, Dialog, ActionResponse } from 'slack';
+import { Message, Payload, Dialog } from 'slack';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
@@ -13,7 +13,7 @@ import {
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
-import { send, sendDialogue } from './slack-calls/send-message';
+import { sendDialogue } from './slack-calls/send-message';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { reply } from './slack/messages';
@@ -30,7 +30,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
     let dialogResponse = false;
-    let response: ActionResponse;
+    let response: Message | Dialog;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {

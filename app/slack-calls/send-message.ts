@@ -1,26 +1,18 @@
 import { post } from 'request-promise';
-import { ActionResponse } from 'slack';
+import { WebClient } from '@slack/client';
+import { Dialog } from 'slack';
+// import { getToken } from './profile';
 
-export async function send(url: string, message: ActionResponse) {
-  const params = {
-    url,
-    method: 'POST',
-    simple: false,
-    body: JSON.stringify(message)
-  };
-  console.log('Replying to message with params', JSON.stringify(params));
-  const response = await post(params);
-  console.log('Received response', JSON.stringify(response));
-}
+const slack = new WebClient();
 
-export async function sendDialogue(url: string, message: ActionResponse) {
-  const params = {
-    url,
-    method: 'POST',
-    simple: false,
-    body: JSON.stringify({ dialog: message})
-  };
-  console.log('Replying to message with params', JSON.stringify(params));
-  const response = await post(params);
+export async function sendDialogue(url: string, message: any) {
+  // const params = {
+  //   url,
+  //   method: 'POST',
+  //   simple: false,
+  //   body: JSON.stringify({ dialog: message})
+  // };
+  console.log('Replying to message with params', JSON.stringify(message));
+  const response = await slack.dialog.open(message);
   console.log('Received response', JSON.stringify(response));
 }
