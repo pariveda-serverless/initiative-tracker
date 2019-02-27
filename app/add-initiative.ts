@@ -12,9 +12,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const slackUserId = body.user_id;
     const team = { id: body.team_id, domain: body.team_domain };
     const createdBy = await getUserProfile(slackUserId, team.id);
-    const [name, ...remaining] = body.text.split(',');
-    const description = remaining.join(',').trim();
-    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, createdBy });
+    let [name, description, channel] = body.text.split(',');
+    description = description.trim();
+    channel = channel.trim();
+    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
     const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
