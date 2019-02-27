@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, Payload, Dialog } from 'slack';
-import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
+import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
   MEMBER_TYPE,
@@ -22,13 +22,13 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    console.log('body', body)
+    console.log('body', body);
     console.log('pl', body.payload);
     const payload: Payload = JSON.parse(body.payload);
     const teamId = payload.team.id;
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
-    const action = payload.actions[0].action_id;
+    const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
     const triggerId = payload.trigger_id;
     let dialogResponse = false;
     let response: Message | EditInitiativeDialogResponse;
@@ -52,7 +52,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case InitiativeAction.OPEN_EDIT_DIALOG: {
         dialogResponse = true;
         const { initiativeId } = JSON.parse(payload.actions[0].value);
-        const initiative = await getInitiativeDetails(teamId ,initiativeId);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new EditInitiativeDialogResponse(initiative, triggerId);
         break;
       }
@@ -73,6 +73,19 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case MemberAction.REMOVE_MEMBER: {
         const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
         await leaveInitiative(initiativeId, teamId, slackUserId);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
+        response = new DetailResponse(initiative, slackUserId, channel);
+        break;
+      }
+      case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG_CALLBACK_ID: {
+        const slackUserId = payload.user.id;
+        const { initiative_name, initiative_description } = payload.submission;
+        const { originalName, originalDescription, initiativeId } = JSON.parse(payload.state);
+        await updateInitiativeNameAndDescription(
+          initiativeId,
+          originalName !== initiative_name && initiative_name,
+          originalDescription !== initiative_description && initiative_description
+        );
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
@@ -105,6 +118,58 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+// async function updateInitiativeNameAndDescriptionHandler(payload: any): Promise<any> {
+//   const initiativeId: string = payload.actions[0].value;
+//   const update = new UpdateInitiativeRequest({
+//     updateInitiativeId: initiativeId,
+//     newName: payload.initiative.name,
+//     newDescription: payload.initiative.description
+//   });
+//   await updateInitiativeNameAndDescription(update);
+//   const message = {
+//     text: `Initiative ${
+//       update.name && update.description
+//         ? `name updated to ${update.name} and description updated to ${update.description}`
+//         : update.name
+//         ? `name updated to ${update.name}`
+//         : `description updated to ${update.description}`
+//     }!`,
+//     response_type: 'in_channel'
+//   };
+//   return message;
+// }
+
+function updateInitiativeNameAndDescription(
+  initiativeId: string,
+  initiativeName: string,
+  initiativeDescription: string
+): Promise<any> {
+  let UpdateExpression = 'set ';
+  let ExpressionAttributeNames = {};
+  let ExpressionAttributeValues = {};
+  if (initiativeName) {
+    UpdateExpression = UpdateExpression.concat('#name = :name');
+    ExpressionAttributeNames['#name'] = 'name';
+    ExpressionAttributeValues[':name'] = initiativeName;
+  }
+  if (initiativeDescription) {
+    UpdateExpression = UpdateExpression.concat(
+      UpdateExpression.length > 4 ? ', #description = :description' : '#description = :description'
+    );
+    ExpressionAttributeNames['#description'] = 'description';
+    ExpressionAttributeValues[':description'] = initiativeDescription;
+  }
+  const params = {
+    TableName: process.env.INITIATIVES_TABLE,
+    Key: { HashKey: initiativeId, RangeKey: INITIATIVE_TYPE },
+    UpdateExpression,
+    ExpressionAttributeNames,
+    ExpressionAttributeValues
+  };
+  console.log('Updating Initiative Name and/or Description', params);
+  return initiatives.update(params).promise();
+}
 
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
   const params = {

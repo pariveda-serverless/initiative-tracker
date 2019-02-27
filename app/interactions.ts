@@ -1,3 +1,7 @@
+export enum InitiativeCallbackAction {
+  EDIT_INITIATIVE_DIALOG_CALLBACK_ID = 'EDIT_INITIATIVE_DIALOG_CALLBACK_ID'
+}
+
 export enum InitiativeAction {
   JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
   JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',

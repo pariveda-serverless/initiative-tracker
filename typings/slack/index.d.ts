@@ -168,7 +168,10 @@ declare module 'slack' {
       name: string;
     };
     trigger_id: string;
+    callback_id: string;
     response_url: string;
+    submission: {[key: string]: any},
+    state: string,
     actions: [
       {
         action_id: string;
