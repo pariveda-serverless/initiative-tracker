@@ -9,11 +9,10 @@ import {
   StaticSelect,
   Button
 } from 'slack';
-import { InitiativeResponse } from '../initiative';
+import { InitiativeResponse, Status } from '../initiative';
 import { InitiativeNameAndStatus, InitiativeDescription, CreatedBy } from './initiatives';
 import { MemberResponse } from '../member';
 import { StatusUpdateAction } from '../interactions';
-import { STATUS_UPDATE_DISPLAY } from './display';
 import { stringifyValue } from './id-helper';
 
 export class StatusUpdateRequest implements Message {
@@ -46,24 +45,82 @@ class UpdateStatusActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    this.elements = Object.values(StatusUpdateAction).map(action => new ActionButton(initiative, action));
+    const active = new MarkActiveButton(initiative);
+    const abandoned = new MarkAbandonedButton(initiative);
+    const onHold = new MarkOnHoldButton(initiative);
+    const complete = new MarkCompleteButton(initiative);
+    this.elements = [active, abandoned, onHold, complete];
   }
 }
 
-class ActionButton implements Button {
+class MarkActiveButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse, action: StatusUpdateAction) {
-    this.action_id = action;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = StatusUpdateAction.MARK_ACTIVE;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
-      status: STATUS_UPDATE_DISPLAY[action].status
+      status: Status.ACTIVE
     });
     this.text = {
       type: 'plain_text',
-      text: STATUS_UPDATE_DISPLAY[action].text
+      text: 'Actively being worked on'
+    };
+  }
+}
+
+class MarkAbandonedButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = StatusUpdateAction.MARK_ABANDONED;
+    this.value = stringifyValue({
+      initiativeId: initiative.initiativeId,
+      status: Status.ABANDONED
+    });
+    this.text = {
+      type: 'plain_text',
+      text: 'Not being worked on'
+    };
+  }
+}
+
+class MarkOnHoldButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = StatusUpdateAction.MARK_ON_HOLD;
+    this.value = stringifyValue({
+      initiativeId: initiative.initiativeId,
+      status: Status.ON_HOLD
+    });
+    this.text = {
+      type: 'plain_text',
+      text: 'Work is temporarily on hold'
+    };
+  }
+}
+
+class MarkCompleteButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = StatusUpdateAction.MARK_COMPLETE;
+    this.value = stringifyValue({
+      initiativeId: initiative.initiativeId,
+      status: Status.COMPLETE
+    });
+    this.text = {
+      type: 'plain_text',
+      text: 'All work has been completed'
     };
   }
 }

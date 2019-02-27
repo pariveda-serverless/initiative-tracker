@@ -1,7 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse, Status } from '../initiative';
+import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
 import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiatives';
-import { STATUS_DISPLAY } from './display';
 
 export class ListResponse implements Message {
   channel: string;
@@ -29,7 +28,7 @@ class NoResults implements Section {
   type: 'section' = 'section';
   text: PlainText | MarkdownText;
   constructor(status?: Status) {
-    const search = status ? `${STATUS_DISPLAY[status].text.toLowerCase()} ` : '';
+    const search = status ? `${getStatusDisplay(status).toLowerCase()} ` : '';
     this.text = {
       type: 'mrkdwn',
       text: `Darn, we couldn't find any ${search}initiatives :thinking_face: ...  maybe you should add one! :muscle:`

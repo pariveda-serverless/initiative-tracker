@@ -71,6 +71,7 @@ export class InitiativeResponse {
   name: string;
   description: string;
   status: Status;
+  statusDisplay: string;
   team: {
     id: string;
     domain: string;
@@ -88,8 +89,14 @@ export class InitiativeResponse {
     this.name = record.name;
     this.description = record.description;
     this.status = record.status;
+    this.statusDisplay = getStatusDisplay(record.status);
     this.team = record.team;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
   }
+}
+
+export function getStatusDisplay(status: Status): string {
+  const display = status.toLowerCase().replace('_', ' ');
+  return display.charAt(0).toUpperCase() + display.slice(1);
 }
