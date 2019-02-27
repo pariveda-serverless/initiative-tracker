@@ -13,8 +13,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const team = { id: body.team_id, domain: body.team_domain };
     const createdBy = await getUserProfile(slackUserId, team.id);
     const [name, ...remaining] = body.text.split(',');
-    const channel = getChannel(remaining);
-    const description = getDescription(remaining);
+    const { channel, description } = getChannelAndDescription(remaining);
     const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
@@ -27,17 +26,18 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-function getChannel(remaining): string {
+function getChannelAndDescription(remaining: string[]) {
   console.log('Getting channel from remaining', remaining);
-  // /<.*?>/
-  // trim
-  return null;
+  const first = remaining.length ? remaining[0].trim() : null;
+  const second = remaining.length && remaining.length > 1 ? remaining[1].trim() : null;
+  const channel = isChannel(first) ? first : isChannel(second) ? second : null;
+  const description = !isChannel(first) ? first : !isChannel(second) ? second : null;
+  return { channel, description };
 }
 
-function getDescription(remaining): string {
-  console.log('Getting description from remaining', JSON.stringify(remaining));
-  // trim
-  return null;
+function isChannel(text: string): boolean {
+  const channel = text && text.match(/<.*?>/);
+  return channel && channel.length > 0;
 }
 
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
