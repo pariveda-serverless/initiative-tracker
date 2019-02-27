@@ -13,13 +13,20 @@ export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, slackUserId: string, channel?: string) {
-    let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
     this.channel = channel;
-    const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
-    const description = new InitiativeDescription(initiative);
-    const metaInformation = new CreatedBy(initiative);
     const divider = new Divider();
-    blocks = [nameAndStatus, description, metaInformation];
+
+    let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
+    const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
+    blocks.push(nameAndStatus);
+
+    if (initiative.description) {
+      const description = new InitiativeDescription(initiative);
+      blocks.push(description);
+    }
+
+    const metaInformation = new CreatedBy(initiative);
+    blocks.push(metaInformation);
 
     // Only add the join buttons if the user isn't already a member
     if (!initiative.members.find(member => member.slackUserId === slackUserId)) {
