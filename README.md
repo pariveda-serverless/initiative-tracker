@@ -16,8 +16,8 @@ Initiative Tracker is a slackbot which helps teams track the internal initiative
 
 Available slash commands are:
 
-- `/add-initiative [initiative name], [optional initiative description]`
-- `/show-initiatives [optional initiative status: 'active' | 'abandoned' | 'complete' | 'on hold']`
+- `/add-initiative [name], [optional description], [optional #channel]`
+- `/show-initiatives [optional filter: 'active' | 'abandoned' | 'complete' | 'on hold']`
 
 ## Architecture diagram
 
