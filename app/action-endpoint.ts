@@ -29,6 +29,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const responseUrl = payload.response_url;
     const channel = payload.channel.id;
     const action = payload.actions[0].action_id;
+    const triggerId = payload.trigger_id;
     let dialogResponse = false;
     let response: Message | Dialog;
     switch (action) {
@@ -98,7 +99,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     console.log('payload', payload);
     if (dialogResponse) {
-      await sendDialogue(teamId, response);
+      await sendDialogue(teamId, triggerId, response);
     } else {
       await reply(responseUrl, response as Message);
     }

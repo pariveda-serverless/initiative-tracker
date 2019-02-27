@@ -167,6 +167,7 @@ declare module 'slack' {
       id: string;
       name: string;
     };
+    trigger_id: string;
     response_url: string;
     actions: [
       {
