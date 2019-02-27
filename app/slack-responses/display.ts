@@ -28,20 +28,6 @@ initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
   text: 'View details'
 };
 
-const memberActions: ActionDisplay[] = [];
-memberActions[MemberAction.REMOVE_MEMBER] = <ActionDisplay>{
-  text: 'Remove from initiative',
-  confirmation: { title: 'Confirm removal', verb: 'remove', noun: 'from the initiative' }
-};
-memberActions[MemberAction.MAKE_CHAMPION] = <ActionDisplay>{
-  text: 'Make champion',
-  confirmation: { title: 'Confirm change', verb: 'make', noun: 'an initiative champion' }
-};
-memberActions[MemberAction.MAKE_MEMBER] = <ActionDisplay>{
-  text: 'Make member',
-  confirmation: { title: 'Confirm change', verb: 'make', noun: 'an initiative member instead of champion' }
-};
-
 const statusUpdateIntents: ActionDisplay[] = [];
 statusUpdateIntents[StatusUpdateAction.MARK_ABANDONED] = <ActionDisplay>{
   text: `Not being worked on`,
@@ -60,16 +46,7 @@ statusUpdateIntents[StatusUpdateAction.MARK_ON_HOLD] = <ActionDisplay>{
   status: Status.ON_HOLD
 };
 
-const members: MemberDisplay[] = [];
-members['CHAMPION'] = <MemberDisplay>{ color: PURPLE, text: 'Champion' };
-members['MEMBER'] = <MemberDisplay>{ color: '', text: 'Member' };
-
 interface StatusDisplay {
-  color: string;
-  text: string;
-}
-
-interface MemberDisplay {
   color: string;
   text: string;
 }
@@ -87,6 +64,4 @@ interface ConfirmationDisplay {
 
 export const STATUS_DISPLAY: StatusDisplay[] = statuses;
 export const INITIATIVE_ACTION_DISPLAY: ActionDisplay[] = initiativeActions;
-export const MEMBER_ACTION_DISPLAY: ActionDisplay[] = memberActions;
 export const STATUS_UPDATE_DISPLAY: ActionDisplay[] = statusUpdateIntents;
-export const MEMBER_DISPLAY: MemberDisplay[] = members;

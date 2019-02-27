@@ -56,7 +56,7 @@ export class MemberResponse {
     this.initiativeId = record.initaitiveId;
     this.name = record.name;
     this.champion = record.champion;
-    this.role = record.champion ? 'CHAMPION' : 'MEMBER';
+    this.role = record.champion ? 'Champion' : 'Member';
     this.slackUserId = record.slackUserId;
     this.icon = record.icon;
     this.joinedAt = record.joinedAt;
