@@ -12,7 +12,9 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const slackUserId = body.user_id;
     const team = { id: body.team_id, domain: body.team_domain };
     const createdBy = await getUserProfile(slackUserId, team.id);
-    let [name, description, channel] = body.text.split(',');
+    const [name, ...remaining] = body.text.split(',');
+    const channel = getChannel(remaining);
+    const description = getDescription(remaining);
     const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
@@ -24,6 +26,19 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+function getChannel(remaining): string {
+  console.log('Getting channel from remaining', remaining);
+  // /<.*?>/
+  // trim
+  return null;
+}
+
+function getDescription(remaining): string {
+  console.log('Getting description from remaining', JSON.stringify(remaining));
+  // trim
+  return null;
+}
 
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
