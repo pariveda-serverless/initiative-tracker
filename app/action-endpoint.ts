@@ -82,6 +82,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const { initiative_name, initiative_description } = payload.submission;
         const { originalName, originalDescription, initiativeId } = JSON.parse(payload.state);
         await updateInitiativeNameAndDescription(
+          teamId,
           initiativeId,
           originalName !== initiative_name && initiative_name,
           originalDescription !== initiative_description && initiative_description
@@ -141,6 +142,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 // }
 
 function updateInitiativeNameAndDescription(
+  teamId: string,
   initiativeId: string,
   initiativeName: string,
   initiativeDescription: string
@@ -162,7 +164,7 @@ function updateInitiativeNameAndDescription(
   }
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: { HashKey: initiativeId, RangeKey: INITIATIVE_TYPE },
+    Key: {initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
     UpdateExpression,
     ExpressionAttributeNames,
     ExpressionAttributeValues
