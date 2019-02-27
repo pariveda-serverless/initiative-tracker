@@ -29,7 +29,11 @@ export async function getToken(teamId: string): Promise<string> {
   return ssm
     .getParameter(params)
     .promise()
-    .then(res => res.Parameter.Value);
+    .then(res => res.Parameter.Value)
+    .catch(error => {
+      console.log('ssm error', error);
+      return '';
+    });
 }
 
 interface Profile {
