@@ -13,7 +13,7 @@ import {
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
 import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
-import { sendDialogue } from './slack-calls/send-message';
+import { sendDialogue } from './slack/send-message';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { reply } from './slack/messages';
@@ -98,7 +98,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     console.log('payload', payload);
     if (dialogResponse) {
-      await sendDialogue(responseUrl, response);
+      await sendDialogue(teamId, response);
     } else {
       await reply(responseUrl, response as Message);
     }
