@@ -44,14 +44,14 @@ export class InitiativeNameStatusAndViewDetails implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, status];
-    this.accessory = new ViewDetailsActionButton(initiative);
+    this.accessory = new ViewDetailsButton(initiative);
   }
 }
 
 export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
-  fields?: (PlainText | MarkdownText)[];
-  accessory?: ImageContext | Button | StaticSelect;
+  fields: MarkdownText[];
+  accessory: StaticSelect;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -62,6 +62,24 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, status];
+    this.accessory = new StatusUpdate(initiative);
+  }
+}
+
+export class InitiativeNameChannelAndUpdateStatus implements Section {
+  type: 'section' = 'section';
+  fields: MarkdownText[];
+  accessory: StaticSelect;
+  constructor(initiative: InitiativeResponse) {
+    const name: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*Name*\n${initiative.name}`
+    };
+    const channel: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*Channel*\n${initiative.channel}`
+    };
+    this.fields = [name, channel];
     this.accessory = new StatusUpdate(initiative);
   }
 }
@@ -98,13 +116,13 @@ export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
   constructor(initiative: InitiativeResponse) {
-    const joinAsMember = new JoinAsMemberActionButton(initiative);
-    const joinAsChampion = new JoinAsChampionActionButton(initiative);
+    const joinAsMember = new JoinAsMemberButton(initiative);
+    const joinAsChampion = new JoinAsChampionButton(initiative);
     this.elements = [joinAsMember, joinAsChampion];
   }
 }
 
-class ViewDetailsActionButton implements Button {
+class ViewDetailsButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
@@ -120,7 +138,7 @@ class ViewDetailsActionButton implements Button {
   }
 }
 
-class JoinAsChampionActionButton implements Button {
+class JoinAsChampionButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
@@ -135,7 +153,7 @@ class JoinAsChampionActionButton implements Button {
   }
 }
 
-class JoinAsMemberActionButton implements Button {
+class JoinAsMemberButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
@@ -159,12 +177,14 @@ export class StatusUpdate implements StaticSelect {
   placeholder: PlainText;
   action_id: string;
   options: Option[];
+  initial_option: Option;
   constructor(initiative: InitiativeResponse) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Update status'
     };
-    this.options = Object.values(Status).map(status => new StatusOption(getStatusDisplay(status), initiative));
+    this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
+    this.initial_option = new StatusOption(initiative.status, initiative);
     this.action_id = InitiativeAction.UPDATE_STATUS;
   }
 }
@@ -172,8 +192,8 @@ export class StatusUpdate implements StaticSelect {
 class StatusOption implements Option {
   text: PlainText;
   value: string;
-  constructor(status: string, initiative: InitiativeResponse) {
-    this.text = { text: status, type: 'plain_text' };
+  constructor(status: Status, initiative: InitiativeResponse) {
+    this.text = { text: getStatusDisplay(status), type: 'plain_text' };
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, status });
   }
 }

@@ -5,7 +5,8 @@ import {
   InitiativeDescription,
   Divider,
   CreatedBy,
-  InitiativeDetailActions
+  InitiativeDetailActions,
+  InitiativeNameChannelAndUpdateStatus
 } from './initiatives';
 import { MemberSection } from './members';
 
@@ -17,7 +18,7 @@ export class DetailResponse implements Message {
     const divider = new Divider();
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
-    const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
+    const nameAndStatus = new InitiativeNameChannelAndUpdateStatus(initiative);
     blocks.push(nameAndStatus);
 
     if (initiative.description) {
