@@ -23,6 +23,6 @@ export class EditInitiativeDescription implements TextElement {
       this.name = 'initiative_description';
       this.label = 'Enter a new description for this initiative';
       this.value = initiative.description;
-      this.type = 'text';
+      this.type = 'textarea';
     }
   }

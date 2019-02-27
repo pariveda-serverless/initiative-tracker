@@ -31,7 +31,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const action = payload.actions[0].action_id;
     const triggerId = payload.trigger_id;
     let dialogResponse = false;
-    let response: Message | Dialog;
+    let response: Message | EditInitiativeDialogResponse;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
@@ -52,10 +52,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case InitiativeAction.OPEN_EDIT_DIALOG: {
         dialogResponse = true;
         const { initiativeId } = JSON.parse(payload.actions[0].value);
-        const callback_id = payload.actions[0].callback_id;
-        // const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(teamId ,initiativeId);
-        response = new EditInitiativeDialogResponse(initiative, callback_id);
+        response = new EditInitiativeDialogResponse(initiative, triggerId);
         break;
       }
       case MemberAction.MAKE_CHAMPION: {
@@ -97,9 +95,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    console.log('payload', payload);
     if (dialogResponse) {
-      await sendDialogue(teamId, triggerId, response);
+      await sendDialogue(teamId, response);
     } else {
       await reply(responseUrl, response as Message);
     }
