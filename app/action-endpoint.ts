@@ -96,6 +96,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
+    console.log('payload', payload);
     if (dialogResponse) {
       await sendDialogue(responseUrl, response);
     } else {
