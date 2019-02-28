@@ -12,7 +12,10 @@ import {
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { DetailResponse } from './slack-responses/detail-response';
-import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
+import {
+  EditInitiativeDialogResponse,
+  EditInitiativeFieldValidator
+} from './slack-responses/edit-initiative-dialogue-response';
 import { sendDialogue } from './slack/send-message';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
@@ -31,7 +34,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
     const triggerId = payload.trigger_id;
     let dialogResponse = false;
-    let response: Message | EditInitiativeDialogResponse;
+    let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
@@ -77,18 +80,28 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG_CALLBACK_ID: {
+      case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
         const { initiative_name, initiative_description } = payload.submission;
         const { originalName, originalDescription, initiativeId } = JSON.parse(payload.state);
-        await updateInitiativeNameAndDescription(
-          teamId,
-          initiativeId,
-          originalName !== initiative_name && initiative_name,
-          originalDescription !== initiative_description && initiative_description
+        const fieldValidator = new EditInitiativeFieldValidator(
+          initiative_name,
+          initiative_description,
+          originalName,
+          originalDescription
         );
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
+        if (fieldValidator.errors.length > 0) {
+          response = fieldValidator;
+        } else {
+          await updateInitiativeNameAndDescription(
+            teamId,
+            initiativeId,
+            originalName !== initiative_name && initiative_name,
+            originalDescription !== initiative_description && initiative_description
+          );
+          const initiative = await getInitiativeDetails(teamId, initiativeId);
+          response = new DetailResponse(initiative, slackUserId, channel);
+        }
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -164,7 +177,7 @@ function updateInitiativeNameAndDescription(
   }
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    Key: {initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
+    Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
     UpdateExpression,
     ExpressionAttributeNames,
     ExpressionAttributeValues

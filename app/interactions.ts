@@ -1,5 +1,5 @@
 export enum InitiativeCallbackAction {
-  EDIT_INITIATIVE_DIALOG_CALLBACK_ID = 'EDIT_INITIATIVE_DIALOG_CALLBACK_ID'
+  EDIT_INITIATIVE_DIALOG = 'EDIT_INITIATIVE_DIALOG'
 }
 
 export enum InitiativeAction {

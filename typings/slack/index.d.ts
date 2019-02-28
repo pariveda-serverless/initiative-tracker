@@ -1,4 +1,8 @@
 declare module 'slack' {
+  export interface DialogError {
+    name: string;
+    error: string;
+  }
   // https://api.slack.com/dialogs#implementation
   export interface Dialog {
     title: string;
