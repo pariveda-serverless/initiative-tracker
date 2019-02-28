@@ -16,12 +16,13 @@ class NewMember implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
+    const text = `@here Hey ${initiative.name}, <@${
+      member.slackUserId
+    }> has joined your initiative as a *${member.role.toLowerCase()}*! :man-with-bunny-ears-partying::woman-with-bunny-ears-partying:
+    If they aren't already here in the channel why don't you go ahead and invite them to join?`.replace(/  +/g, '');
     this.text = {
       type: 'mrkdwn',
-      text: `@here Hey ${initiative.name}, <@${
-        member.slackUserId
-      }> has joined your initiative as a *${member.role.toLowerCase()}*! :man-with-bunny-ears-partying::woman-with-bunny-ears-partying:
-      If they aren't already here in the channel why don't you go ahead and invite them to join?`
+      text
     };
   }
 }
