@@ -26,12 +26,6 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    // const payload: Payload = JSON.parse(body.payload);
-    // const teamId = payload.team.id;
-    // const responseUrl = payload.response_url;
-    // const channel = payload.channel.id;
-    // const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
-    // const triggerId = payload.trigger_id;
     let dialogResponse = false;
     let dialogError = false;
     let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
