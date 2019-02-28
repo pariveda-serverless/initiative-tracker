@@ -49,6 +49,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
       Resource:
         - { Fn::GetAtt: [InitiativesTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
