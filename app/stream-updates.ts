@@ -12,7 +12,7 @@ export const handler = streamWrapper(async ({ versions, success, error }: Stream
         const record = <InitiativeRecord>version.newVersion;
         return record.identifiers.indexOf(MEMBER_TYPE) > -1 && !version.oldVersion;
       })
-      .map(record => new MemberResponse(record));
+      .map(version => new MemberResponse(version.newVersion));
     await Promise.all(newMembers.map(member => publishNewMembersForNotifications(member)));
     success();
   } catch (err) {
@@ -25,5 +25,6 @@ async function publishNewMembersForNotifications(member: MemberResponse): Promis
     Message: JSON.stringify(member),
     TopicArn: process.env.NOTIFY_ON_JOIN_SNS
   };
+  console.log('Publishing new member notification with params', params);
   return sns.publish(params).promise();
 }
