@@ -7,16 +7,7 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const teamId = body.team_id;
-    const text = body.text
-      ? body.text
-          .toUpperCase()
-          .trim()
-          .replace(' ', '_')
-      : '';
-    console.log('status argument', text);
-    const status: Status | undefined = <any>Status[text];
-    console.log('status', status);
+    const { teamId, status } = getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
     const message = new ListResponse(initiatives, status);
     console.log(message);
@@ -26,6 +17,18 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+function getFieldsFromBody(body) {
+  const teamId = body.team_id;
+  const text = body.text
+    ? body.text
+        .toUpperCase()
+        .trim()
+        .replace(' ', '_')
+    : '';
+  const status: Status | undefined = <any>Status[text];
+  return { teamId, status };
+}
 
 export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
   const KeyConditionExpression = status

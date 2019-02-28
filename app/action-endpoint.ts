@@ -21,11 +21,7 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const payload: Payload = JSON.parse(body.payload);
-    const teamId = payload.team.id;
-    const responseUrl = payload.response_url;
-    const channel = payload.channel.id;
-    const action = payload.actions[0].action_id;
+    const { payload, teamId, responseUrl, channel, action } = getFieldsFromBody(body);
     let response: Message;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
@@ -88,6 +84,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+function getFieldsFromBody(body: any) {
+  const payload: Payload = JSON.parse(body.payload);
+  const teamId = payload.team.id;
+  const responseUrl = payload.response_url;
+  const channel = payload.channel.id;
+  const action = payload.actions[0].action_id;
+  return { payload, teamId, responseUrl, channel, action };
+}
 
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
   const params = {

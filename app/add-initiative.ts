@@ -9,11 +9,7 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const slackUserId = body.user_id;
-    const team = { id: body.team_id, domain: body.team_domain };
-    const createdBy = await getUserProfile(slackUserId, team.id);
-    const [name, ...remaining] = body.text.split(',');
-    const { channel, description } = getChannelAndDescription(remaining);
+    const { team, createdBy, name, channel, description } = await getFieldsFromBody(body);
     const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
@@ -25,6 +21,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+async function getFieldsFromBody(body: any) {
+  const slackUserId = body.user_id;
+  const team = { id: body.team_id, domain: body.team_domain };
+  const createdBy = await getUserProfile(slackUserId, team.id);
+  const [name, ...remaining] = body.text.split(',');
+  const { channel, description } = getChannelAndDescription(remaining);
+  return { team, createdBy, name, channel, description };
+}
 
 function getChannelAndDescription(
   remaining: string[]
