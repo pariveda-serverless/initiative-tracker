@@ -7,7 +7,8 @@ export class NewMemberNotification implements Message {
   text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
-    this.channel = initiative.channel;
+    const channel = initiative.channel.match(/#.*?\|/);
+    this.channel = channel && channel[0];
     this.blocks = [new NewMember(initiative, member)];
   }
 }
