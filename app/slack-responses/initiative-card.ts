@@ -100,8 +100,7 @@ export class InitiativeDetailActions implements Action {
   constructor(initiative: InitiativeResponse) {
     const joinAsMember = new JoinActionButton(initiative, false);
     const joinAsChampion = new JoinActionButton(initiative, true);
-    const editInitiative = new EditInitiativeActionButton(initiative);
-    this.elements = [joinAsMember, joinAsChampion, editInitiative];
+    this.elements = [joinAsMember, joinAsChampion];
   }
 }
 
@@ -130,22 +129,6 @@ class JoinActionButton implements Button {
     const action = champion ? InitiativeAction.JOIN_AS_CHAMPION : InitiativeAction.JOIN_AS_MEMBER;
     this.action_id = action;
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId, champion });
-    this.text = {
-      type: 'plain_text',
-      text: INITIATIVE_ACTION_DISPLAY[action].text
-    };
-  }
-}
-
-class EditInitiativeActionButton implements Button {
-  type: 'button' = 'button';
-  text: PlainText;
-  action_id: string;
-  value?: string;
-  constructor(initiative: InitiativeResponse) {
-    const action = InitiativeAction.OPEN_EDIT_DIALOG;
-    this.action_id = action;
-    this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
       text: INITIATIVE_ACTION_DISPLAY[action].text

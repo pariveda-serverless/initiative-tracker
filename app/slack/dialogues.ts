@@ -15,17 +15,3 @@ export async function sendDialogue(teamId: string, message: any) {
   const response = await slack.dialog.open(message);
   console.log('Received response', JSON.stringify(response));
 }
-
-export async function dialogErrorReply(url: string, message: EditInitiativeFieldValidator) {
-  const params = {
-    url,
-    headers: {
-      'content-type': 'application/json'
-    },
-    method: 'POST',
-    body:JSON.stringify(message),
-  };
-  console.log('Replying to message with params', JSON.stringify(params));
-  const response = await post(params);
-  console.log('Received response in dialog error', JSON.stringify(response));
-}

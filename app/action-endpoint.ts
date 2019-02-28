@@ -16,7 +16,7 @@ import {
   EditInitiativeDialogResponse,
   EditInitiativeFieldValidator
 } from './slack-responses/edit-initiative-dialogue-response';
-import { sendDialogue, dialogErrorReply } from './slack/dialogues';
+import { sendDialogue } from './slack/dialogues';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { reply } from './slack/messages';
@@ -25,8 +25,6 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    console.log('body', body);
-    console.log('pl', body.payload);
     const payload: Payload = JSON.parse(body.payload);
     const teamId = payload.team.id;
     const responseUrl = payload.response_url;
@@ -53,7 +51,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case InitiativeAction.OPEN_EDIT_DIALOG: {
+      case MemberAction.OPEN_EDIT_DIALOG: {
         dialogResponse = true;
         const { initiativeId } = JSON.parse(payload.actions[0].value);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
@@ -134,27 +132,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-// async function updateInitiativeNameAndDescriptionHandler(payload: any): Promise<any> {
-//   const initiativeId: string = payload.actions[0].value;
-//   const update = new UpdateInitiativeRequest({
-//     updateInitiativeId: initiativeId,
-//     newName: payload.initiative.name,
-//     newDescription: payload.initiative.description
-//   });
-//   await updateInitiativeNameAndDescription(update);
-//   const message = {
-//     text: `Initiative ${
-//       update.name && update.description
-//         ? `name updated to ${update.name} and description updated to ${update.description}`
-//         : update.name
-//         ? `name updated to ${update.name}`
-//         : `description updated to ${update.description}`
-//     }!`,
-//     response_type: 'in_channel'
-//   };
-//   return message;
-// }
-
 function updateInitiativeNameAndDescription(
   teamId: string,
   initiativeId: string,
@@ -163,7 +140,7 @@ function updateInitiativeNameAndDescription(
 ): Promise<any> {
   const UpdateExpression = 'set #name = :name, #description = :description';
   const ExpressionAttributeNames = { '#name': 'name', '#description': 'description' };
-  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription};
+  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription };
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },

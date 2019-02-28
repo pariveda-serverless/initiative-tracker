@@ -27,9 +27,6 @@ initiativeActions[InitiativeAction.UPDATE_STATUS] = <ActionDisplay>{
 initiativeActions[InitiativeAction.VIEW_DETAILS] = <ActionDisplay>{
   text: 'View details'
 };
-initiativeActions[InitiativeAction.OPEN_EDIT_DIALOG] = <ActionDisplay>{
-  text: 'Edit Initiative'
-};
 
 const memberActions: ActionDisplay[] = [];
 memberActions[MemberAction.REMOVE_MEMBER] = <ActionDisplay>{
@@ -43,6 +40,9 @@ memberActions[MemberAction.MAKE_CHAMPION] = <ActionDisplay>{
 memberActions[MemberAction.MAKE_MEMBER] = <ActionDisplay>{
   text: 'Make member',
   confirmation: { title: 'Confirm change', verb: 'make', noun: 'an initiative member instead of champion' }
+};
+memberActions[MemberAction.OPEN_EDIT_DIALOG] = <ActionDisplay>{
+  text: 'Edit Initiative'
 };
 
 const statusUpdateIntents: ActionDisplay[] = [];

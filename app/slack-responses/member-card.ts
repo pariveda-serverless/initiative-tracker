@@ -11,8 +11,8 @@ import {
 } from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
-import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
-import { MemberAction } from '../interactions';
+import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
+import { MemberAction, InitiativeAction } from '../interactions';
 
 export class NameAndRole implements ContextBlock {
   type: 'context' = 'context';
@@ -41,7 +41,8 @@ export class MemberActions implements Action {
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
     const changeMembership = new ChangeMembershipActionButton(member, initiative);
     const remove = new RemoveMembershipActionButton(member, initiative);
-    this.elements = [changeMembership, remove];
+    const edit = new EditInitiativeActionButton(initiative);
+    this.elements = [changeMembership, remove, edit];
   }
 }
 
@@ -78,6 +79,22 @@ class RemoveMembershipActionButton implements Button {
       text: MEMBER_ACTION_DISPLAY[action].text
     };
     this.confirm = new ConfirmAction(member, action);
+  }
+}
+
+class EditInitiativeActionButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = MemberAction.OPEN_EDIT_DIALOG;
+    this.action_id = action;
+    this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
+    this.text = {
+      type: 'plain_text',
+      text: INITIATIVE_ACTION_DISPLAY[action].text
+    };
   }
 }
 
