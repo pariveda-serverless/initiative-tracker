@@ -32,7 +32,7 @@ export class StatusUpdateRequest implements Message {
 
 class RequestInfo implements Section {
   type: 'section' = 'section';
-  text: PlainText | MarkdownText;
+  text: MarkdownText;
   constructor(member: MemberResponse) {
     this.text = {
       type: 'mrkdwn',

@@ -38,7 +38,7 @@ function getChannelAndDescription(remaining: string[]): { channel: string; descr
     channel = first;
     description = second;
   } else {
-    description = remaining.join(' ');
+    description = remaining.join(', ');
   }
   return { channel, description };
 }
