@@ -27,7 +27,11 @@ interface CreateInitiativeRequestProperties {
     domain: string;
   };
   description?: string;
-  channel?: string;
+  channel?: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   createdBy: {
     slackUserId: string;
     name: string;
@@ -45,7 +49,11 @@ export class CreateInitiativeRequest {
   };
   name: string;
   description: string;
-  channel: string;
+  channel: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   status: Status;
   createdBy: {
     slackUserId: string;
@@ -73,7 +81,11 @@ export class InitiativeResponse {
   initiativeId: string;
   name: string;
   description: string;
-  channel: string;
+  channel: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   status: Status;
   statusDisplay: string;
   team: {

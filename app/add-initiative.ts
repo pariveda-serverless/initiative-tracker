@@ -26,16 +26,18 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-function getChannelAndDescription(remaining: string[]): { channel: string; description: string } {
+function getChannelAndDescription(
+  remaining: string[]
+): { channel: { id: string; name: string; parsed: string }; description: string } {
   console.log('Getting channel from remaining', remaining);
   let channel, description;
   const first = remaining.length ? remaining[0].trim() : null;
   const second = remaining.length && remaining.length > 1 ? remaining[1].trim() : null;
   if (isChannel(second)) {
-    channel = second;
+    channel = getChannel(second);
     description = first;
   } else if (isChannel(first)) {
-    channel = first;
+    channel = getChannel(first);
     description = second;
   } else {
     description = remaining.join(', ');
@@ -45,6 +47,19 @@ function getChannelAndDescription(remaining: string[]): { channel: string; descr
 
 function isChannel(text: string): boolean {
   return text && /<.*?>/.test(text);
+}
+
+function getChannel(channel: string): { id: string; name: string; parsed: string } {
+  const parsed = channel;
+  const id = channel
+    .match(/#.*?\|/)[0]
+    .replace('#', '')
+    .replace('|', '');
+  const name = channel
+    .match(/\|.*?\>/)[0]
+    .replace('|', '')
+    .replace('>', '');
+  return { id, name, parsed };
 }
 
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
