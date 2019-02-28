@@ -95,12 +95,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           response = fieldValidator;
           dialogError = true;
         } else {
-          await updateInitiativeNameAndDescription(
-            teamId,
-            initiativeId,
-            originalName !== initiative_name && initiative_name,
-            originalDescription !== initiative_description && initiative_description
-          );
+          await updateInitiativeNameAndDescription(teamId, initiativeId, initiative_name, initiative_description);
           const initiative = await getInitiativeDetails(teamId, initiativeId);
           response = new DetailResponse(initiative, slackUserId, channel);
         }
@@ -125,16 +120,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (dialogError) {
-      success(response)
+      success(response);
     } else {
-    if (dialogResponse) {
-      await sendDialogue(teamId, response);
-    } 
-    else {
-      await reply(responseUrl, response as Message);
+      if (dialogResponse) {
+        await sendDialogue(teamId, response);
+      } else {
+        await reply(responseUrl, response as Message);
+      }
+      success();
     }
-    success();
-  }
   } catch (err) {
     error(err);
   }
@@ -167,21 +161,9 @@ function updateInitiativeNameAndDescription(
   initiativeName: string,
   initiativeDescription: string
 ): Promise<any> {
-  let UpdateExpression = 'set ';
-  let ExpressionAttributeNames = {};
-  let ExpressionAttributeValues = {};
-  if (initiativeName !== undefined) {
-    UpdateExpression = UpdateExpression.concat('#name = :name');
-    ExpressionAttributeNames['#name'] = 'name';
-    ExpressionAttributeValues[':name'] = initiativeName;
-  }
-  if (initiativeDescription !== undefined) {
-    UpdateExpression = UpdateExpression.concat(
-      UpdateExpression.length > 4 ? ', #description = :description' : '#description = :description'
-    );
-    ExpressionAttributeNames['#description'] = 'description';
-    ExpressionAttributeValues[':description'] = initiativeDescription;
-  }
+  const UpdateExpression = 'set #name = :name, #description = :description';
+  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description' };
+  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription};
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
