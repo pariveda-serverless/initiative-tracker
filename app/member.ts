@@ -53,7 +53,7 @@ export class MemberResponse {
   joinedAt: string;
 
   constructor(record: any) {
-    this.initiativeId = record.initaitiveId;
+    this.initiativeId = record.initiativeId;
     this.name = record.name;
     this.champion = record.champion;
     this.role = record.champion ? 'Champion' : 'Member';
