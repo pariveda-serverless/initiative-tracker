@@ -16,7 +16,7 @@ import {
   EditInitiativeDialogResponse,
   EditInitiativeFieldValidator
 } from './slack-responses/edit-initiative-dialogue-response';
-import { sendDialogue } from './slack/send-message';
+import { sendDialogue, dialogErrorReply } from './slack/dialogues';
 import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented-response';
 import { reply } from './slack/messages';
@@ -34,6 +34,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
     const triggerId = payload.trigger_id;
     let dialogResponse = false;
+    let dialogError = false;
     let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
@@ -92,6 +93,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         );
         if (fieldValidator.errors.length > 0) {
           response = fieldValidator;
+          dialogError = true;
         } else {
           await updateInitiativeNameAndDescription(
             teamId,
@@ -124,7 +126,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     if (dialogResponse) {
       await sendDialogue(teamId, response);
-    } else {
+    } else if (dialogError) {
+      dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
+    }
+    else {
       await reply(responseUrl, response as Message);
     }
     success();
