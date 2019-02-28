@@ -127,7 +127,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     if (dialogResponse) {
       await sendDialogue(teamId, response);
     } else if (dialogError) {
-      dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
+      await dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
     }
     else {
       await reply(responseUrl, response as Message);
