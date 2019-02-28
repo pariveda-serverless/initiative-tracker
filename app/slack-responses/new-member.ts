@@ -18,7 +18,7 @@ class NewMember implements Section {
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
     this.text = {
       type: 'mrkdwn',
-      text: `Hey ${initiative.name}, ${member.name} has joined you as a ${member.role}!`
+      text: `Hey ${initiative.name}, <@${member.slackUserId}> has joined you as a ${member.role.toLowerCase()}!`
     };
   }
 }
