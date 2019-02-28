@@ -125,7 +125,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (dialogError) {
-      // await dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
       success(response)
     } else {
     if (dialogResponse) {
@@ -171,12 +170,12 @@ function updateInitiativeNameAndDescription(
   let UpdateExpression = 'set ';
   let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
-  if (initiativeName) {
+  if (initiativeName !== undefined) {
     UpdateExpression = UpdateExpression.concat('#name = :name');
     ExpressionAttributeNames['#name'] = 'name';
     ExpressionAttributeValues[':name'] = initiativeName;
   }
-  if (initiativeDescription) {
+  if (initiativeDescription !== undefined) {
     UpdateExpression = UpdateExpression.concat(
       UpdateExpression.length > 4 ? ', #description = :description' : '#description = :description'
     );
