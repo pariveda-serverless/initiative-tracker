@@ -27,7 +27,8 @@ class MemberOverflowActions implements Overflow {
     this.action_id = MemberAction.UPDATE_MEMBERSHIP;
     const changeMembership = new ChangeMembershipOption(member, initiative);
     const remove = new RemoveOption(member, initiative);
-    this.options = [changeMembership, remove];
+    const edit = new EditInitiativeOption(initiative);
+    this.options = [changeMembership, remove, edit];
   }
 }
 
@@ -41,6 +42,19 @@ class ChangeMembershipOption implements Option {
       type: 'plain_text'
     };
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, slackUserId: member.slackUserId, action });
+  }
+}
+
+class EditInitiativeOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = MemberAction.OPEN_EDIT_DIALOG;
+    this.text = {
+      text: 'Edit Initiative',
+      type: 'plain_text'
+    };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
   }
 }
 
