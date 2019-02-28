@@ -18,9 +18,9 @@ class NewMember implements Section {
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
     this.text = {
       type: 'mrkdwn',
-      text: `@here Hey ${initiative.name}, <@${member.slackUserId}> has joined your initiative${
-        member.champion ? ' as a *champion*' : ''
-      }! :man-with-bunny-ears-partying::woman-with-bunny-ears-partying:
+      text: `@here Hey ${initiative.name}, <@${
+        member.slackUserId
+      }> has joined your initiative as a *${member.role.toLowerCase()}*! :man-with-bunny-ears-partying::woman-with-bunny-ears-partying:
       If they aren't already here in the channel why don't you go ahead and invite them to join?`
     };
   }
