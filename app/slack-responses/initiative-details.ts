@@ -5,21 +5,29 @@ import {
   InitiativeDescription,
   Divider,
   CreatedBy,
-  InitiativeDetailActions
-} from './initiative-card';
-import { NameAndRole, MemberActions } from './member-card';
+  InitiativeDetailActions,
+  InitiativeNameChannelAndUpdateStatus
+} from './initiatives';
+import { MemberSection } from './members';
 
 export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, slackUserId: string, channel?: string) {
-    let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
     this.channel = channel;
-    const nameAndStatus = new InitiativeNameStatusAndUpdateStatus(initiative);
-    const description = new InitiativeDescription(initiative);
-    const metaInformation = new CreatedBy(initiative);
     const divider = new Divider();
-    blocks = [nameAndStatus, description, metaInformation];
+
+    let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
+    const nameAndStatus = new InitiativeNameChannelAndUpdateStatus(initiative);
+    blocks.push(nameAndStatus);
+
+    if (initiative.description) {
+      const description = new InitiativeDescription(initiative);
+      blocks.push(description);
+    }
+
+    const metaInformation = new CreatedBy(initiative);
+    blocks.push(metaInformation);
 
     // Only add the join buttons if the user isn't already a member
     if (!initiative.members.find(member => member.slackUserId === slackUserId)) {
@@ -30,9 +38,8 @@ export class DetailResponse implements Message {
     const members = initiative.members
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
-        const nameAndRole = new NameAndRole(member);
-        const memberActions = new MemberActions(member, initiative);
-        return [nameAndRole, memberActions, divider];
+        const memberSection = new MemberSection(member, initiative);
+        return [memberSection, divider];
       })
       .reduce((all, block) => all.concat(block), []);
     // Remove the last divider block

@@ -11,33 +11,35 @@ import {
   getMemberIdentifiers
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
-import { DetailResponse } from './slack-responses/detail-response';
 import {
   EditInitiativeDialogResponse,
   EditInitiativeFieldValidator
 } from './slack-responses/edit-initiative-dialogue-response';
 import { sendDialogue } from './slack/dialogues';
+import { DetailResponse } from './slack-responses/initiative-details';
 import { getUserProfile } from './slack/profile';
-import { NotImplementedResponse } from './slack-responses/not-implemented-response';
+import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
+import { parseValue } from './slack-responses/id-helper';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const payload: Payload = JSON.parse(body.payload);
-    const teamId = payload.team.id;
-    const responseUrl = payload.response_url;
-    const channel = payload.channel.id;
-    const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
-    const triggerId = payload.trigger_id;
+    // const payload: Payload = JSON.parse(body.payload);
+    // const teamId = payload.team.id;
+    // const responseUrl = payload.response_url;
+    // const channel = payload.channel.id;
+    // const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
+    // const triggerId = payload.trigger_id;
     let dialogResponse = false;
     let dialogError = false;
     let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
+    const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
-        const { initiativeId, champion } = JSON.parse(payload.actions[0].value);
+        const { initiativeId, champion } = parseValue(payload.actions[0].value);
         const slackUserId = payload.user.id;
         await joinInitiative(teamId, initiativeId, slackUserId, champion);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
@@ -45,7 +47,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.VIEW_DETAILS: {
-        const { initiativeId } = JSON.parse(payload.actions[0].value);
+        const { initiativeId } = parseValue(payload.actions[0].value);
         const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
@@ -58,23 +60,22 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new EditInitiativeDialogResponse(initiative, triggerId);
         break;
       }
-      case MemberAction.MAKE_CHAMPION: {
-        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await changeMembership(initiativeId, teamId, slackUserId, true);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
-        break;
-      }
-      case MemberAction.MAKE_MEMBER: {
-        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await changeMembership(initiativeId, teamId, slackUserId, false);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
-        break;
-      }
-      case MemberAction.REMOVE_MEMBER: {
-        const { initiativeId, slackUserId } = JSON.parse(payload.actions[0].value);
-        await leaveInitiative(initiativeId, teamId, slackUserId);
+      case MemberAction.UPDATE_MEMBERSHIP: {
+        const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
+        switch (action) {
+          case MemberAction.REMOVE_MEMBER: {
+            await leaveInitiative(initiativeId, teamId, slackUserId);
+            break;
+          }
+          case MemberAction.MAKE_CHAMPION: {
+            await changeMembership(initiativeId, teamId, slackUserId, true);
+            break;
+          }
+          case MemberAction.MAKE_MEMBER: {
+            await changeMembership(initiativeId, teamId, slackUserId, false);
+            break;
+          }
+        }
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
@@ -105,7 +106,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case StatusUpdateAction.MARK_COMPLETE:
       case StatusUpdateAction.MARK_ACTIVE: {
         const value = payload.actions[0].value ? payload.actions[0].value : payload.actions[0].selected_option.value;
-        const { initiativeId, status } = JSON.parse(value);
+        const { initiativeId, status } = parseValue(value);
         const slackUserId = payload.user.id;
         await updateInitiativeStatus(initiativeId, teamId, status);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
@@ -150,6 +151,16 @@ function updateInitiativeNameAndDescription(
   };
   console.log('Updating Initiative Name and/or Description', params);
   return initiatives.update(params).promise();
+}
+
+function getFieldsFromBody(body: any) {
+  const payload: Payload = JSON.parse(body.payload);
+  const teamId = payload.team.id;
+  const responseUrl = payload.response_url;
+  const channel = payload.channel.id;
+  const action = payload.actions[0].action_id;
+  const triggerId = payload.trigger_id
+  return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
