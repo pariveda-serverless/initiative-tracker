@@ -26,12 +26,6 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    // const payload: Payload = JSON.parse(body.payload);
-    // const teamId = payload.team.id;
-    // const responseUrl = payload.response_url;
-    // const channel = payload.channel.id;
-    // const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
-    // const triggerId = payload.trigger_id;
     let dialogResponse = false;
     let dialogError = false;
     let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
@@ -53,15 +47,9 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = new DetailResponse(initiative, slackUserId, channel);
         break;
       }
-      case MemberAction.OPEN_EDIT_DIALOG: {
-        dialogResponse = true;
-        const { initiativeId } = JSON.parse(payload.actions[0].value);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new EditInitiativeDialogResponse(initiative, triggerId);
-        break;
-      }
-      case MemberAction.UPDATE_MEMBERSHIP: {
+      case MemberAction.UPDATE_INITIATIVE: {
         const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
         switch (action) {
           case MemberAction.REMOVE_MEMBER: {
             await leaveInitiative(initiativeId, teamId, slackUserId);
@@ -75,9 +63,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
             await changeMembership(initiativeId, teamId, slackUserId, false);
             break;
           }
+          case MemberAction.OPEN_EDIT_DIALOG: {
+            dialogResponse = true;
+            response = new EditInitiativeDialogResponse(initiative, triggerId);
+            break;
+          }
         }
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
+        if (action !== MemberAction.OPEN_EDIT_DIALOG) {
+          response = new DetailResponse(initiative, slackUserId, channel);
+        }
         break;
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
@@ -159,7 +153,7 @@ function getFieldsFromBody(body: any) {
   const responseUrl = payload.response_url;
   const channel = payload.channel.id;
   const action = payload.actions[0].action_id;
-  const triggerId = payload.trigger_id
+  const triggerId = payload.trigger_id;
   return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
