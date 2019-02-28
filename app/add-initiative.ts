@@ -3,7 +3,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 import { getUserProfile } from './slack/profile';
 import { DetailResponse } from './slack-responses/initiative-details';
-import { MemberResponse, MEMBER_TYPE, TEAM, getTeamIdentifier } from './member';
+import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -45,7 +45,7 @@ function getChannelAndDescription(
     channel = getChannel(first);
     description = second;
   } else {
-    description = remaining.join(', ');
+    description = remaining.join(',');
   }
   return { channel, description };
 }
