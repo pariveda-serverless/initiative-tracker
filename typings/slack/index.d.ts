@@ -15,7 +15,7 @@ declare module 'slack' {
     text?: PlainText | MarkdownText;
     block_id?: string;
     fields?: (PlainText | MarkdownText)[];
-    accessory?: ImageContext | Button | StaticSelect;
+    accessory?: ImageContext | Button | StaticSelect | Overflow;
   }
 
   export interface DividerBlock {
@@ -66,6 +66,13 @@ declare module 'slack' {
     options: Option[];
     option_groups?: OptionGroup[];
     initial_option?: Option;
+    confirm?: Confirmation;
+  }
+
+  export interface Overflow {
+    type: 'overflow';
+    action_id: string;
+    options: Option[];
     confirm?: Confirmation;
   }
 

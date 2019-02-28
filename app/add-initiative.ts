@@ -2,19 +2,15 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
 import { getUserProfile } from './slack/profile';
-import { DetailResponse } from './slack-responses/detail-response';
-import { MemberResponse, MEMBER_TYPE, TEAM, getTeamIdentifier } from './member';
+import { DetailResponse } from './slack-responses/initiative-details';
+import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from './member';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const slackUserId = body.user_id;
-    const team = { id: body.team_id, domain: body.team_domain };
-    const createdBy = await getUserProfile(slackUserId, team.id);
-    const [name, ...remaining] = body.text.split(',');
-    const description = remaining.join(',').trim();
-    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, createdBy });
+    const { team, createdBy, name, channel, description } = await getFieldsFromBody(body);
+    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
     const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
     const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
@@ -25,6 +21,51 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     error(err);
   }
 });
+
+async function getFieldsFromBody(body: any) {
+  const slackUserId = body.user_id;
+  const team = { id: body.team_id, domain: body.team_domain };
+  const createdBy = await getUserProfile(slackUserId, team.id);
+  const [name, ...remaining] = body.text.split(',');
+  const { channel, description } = getChannelAndDescription(remaining);
+  return { team, createdBy, name, channel, description };
+}
+
+function getChannelAndDescription(
+  remaining: string[]
+): { channel: { id: string; name: string; parsed: string }; description: string } {
+  console.log('Getting channel from remaining', remaining);
+  let channel, description;
+  const first = remaining.length ? remaining[0].trim() : null;
+  const second = remaining.length && remaining.length > 1 ? remaining[1].trim() : null;
+  if (isChannel(second)) {
+    channel = getChannel(second);
+    description = first;
+  } else if (isChannel(first)) {
+    channel = getChannel(first);
+    description = second;
+  } else {
+    description = remaining.join(',');
+  }
+  return { channel, description };
+}
+
+function isChannel(text: string): boolean {
+  return text && /<.*?>/.test(text);
+}
+
+function getChannel(channel: string): { id: string; name: string; parsed: string } {
+  const parsed = channel;
+  const id = channel
+    .match(/#.*?\|/)[0]
+    .replace('#', '')
+    .replace('|', '');
+  const name = channel
+    .match(/\|.*?\>/)[0]
+    .replace('|', '')
+    .replace('>', '');
+  return { id, name, parsed };
+}
 
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };

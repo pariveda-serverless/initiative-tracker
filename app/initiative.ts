@@ -27,6 +27,11 @@ interface CreateInitiativeRequestProperties {
     domain: string;
   };
   description?: string;
+  channel?: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   createdBy: {
     slackUserId: string;
     name: string;
@@ -44,6 +49,11 @@ export class CreateInitiativeRequest {
   };
   name: string;
   description: string;
+  channel: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   status: Status;
   createdBy: {
     slackUserId: string;
@@ -53,13 +63,14 @@ export class CreateInitiativeRequest {
   createdBySlackUserId: string;
   createdAt: string;
 
-  constructor({ name, team, description, createdBy }: CreateInitiativeRequestProperties) {
+  constructor({ name, team, description, channel, createdBy }: CreateInitiativeRequestProperties) {
     this.initiativeId = id();
     this.identifiers = getInitiativeIdentifiers(team.id);
     this.type = INITIATIVE_TYPE;
     this.team = team;
     this.name = name;
     this.description = description ? description : null;
+    this.channel = channel ? channel : null;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
     this.createdAt = new Date().toDateString();
@@ -70,7 +81,13 @@ export class InitiativeResponse {
   initiativeId: string;
   name: string;
   description: string;
+  channel: {
+    id: string;
+    name: string;
+    parsed: string;
+  };
   status: Status;
+  statusDisplay: string;
   team: {
     id: string;
     domain: string;
@@ -87,9 +104,16 @@ export class InitiativeResponse {
     this.initiativeId = record.initiativeId;
     this.name = record.name;
     this.description = record.description;
+    this.channel = record.channel;
     this.status = record.status;
+    this.statusDisplay = getStatusDisplay(record.status);
     this.team = record.team;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
   }
+}
+
+export function getStatusDisplay(status: Status): string {
+  const display = status.toLowerCase().replace('_', ' ');
+  return display.charAt(0).toUpperCase() + display.slice(1);
 }

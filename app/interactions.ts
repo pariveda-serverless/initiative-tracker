@@ -8,7 +8,8 @@ export enum InitiativeAction {
 export enum MemberAction {
   MAKE_CHAMPION = 'MAKE_CHAMPION',
   MAKE_MEMBER = 'MAKE_MEMBER',
-  REMOVE_MEMBER = 'REMOVE_MEMBER'
+  REMOVE_MEMBER = 'REMOVE_MEMBER',
+  UPDATE_MEMBERSHIP = 'UPDATE_MEMBERSHIP'
 }
 
 export enum StatusUpdateAction {
