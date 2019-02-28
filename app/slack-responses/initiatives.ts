@@ -122,7 +122,7 @@ export class InitiativeDetailActions implements Action {
   }
 }
 
-class ViewDetailsButton implements Button {
+export class ViewDetailsButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
