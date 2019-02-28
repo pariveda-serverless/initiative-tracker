@@ -2,7 +2,8 @@ export enum InitiativeAction {
   JOIN_AS_MEMBER = 'JOIN_AS_MEMBER',
   JOIN_AS_CHAMPION = 'JOIN_AS_CHAMPION',
   VIEW_DETAILS = 'VIEW_DETAILS',
-  UPDATE_STATUS = 'UPDATE_STATUS'
+  UPDATE_STATUS = 'UPDATE_STATUS',
+  DELETE = 'DELETE'
 }
 
 export enum MemberAction {

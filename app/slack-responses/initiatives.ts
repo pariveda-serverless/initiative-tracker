@@ -103,12 +103,25 @@ export class CreatedBy implements ContextBlock {
 
 export class InitiativeDescription implements Section {
   type: 'section' = 'section';
-  text: PlainText | MarkdownText;
+  text: MarkdownText;
   constructor(initiative: InitiativeResponse) {
     this.text = {
       type: 'mrkdwn',
       text: `*Description*\n${initiative.description}`
     };
+  }
+}
+
+export class InitiativeDescriptionAndDelete implements Section {
+  type: 'section' = 'section';
+  text: MarkdownText;
+  accessory: Button;
+  constructor(initiative: InitiativeResponse) {
+    this.text = {
+      type: 'mrkdwn',
+      text: `*Description*\n${initiative.description}`
+    };
+    this.accessory = new DeleteButton(initiative);
   }
 }
 
@@ -122,14 +135,28 @@ export class InitiativeDetailActions implements Action {
   }
 }
 
+export class DeleteButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = InitiativeAction.DELETE;
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.text = {
+      type: 'plain_text',
+      text: 'Delete'
+    };
+  }
+}
+
 export class ViewDetailsButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
-  value?: string;
+  value: string;
   constructor(initiative: InitiativeResponse) {
-    const action = InitiativeAction.VIEW_DETAILS;
-    this.action_id = action;
+    this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',

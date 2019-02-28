@@ -1,8 +1,7 @@
 import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
-  InitiativeNameStatusAndUpdateStatus,
-  InitiativeDescription,
+  InitiativeDescriptionAndDelete,
   Divider,
   CreatedBy,
   InitiativeDetailActions,
@@ -22,7 +21,7 @@ export class DetailResponse implements Message {
     blocks.push(nameAndStatus);
 
     if (initiative.description) {
-      const description = new InitiativeDescription(initiative);
+      const description = new InitiativeDescriptionAndDelete(initiative);
       blocks.push(description);
     }
 
