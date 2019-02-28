@@ -11,8 +11,8 @@ import {
 } from 'slack';
 import { MemberResponse } from '../member';
 import { InitiativeResponse } from '../initiative';
-import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY, INITIATIVE_ACTION_DISPLAY } from './display';
-import { MemberAction, InitiativeAction } from '../interactions';
+import { MEMBER_DISPLAY, MEMBER_ACTION_DISPLAY } from './display';
+import { MemberAction } from '../interactions';
 
 export class NameAndRole implements ContextBlock {
   type: 'context' = 'context';
@@ -93,7 +93,7 @@ class EditInitiativeActionButton implements Button {
     this.value = JSON.stringify({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
-      text: INITIATIVE_ACTION_DISPLAY[action].text
+      text: MEMBER_ACTION_DISPLAY[action].text
     };
   }
 }
