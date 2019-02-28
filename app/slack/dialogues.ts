@@ -23,9 +23,9 @@ export async function dialogErrorReply(url: string, message: EditInitiativeField
       'content-type': 'application/json'
     },
     method: 'POST',
-    body: message, //JSON.stringify(message)
+    body:JSON.stringify(message),
   };
   console.log('Replying to message with params', JSON.stringify(params));
   const response = await post(params);
-  console.log('Received response', JSON.stringify(response));
+  console.log('Received response in dialog error', JSON.stringify(response));
 }
