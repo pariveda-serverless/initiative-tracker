@@ -12,10 +12,15 @@ export class ListResponse implements Message {
       this.blocks = initiatives
         .map(initiative => {
           const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
-          const description = new InitiativeDescription(initiative);
+          let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
+          if (initiative.description) {
+            const description = new InitiativeDescription(initiative);
+            blocks.push(description);
+          }
           const metaInformation = new CreatedBy(initiative);
           const divider = new Divider();
-          return [nameAndStatus, description, metaInformation, divider];
+          blocks = [...blocks, metaInformation, divider];
+          return blocks;
         })
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block

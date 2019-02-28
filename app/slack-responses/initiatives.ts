@@ -77,7 +77,7 @@ export class InitiativeNameChannelAndUpdateStatus implements Section {
     };
     const channel: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Channel*\n${initiative.channel ? initiative.channel : ''}`
+      text: `*Channel*\n${initiative.channel ? initiative.channel.parsed : ''}`
     };
     this.fields = [name, channel];
     this.accessory = new StatusUpdate(initiative);
