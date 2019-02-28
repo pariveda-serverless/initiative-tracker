@@ -124,15 +124,18 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
+    if (dialogError) {
+      // await dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
+      success(response)
+    } else {
     if (dialogResponse) {
       await sendDialogue(teamId, response);
-    } else if (dialogError) {
-      await dialogErrorReply(responseUrl, response as EditInitiativeFieldValidator)
-    }
+    } 
     else {
       await reply(responseUrl, response as Message);
     }
     success();
+  }
   } catch (err) {
     error(err);
   }
