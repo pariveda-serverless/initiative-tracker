@@ -108,6 +108,13 @@ functions:
           method: post
           path: actions
 
+  notify-on-updates:
+    handler: app/notify-on-updates.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: { Fn::GetAtt: [InitiativesTable, StreamArn] }
+
   auth-redirect:
     handler: app/auth-redirect.handler
     events:
@@ -135,6 +142,8 @@ resources:
           - AttributeName: identifiers
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
         GlobalSecondaryIndexes:
           - IndexName: ${self:custom.identifiersIndex}
             KeySchema:
