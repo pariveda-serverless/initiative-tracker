@@ -16,6 +16,7 @@ import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
 import { parseValue } from './slack-responses/id-helper';
+import { DeleteResponse } from './slack-responses/delete-initiative';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -31,6 +32,12 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await joinInitiative(teamId, initiativeId, slackUserId, champion);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        break;
+      }
+      case InitiativeAction.DELETE: {
+        const { initiativeId } = parseValue(payload.actions[0].value);
+        const name = await deleteInitiative(teamId, initiativeId);
+        response = new DeleteResponse(channel, name);
         break;
       }
       case InitiativeAction.VIEW_DETAILS: {
@@ -134,6 +141,30 @@ async function changeMembership(
   };
   console.log('Updating membership type with params', params);
   await initiatives.update(params).promise();
+}
+
+async function deleteInitiative(teamId: string, initiativeId: string): Promise<string> {
+  const queryParams = {
+    TableName: process.env.INITIATIVES_TABLE,
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#identifiers': 'identifiers' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
+  };
+  console.log('Getting initiative details with params', queryParams);
+  const records = await initiatives
+    .query(queryParams)
+    .promise()
+    .then(res => <InitiativeRecord[]>res.Items);
+  const initiative = new InitiativeResponse(records.find(record => record.type === INITIATIVE_TYPE));
+  const deleteParams = { RequestItems: {} };
+  deleteParams.RequestItems[process.env.INITIATIVES_TABLE] = records.map(record => {
+    return {
+      DeleteRequest: { Key: { initiativeId: record.initiativeId, identifiers: record.identifiers } }
+    };
+  });
+  console.log('Deleting initiative with params', deleteParams);
+  await initiatives.batchWrite(deleteParams).promise();
+  return initiative ? initiative.name : '';
 }
 
 function leaveInitiative(initiativeId: string, teamId: string, slackUserId: string): Promise<any> {
