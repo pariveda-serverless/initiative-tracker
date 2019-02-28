@@ -10,7 +10,7 @@ export const handler = streamWrapper(async ({ versions, success, error }: Stream
     const newMembers = versions
       .filter(version => {
         const record = <InitiativeRecord>version.newVersion;
-        return record.identifiers.indexOf(MEMBER_TYPE) > -1 && !version.oldVersion;
+        return record && record.identifiers.indexOf(MEMBER_TYPE) > -1 && !version.oldVersion;
       })
       .map(version => new MemberResponse(version.newVersion));
     await Promise.all(newMembers.map(member => publishNewMembersForNotifications(member)));
