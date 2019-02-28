@@ -23,8 +23,7 @@ export async function dialogErrorReply(url: string, message: EditInitiativeField
       'content-type': 'application/json'
     },
     method: 'POST',
-    simple: false,
-    body: JSON.stringify(message)
+    body: message, //JSON.stringify(message)
   };
   console.log('Replying to message with params', JSON.stringify(params));
   const response = await post(params);
