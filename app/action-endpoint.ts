@@ -49,6 +49,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await reply(responseUrl, response as Message);
         break;
       }
+      case InitiativeAction.OPEN_EDIT_DIALOG: {
+        const { initiativeId } = parseValue(payload.actions[0].value);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
+        response = new EditInitiativeDialogResponse(initiative, triggerId);
+      }
       case MemberAction.UPDATE_INITIATIVE: {
         const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
@@ -65,15 +70,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
             await changeMembership(initiativeId, teamId, slackUserId, false);
             break;
           }
-          case MemberAction.OPEN_EDIT_DIALOG: {
-            dialogResponse = true;
-            response = new EditInitiativeDialogResponse(initiative, triggerId);
-            break;
-          }
         }
-        if (action !== MemberAction.OPEN_EDIT_DIALOG) {
-          response = new DetailResponse(initiative, slackUserId, channel);
-        }
+        response = new DetailResponse(initiative, slackUserId, channel);
         await reply(responseUrl, response as Message);
         break;
       }
@@ -93,7 +91,13 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           response = fieldValidator;
           success(response);
         } else {
-          await updateInitiativeNameAndDescription(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
+          await updateInitiativeNameAndDescription(
+            teamId,
+            initiativeId,
+            initiative_name,
+            initiative_description,
+            initiative_status
+          );
           const initiative = await getInitiativeDetails(teamId, initiativeId);
           response = new DetailResponse(initiative, slackUserId, channel);
           await reply(responseUrl, response as Message);
@@ -140,7 +144,7 @@ function getFieldsFromBody(body: any) {
   const teamId = payload.team.id;
   const responseUrl = payload.response_url;
   const channel = payload.channel.id;
-  const action =  payload.actions ? payload.actions[0].action_id : payload.callback_id;
+  const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
   const triggerId = payload.trigger_id;
   return { payload, teamId, responseUrl, channel, action, triggerId };
 }
@@ -153,8 +157,12 @@ function updateInitiativeNameAndDescription(
   initiativeStatus: string
 ): Promise<any> {
   const UpdateExpression = 'set #name = :name, #description = :description, #status = : status';
-  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description', '#status' : 'status' };
-  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription , ':status' : initiativeStatus};
+  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description', '#status': 'status' };
+  const ExpressionAttributeValues = {
+    ':name': initiativeName,
+    ':description': initiativeDescription,
+    ':status': initiativeStatus
+  };
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
