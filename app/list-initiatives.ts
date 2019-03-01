@@ -2,12 +2,14 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
 import { ListResponse } from './slack-responses/initiative-list';
+import { getUserProfile } from './slack/profile';
+import { SlashCommandBody } from 'slack';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { teamId, status } = getFieldsFromBody(body);
+    const { teamId, status, office } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
     const message = new ListResponse(initiatives, status);
     console.log(message);
@@ -18,7 +20,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-function getFieldsFromBody(body) {
+async function getFieldsFromBody(body: SlashCommandBody) {
+  const { office } = await getUserProfile(body.user_id, body.team_id);
   const teamId = body.team_id;
   const text = body.text
     ? body.text
@@ -27,7 +30,7 @@ function getFieldsFromBody(body) {
         .replace(' ', '_')
     : '';
   const status: Status | undefined = <any>Status[text];
-  return { teamId, status };
+  return { teamId, status, office };
 }
 
 export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {

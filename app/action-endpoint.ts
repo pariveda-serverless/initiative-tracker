@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Message, Payload } from 'slack';
+import { Message, ActionPayload } from 'slack';
 import { InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
@@ -93,7 +93,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 });
 
 function getFieldsFromBody(body: any) {
-  const payload: Payload = JSON.parse(body.payload);
+  const payload: ActionPayload = JSON.parse(body.payload);
   const teamId = payload.team.id;
   const responseUrl = payload.response_url;
   const channel = payload.channel.id;

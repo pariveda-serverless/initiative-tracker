@@ -36,6 +36,7 @@ interface CreateInitiativeRequestProperties {
     slackUserId: string;
     name: string;
     icon: string;
+    office?: string;
   };
 }
 
@@ -49,6 +50,7 @@ export class CreateInitiativeRequest {
   };
   name: string;
   description: string;
+  office: string;
   channel: {
     id: string;
     name: string;
@@ -59,6 +61,7 @@ export class CreateInitiativeRequest {
     slackUserId: string;
     name: string;
     icon: string;
+    office?: string;
   };
   createdBySlackUserId: string;
   createdAt: string;
@@ -71,6 +74,7 @@ export class CreateInitiativeRequest {
     this.name = name;
     this.description = description ? description : null;
     this.channel = channel ? channel : null;
+    this.office = createdBy.office ? createdBy.office : null;
     this.status = Status.ACTIVE;
     this.createdBy = createdBy;
     this.createdAt = new Date().toDateString();
@@ -92,11 +96,13 @@ export class InitiativeResponse {
     id: string;
     domain: string;
   };
+  office?: string;
   members?: MemberResponse[];
   createdBy: {
     slackUserId: string;
     name: string;
     icon: string;
+    office?: string;
   };
   createdAt: number;
 
@@ -106,6 +112,7 @@ export class InitiativeResponse {
     this.description = record.description;
     this.channel = record.channel;
     this.status = record.status;
+    this.office = record.office;
     this.statusDisplay = getStatusDisplay(record.status);
     this.team = record.team;
     this.createdAt = record.createdAt;
