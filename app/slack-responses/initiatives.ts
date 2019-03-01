@@ -51,7 +51,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
 export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: StaticSelect;
+  accessory: Button;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -62,14 +62,14 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, status];
-    this.accessory = new StatusUpdate(initiative);
+    this.accessory = new EditInitiativeButton(initiative);
   }
 }
 
-export class InitiativeNameChannelAndUpdateStatus implements Section {
+export class InitiativeNameChannelStatusAndUpdateButton implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: StaticSelect;
+  accessory: Button;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -79,8 +79,12 @@ export class InitiativeNameChannelAndUpdateStatus implements Section {
       type: 'mrkdwn',
       text: `*Channel*\n${initiative.channel ? initiative.channel.parsed : ''}`
     };
-    this.fields = [name, channel];
-    this.accessory = new StatusUpdate(initiative);
+    const status: MarkdownText = {
+      type: 'mrkdwn',
+      text: `*Status*\n${initiative.statusDisplay}`
+    };
+    this.fields = [name, channel, status];
+    this.accessory = new EditInitiativeButton(initiative);
   }
 }
 
@@ -195,32 +199,22 @@ class JoinAsMemberButton implements Button {
   }
 }
 
+
+class EditInitiativeButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value?: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = InitiativeAction.OPEN_EDIT_DIALOG;
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.text = {
+      type: 'plain_text',
+      text: 'Edit initiative'
+    };
+  }
+}
+
 export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
-}
-
-export class StatusUpdate implements StaticSelect {
-  type: 'static_select' = 'static_select';
-  placeholder: PlainText;
-  action_id: string;
-  options: Option[];
-  initial_option: Option;
-  constructor(initiative: InitiativeResponse) {
-    this.placeholder = {
-      type: 'plain_text',
-      text: 'Update status'
-    };
-    this.options = Object.values(Status).map(status => new StatusOption(status, initiative));
-    this.initial_option = new StatusOption(initiative.status, initiative);
-    this.action_id = InitiativeAction.UPDATE_STATUS;
-  }
-}
-
-class StatusOption implements Option {
-  text: PlainText;
-  value: string;
-  constructor(status: Status, initiative: InitiativeResponse) {
-    this.text = { text: getStatusDisplay(status), type: 'plain_text' };
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId, status });
-  }
 }
