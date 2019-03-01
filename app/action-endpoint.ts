@@ -38,6 +38,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await joinInitiative(teamId, initiativeId, slackUserId, champion);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        await reply(responseUrl, response as Message);
         break;
       }
       case InitiativeAction.VIEW_DETAILS: {
@@ -45,6 +46,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        await reply(responseUrl, response as Message);
         break;
       }
       case MemberAction.UPDATE_INITIATIVE: {
@@ -72,25 +74,29 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         if (action !== MemberAction.OPEN_EDIT_DIALOG) {
           response = new DetailResponse(initiative, slackUserId, channel);
         }
+        await reply(responseUrl, response as Message);
         break;
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
-        const { initiative_name, initiative_description } = payload.submission;
-        const { originalName, originalDescription, initiativeId } = JSON.parse(payload.state);
+        const { initiative_name, initiative_description, initiative_status } = payload.submission;
+        const { originalName, originalDescription, originalStatus, initiativeId } = JSON.parse(payload.state);
         const fieldValidator = new EditInitiativeFieldValidator(
           initiative_name,
           initiative_description,
+          initiative_status,
           originalName,
-          originalDescription
+          originalDescription,
+          originalStatus
         );
         if (fieldValidator.errors.length > 0) {
           response = fieldValidator;
-          dialogError = true;
+          success(response);
         } else {
-          await updateInitiativeNameAndDescription(teamId, initiativeId, initiative_name, initiative_description);
+          await updateInitiativeNameAndDescription(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
           const initiative = await getInitiativeDetails(teamId, initiativeId);
           response = new DetailResponse(initiative, slackUserId, channel);
+          await reply(responseUrl, response as Message);
         }
         break;
       }
@@ -105,10 +111,12 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await updateInitiativeStatus(initiativeId, teamId, status);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        await reply(responseUrl, response as Message);
         break;
       }
       default: {
         response = new NotImplementedResponse(channel);
+        await reply(responseUrl, response as Message);
         break;
       }
     }
@@ -141,11 +149,12 @@ function updateInitiativeNameAndDescription(
   teamId: string,
   initiativeId: string,
   initiativeName: string,
-  initiativeDescription: string
+  initiativeDescription: string,
+  initiativeStatus: string
 ): Promise<any> {
-  const UpdateExpression = 'set #name = :name, #description = :description';
-  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description' };
-  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription };
+  const UpdateExpression = 'set #name = :name, #description = :description, #status = : status';
+  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description', '#status' : 'status' };
+  const ExpressionAttributeValues = { ':name': initiativeName, ':description': initiativeDescription , ':status' : initiativeStatus};
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },

@@ -31,15 +31,20 @@ declare module 'slack' {
   export interface SelectElement {
     label: string;
     name: string;
-    type?: string;
+    type: 'select';
     data_source?: 'users' | 'channels' | 'conversations' | 'external';
     min_query_length?: number;
     placeholder?: string;
     optional?: boolean;
     value?: string;
     selected_options?: string[];
-    options?: string[];
+    options?: SelectElementOption[];
     option_groups?: string[];
+  }
+
+  export interface SelectElementOption {
+    label: string;
+    value: string;
   }
 
   // https://api.slack.com/reference/messaging/payload

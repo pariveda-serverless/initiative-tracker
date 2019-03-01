@@ -1,14 +1,39 @@
-import { TextElement, DialogError } from 'slack';
-import { InitiativeResponse, Status } from '../initiative';
+import { TextElement, DialogError, SelectElement, SelectElementOption } from 'slack';
+import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
 
 export enum EditInitiativeFieldName {
   INITIATIVE_NAME = 'initiative_name',
-  INITIATIVE_DESCRIPTION = 'initiative_description'
+  INITIATIVE_DESCRIPTION = 'initiative_description',
+  INITIATIVE_STATUS = 'initiative_status'
 }
 
 export enum EditInitiativeFieldError {
   EMPTY_ERROR = 'This field cannot be empty',
   UNCHANGED_ERROR = 'Please update a field'
+}
+
+export class SelectIniatitiveStatus implements SelectElementOption {
+  label: string;
+  value: string;
+  constructor(label: string, value: string) {
+    this.label = label;
+    this.value = value;
+  }
+}
+
+export class EditInitiativeStatus implements SelectElement {
+  label: string;
+  name: string;
+  value: string;
+  type: 'select';
+  options: SelectElementOption[];
+  constructor(initiative: InitiativeResponse) {
+    this.name = EditInitiativeFieldName.INITIATIVE_STATUS;
+    this.label = 'Select a stuatus for this initiative';
+    this.value = initiative.status;
+    this.options = Object.values(Status).map(status => new SelectIniatitiveStatus(getStatusDisplay(status), status));
+    this.type = 'select';
+  }
 }
 
 export class EditInitiativeName implements TextElement {

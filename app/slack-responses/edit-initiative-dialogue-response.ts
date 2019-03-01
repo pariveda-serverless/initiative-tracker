@@ -2,6 +2,7 @@ import { Dialog, DialogError, TextElement, SelectElement } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
   EditInitiativeName,
+  EditInitiativeStatus,
   EditInitiativeDescription,
   EditInitiativeFieldName,
   DialogFieldError,
@@ -26,12 +27,14 @@ export class EditInitiativeDialog implements Dialog {
   constructor(initiative: InitiativeResponse) {
     this.title = 'Update Initiative';
     this.callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
+    const statusField = new EditInitiativeStatus(initiative);
     const nameField = new EditInitiativeName(initiative);
     const descriptionField = new EditInitiativeDescription(initiative);
-    this.elements = [nameField, descriptionField];
+    this.elements = [statusField, nameField, descriptionField];
     this.state = JSON.stringify({
       originalName: initiative.name,
       originalDescription: initiative.description,
+      originalStatus: initiative.status,
       initiativeId: initiative.initiativeId
     });
   }
@@ -42,13 +45,20 @@ export class EditInitiativeFieldValidator {
   constructor(
     initiativeName: string,
     initiativeDescription: string,
+    initiativeStatus: string,
     oldInitiativeName: string,
-    oldInitiativeDescription: string
+    oldInitiativeDescription: string,
+    oldInitiativeStatus: string
   ) {
-    if (initiativeName === oldInitiativeName && initiativeDescription === oldInitiativeDescription) {
+    if (
+      initiativeName === oldInitiativeName &&
+      initiativeDescription === oldInitiativeDescription &&
+      initiativeStatus === oldInitiativeStatus
+    ) {
       this.errors = [
         new DialogFieldError(EditInitiativeFieldName.INITIATIVE_NAME, EditInitiativeFieldError.UNCHANGED_ERROR),
-        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_DESCRIPTION, EditInitiativeFieldError.UNCHANGED_ERROR)
+        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_DESCRIPTION, EditInitiativeFieldError.UNCHANGED_ERROR),
+        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_STATUS, EditInitiativeFieldError.UNCHANGED_ERROR)
       ];
     } else {
       this.errors = [];
