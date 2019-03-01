@@ -164,7 +164,7 @@ function updateInitiativeNameAndDescription(
   initiativeDescription: string,
   initiativeStatus: string
 ): Promise<any> {
-  const UpdateExpression = 'set #name = :name, #description = :description, #status = : status';
+  const UpdateExpression = 'set #name = :name, #description = :description, #status = :status';
   const ExpressionAttributeNames = { '#name': 'name', '#description': 'description', '#status': 'status' };
   const ExpressionAttributeValues = {
     ':name': initiativeName,
