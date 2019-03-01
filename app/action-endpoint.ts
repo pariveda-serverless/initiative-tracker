@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, Payload, Dialog } from 'slack';
-import { InitiativeCallbackAction, InitiativeAction, MemberAction } from './interactions';
+import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
   MEMBER_TYPE,
@@ -26,8 +26,6 @@ const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    let dialogResponse = false;
-    let dialogError = false;
     let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
     const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
@@ -79,6 +77,20 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await reply(responseUrl, response as Message);
         success();
         break;
+      }
+      case InitiativeAction.UPDATE_STATUS:
+      case StatusUpdateAction.MARK_ON_HOLD:
+      case StatusUpdateAction.MARK_ABANDONED:
+      case StatusUpdateAction.MARK_COMPLETE:
+      case StatusUpdateAction.MARK_ACTIVE: {
+        const value = payload.actions[0].value ? payload.actions[0].value : payload.actions[0].selected_option.value;
+        const { initiativeId, status } = parseValue(value);
+        const slackUserId = payload.user.id;
+        await updateInitiativeStatus(initiativeId, teamId, status);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
+        response = new DetailResponse(initiative, slackUserId, channel);
+        await reply(responseUrl, response as Message);
+        success();
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;

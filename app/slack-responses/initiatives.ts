@@ -66,7 +66,7 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
   }
 }
 
-export class InitiativeNameChannelAndUpdateButton implements Section {
+export class InitiativeNameChannelStatusAndUpdateButton implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
   accessory: Button;
