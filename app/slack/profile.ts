@@ -9,7 +9,7 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
   console.log('Getting user profile information', user);
   const token = await getToken(teamId);
   const profile = await slack.users.profile
-    .get({ user, token })
+    .get({ user, token, include_labels: true })
     .then(raw => raw as ProfileResult)
     .then(result => result.profile);
   console.log('Received profile result from Slack', profile);
