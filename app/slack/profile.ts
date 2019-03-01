@@ -34,7 +34,7 @@ export async function getToken(teamId: string): Promise<string> {
 }
 
 function getOffice(profile: SlackProfile): string {
-  const office = Object.values(profile.fields).find(field => field.label.toUpperCase() === 'OFFICE');
+  const office = profile.fields && Object.values(profile.fields).find(field => field.label.toUpperCase() === 'OFFICE');
   return office && office.value;
 }
 
