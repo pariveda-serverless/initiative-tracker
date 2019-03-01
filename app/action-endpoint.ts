@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, Payload, Dialog } from 'slack';
-import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
+import { InitiativeCallbackAction, InitiativeAction, MemberAction } from './interactions';
 import {
   CreateMemberRequest,
   MEMBER_TYPE,
@@ -96,7 +96,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           response = fieldValidator;
           success(response);
         } else {
-          await updateInitiativeNameAndDescription(
+          await updateInitiative(
             teamId,
             initiativeId,
             initiative_name,
@@ -110,21 +110,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         }
         break;
       }
-      case InitiativeAction.UPDATE_STATUS:
-      case StatusUpdateAction.MARK_ON_HOLD:
-      case StatusUpdateAction.MARK_ABANDONED:
-      case StatusUpdateAction.MARK_COMPLETE:
-      case StatusUpdateAction.MARK_ACTIVE: {
-        const value = payload.actions[0].value ? payload.actions[0].value : payload.actions[0].selected_option.value;
-        const { initiativeId, status } = parseValue(value);
-        const slackUserId = payload.user.id;
-        await updateInitiativeStatus(initiativeId, teamId, status);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new DetailResponse(initiative, slackUserId, channel);
-        await reply(responseUrl, response as Message);
-        success();
-        break;
-      }
       default: {
         response = new NotImplementedResponse(channel);
         await reply(responseUrl, response as Message);
@@ -132,16 +117,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    // if (dialogError) {
-    //   success(response);
-    // } else {
-    //   if (dialogResponse) {
-    //     await sendDialogue(teamId, response);
-    //   } else {
-    //     await reply(responseUrl, response as Message);
-    //   }
-    //   success();
-    // }
   } catch (err) {
     error(err);
   }
@@ -157,7 +132,7 @@ function getFieldsFromBody(body: any) {
   return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
-function updateInitiativeNameAndDescription(
+function updateInitiative(
   teamId: string,
   initiativeId: string,
   initiativeName: string,
