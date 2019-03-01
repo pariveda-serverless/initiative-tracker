@@ -39,6 +39,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         await reply(responseUrl, response as Message);
+        success();
         break;
       }
       case InitiativeAction.VIEW_DETAILS: {
@@ -47,12 +48,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         await reply(responseUrl, response as Message);
+        success();
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
         const { initiativeId } = parseValue(payload.actions[0].value);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new EditInitiativeDialogResponse(initiative, triggerId);
+        await sendDialogue(teamId, response);
+        success();
       }
       case MemberAction.UPDATE_INITIATIVE: {
         const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
@@ -73,6 +77,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         }
         response = new DetailResponse(initiative, slackUserId, channel);
         await reply(responseUrl, response as Message);
+        success();
         break;
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
@@ -101,6 +106,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           const initiative = await getInitiativeDetails(teamId, initiativeId);
           response = new DetailResponse(initiative, slackUserId, channel);
           await reply(responseUrl, response as Message);
+          success();
         }
         break;
       }
@@ -116,24 +122,26 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         await reply(responseUrl, response as Message);
+        success();
         break;
       }
       default: {
         response = new NotImplementedResponse(channel);
         await reply(responseUrl, response as Message);
+        success();
         break;
       }
     }
-    if (dialogError) {
-      success(response);
-    } else {
-      if (dialogResponse) {
-        await sendDialogue(teamId, response);
-      } else {
-        await reply(responseUrl, response as Message);
-      }
-      success();
-    }
+    // if (dialogError) {
+    //   success(response);
+    // } else {
+    //   if (dialogResponse) {
+    //     await sendDialogue(teamId, response);
+    //   } else {
+    //     await reply(responseUrl, response as Message);
+    //   }
+    //   success();
+    // }
   } catch (err) {
     error(err);
   }
