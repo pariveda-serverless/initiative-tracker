@@ -34,3 +34,5 @@ Slack app setup (username = GitHub username)
 1. Add the following scopes to enable reading basic profile information and direct messaging users
    1. chat:write:bot and chat:write:user to send direct messages
    1. users.profile:read to read basic profile information
+
+Note: You need to commit code before the Sharable URL link to your application can be accessed. 
