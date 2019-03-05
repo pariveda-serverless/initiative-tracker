@@ -16,7 +16,8 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
   return {
     name: profile.real_name_normalized,
     icon: profile.image_original ? profile.image_original : profile.image_512,
-    slackUserId: user
+    slackUserId: user,
+    office: getOffice(profile)
   };
 }
 
@@ -32,10 +33,16 @@ export async function getToken(teamId: string): Promise<string> {
     .then(res => res.Parameter.Value);
 }
 
+function getOffice(profile: SlackProfile): string {
+  const office = profile.fields && Object.values(profile.fields).find(field => field.label.toUpperCase() === 'OFFICE');
+  return office && office.value;
+}
+
 interface Profile {
   name: string;
   icon: string;
   slackUserId: string;
+  office?: string;
 }
 
 interface ProfileResult extends WebAPICallResult {
@@ -51,6 +58,13 @@ interface SlackProfile {
   real_name_normalized: string;
   display_name_normalized: string;
   email: string;
+  fields: {
+    [key: string]: {
+      value: string;
+      alt: string;
+      label: string;
+    };
+  };
   image_original: string;
   image_512: string;
   team: string;

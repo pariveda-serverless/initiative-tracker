@@ -14,17 +14,17 @@ export class MemberSection implements Section {
       text: `*${member.role}*  <@${member.slackUserId}> joined on ${member.joinedAt}`
     };
     this.text = nameAndRole;
-    const memberActions = new MemberOverflowActions(member, initiative);
+    const memberActions = new MemberActions(member, initiative);
     this.accessory = memberActions;
   }
 }
 
-class MemberOverflowActions implements Overflow {
+class MemberActions implements Overflow {
   type: 'overflow' = 'overflow';
   action_id: string;
   options: Option[];
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    this.action_id = MemberAction.UPDATE_INITIATIVE;
+    this.action_id = MemberAction.UPDATE_ROLE;
     const changeMembership = new ChangeMembershipOption(member, initiative);
     const remove = new RemoveOption(member, initiative);
     this.options = [changeMembership, remove];

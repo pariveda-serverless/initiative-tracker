@@ -4,6 +4,7 @@ import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATI
 import { getUserProfile } from './slack/profile';
 import { DetailResponse } from './slack-responses/initiative-details';
 import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from './member';
+import { SlashCommandBody } from 'slack';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -22,7 +23,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function getFieldsFromBody(body: any) {
+async function getFieldsFromBody(body: SlashCommandBody) {
   const slackUserId = body.user_id;
   const team = { id: body.team_id, domain: body.team_domain };
   const createdBy = await getUserProfile(slackUserId, team.id);

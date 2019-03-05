@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { Message, Payload, Dialog } from 'slack';
+import { Message, ActionPayload } from 'slack';
 import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
@@ -21,6 +21,7 @@ import { getUserProfile } from './slack/profile';
 import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
 import { parseValue } from './slack-responses/id-helper';
+import { DeleteResponse } from './slack-responses/delete-initiative';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -36,8 +37,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await joinInitiative(teamId, initiativeId, slackUserId, champion);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
-        await reply(responseUrl, response as Message);
-        success();
         break;
       }
       case InitiativeAction.VIEW_DETAILS: {
@@ -45,18 +44,26 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         const slackUserId = payload.user.id;
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
-        await reply(responseUrl, response as Message);
-        success();
         break;
       }
-      case InitiativeAction.OPEN_EDIT_DIALOG: {
-        const { initiativeId } = parseValue(payload.actions[0].value);
-        const initiative = await getInitiativeDetails(teamId, initiativeId);
-        response = new EditInitiativeDialogResponse(initiative, triggerId);
-        await sendDialogue(teamId, response);
-        success();
+      case InitiativeAction.UPDATE_INITIATIVE: {
+        const { initiativeId, action } = parseValue(payload.actions[0].selected_option.value);
+        switch (action) {
+          case InitiativeAction.DELETE: {
+            const name = await deleteInitiative(teamId, initiativeId);
+            response = new DeleteResponse(channel, name);
+            break;
+          }
+          case InitiativeAction.OPEN_EDIT_DIALOG: {
+            const initiative = await getInitiativeDetails(teamId, initiativeId);
+            const dialog = new EditInitiativeDialogResponse(initiative, triggerId);
+            await sendDialogue(teamId, dialog);
+            break;
+          }
+        }
+        break;
       }
-      case MemberAction.UPDATE_INITIATIVE: {
+      case MemberAction.UPDATE_ROLE: {
         const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         switch (action) {
@@ -74,8 +81,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           }
         }
         response = new DetailResponse(initiative, slackUserId, channel);
-        await reply(responseUrl, response as Message);
-        success();
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -89,8 +94,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await updateInitiativeStatus(initiativeId, teamId, status);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
-        await reply(responseUrl, response as Message);
-        success();
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
@@ -108,34 +111,29 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           response = fieldValidator;
           success(response);
         } else {
-          await updateInitiative(
-            teamId,
-            initiativeId,
-            initiative_name,
-            initiative_description,
-            initiative_status
-          );
+          await updateInitiative(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
           const initiative = await getInitiativeDetails(teamId, initiativeId);
           response = new DetailResponse(initiative, slackUserId, channel);
-          await reply(responseUrl, response as Message);
-          success();
         }
         break;
       }
       default: {
         response = new NotImplementedResponse(channel);
-        await reply(responseUrl, response as Message);
-        success();
         break;
       }
     }
+    if (response) {
+      console.log('Replying with response', JSON.stringify(response));
+      await reply(responseUrl, response as Message);
+    }
+    success();
   } catch (err) {
     error(err);
   }
 });
 
 function getFieldsFromBody(body: any) {
-  const payload: Payload = JSON.parse(body.payload);
+  const payload: ActionPayload = JSON.parse(body.payload);
   const teamId = payload.team.id;
   const responseUrl = payload.response_url;
   const channel = payload.channel.id;
@@ -209,6 +207,30 @@ async function changeMembership(
   };
   console.log('Updating membership type with params', params);
   await initiatives.update(params).promise();
+}
+
+async function deleteInitiative(teamId: string, initiativeId: string): Promise<string> {
+  const queryParams = {
+    TableName: process.env.INITIATIVES_TABLE,
+    KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
+    ExpressionAttributeNames: { '#initiativeId': 'initiativeId', '#identifiers': 'identifiers' },
+    ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
+  };
+  console.log('Getting initiative details with params', queryParams);
+  const records = await initiatives
+    .query(queryParams)
+    .promise()
+    .then(res => <InitiativeRecord[]>res.Items);
+  const initiative = new InitiativeResponse(records.find(record => record.type === INITIATIVE_TYPE));
+  const deleteParams = { RequestItems: {} };
+  deleteParams.RequestItems[process.env.INITIATIVES_TABLE] = records.map(record => {
+    return {
+      DeleteRequest: { Key: { initiativeId: record.initiativeId, identifiers: record.identifiers } }
+    };
+  });
+  console.log('Deleting initiative with params', deleteParams);
+  await initiatives.batchWrite(deleteParams).promise();
+  return initiative ? initiative.name : '';
 }
 
 function leaveInitiative(initiativeId: string, teamId: string, slackUserId: string): Promise<any> {

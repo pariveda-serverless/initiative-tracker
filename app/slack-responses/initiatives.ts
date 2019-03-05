@@ -8,9 +8,10 @@ import {
   Option,
   MarkdownText,
   DividerBlock,
-  ContextBlock
+  ContextBlock,
+  Overflow
 } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
+import { InitiativeResponse } from '../initiative';
 import { InitiativeAction } from '../interactions';
 import { stringifyValue } from './id-helper';
 
@@ -48,28 +49,10 @@ export class InitiativeNameStatusAndViewDetails implements Section {
   }
 }
 
-export class InitiativeNameStatusAndUpdateStatus implements Section {
+export class InitiativeNameChannelStatusAndUpdate implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: Button;
-  constructor(initiative: InitiativeResponse) {
-    const name: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*\n${initiative.name}`
-    };
-    const status: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Status*\n${initiative.statusDisplay}`
-    };
-    this.fields = [name, status];
-    this.accessory = new EditInitiativeButton(initiative);
-  }
-}
-
-export class InitiativeNameChannelStatusAndUpdateButton implements Section {
-  type: 'section' = 'section';
-  fields: MarkdownText[];
-  accessory: Button;
+  accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -84,7 +67,8 @@ export class InitiativeNameChannelStatusAndUpdateButton implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, channel, status];
-    this.accessory = new EditInitiativeButton(initiative);
+    // this.accessory = new EditInitiativeButton(initiative);
+    this.accessory = new InitiativeActions(initiative);
   }
 }
 
@@ -107,7 +91,7 @@ export class CreatedBy implements ContextBlock {
 
 export class InitiativeDescription implements Section {
   type: 'section' = 'section';
-  text: PlainText | MarkdownText;
+  text: MarkdownText;
   constructor(initiative: InitiativeResponse) {
     this.text = {
       type: 'mrkdwn',
@@ -126,14 +110,28 @@ export class InitiativeDetailActions implements Action {
   }
 }
 
-class ViewDetailsButton implements Button {
+export class DeleteButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id: string;
-  value?: string;
+  value: string;
   constructor(initiative: InitiativeResponse) {
-    const action = InitiativeAction.VIEW_DETAILS;
-    this.action_id = action;
+    this.action_id = InitiativeAction.DELETE;
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.text = {
+      type: 'plain_text',
+      text: 'Delete'
+    };
+  }
+}
+
+export class ViewDetailsButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id: string;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
     this.text = {
       type: 'plain_text',
@@ -172,6 +170,37 @@ class JoinAsMemberButton implements Button {
   }
 }
 
+class InitiativeActions implements Overflow {
+  type: 'overflow' = 'overflow';
+  action_id: string;
+  options: Option[];
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = InitiativeAction.UPDATE_INITIATIVE;
+    const edit = new EditOption(initiative);
+    const remove = new RemoveOption(initiative);
+    this.options = [edit, remove];
+  }
+}
+
+class EditOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = InitiativeAction.OPEN_EDIT_DIALOG;
+    this.text = { text: 'Edit initiative', type: 'plain_text' };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
+  }
+}
+
+class RemoveOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = InitiativeAction.DELETE;
+    this.text = { text: 'Remove initiative', type: 'plain_text' };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
+  }
+}
 
 class EditInitiativeButton implements Button {
   type: 'button' = 'button';
