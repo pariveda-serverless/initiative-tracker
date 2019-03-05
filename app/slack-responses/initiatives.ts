@@ -11,8 +11,8 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
-import { InitiativeAction, MemberAction } from '../interactions';
+import { InitiativeResponse } from '../initiative';
+import { InitiativeAction } from '../interactions';
 import { stringifyValue } from './id-helper';
 
 export class InitiativeNameAndStatus implements Section {
@@ -49,25 +49,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
   }
 }
 
-export class InitiativeNameStatusAndUpdateStatus implements Section {
-  type: 'section' = 'section';
-  fields: MarkdownText[];
-  accessory: Button;
-  constructor(initiative: InitiativeResponse) {
-    const name: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*\n${initiative.name}`
-    };
-    const status: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Status*\n${initiative.statusDisplay}`
-    };
-    this.fields = [name, status];
-    this.accessory = new EditInitiativeButton(initiative);
-  }
-}
-
-export class InitiativeNameChannelStatusAndUpdateButton implements Section {
+export class InitiativeNameChannelStatusAndUpdate implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
   accessory: Overflow;
@@ -115,19 +97,6 @@ export class InitiativeDescription implements Section {
       type: 'mrkdwn',
       text: `*Description*\n${initiative.description}`
     };
-  }
-}
-
-export class InitiativeDescriptionAndDelete implements Section {
-  type: 'section' = 'section';
-  text: MarkdownText;
-  accessory: Button;
-  constructor(initiative: InitiativeResponse) {
-    this.text = {
-      type: 'mrkdwn',
-      text: `*Description*\n${initiative.description}`
-    };
-    this.accessory = new DeleteButton(initiative);
   }
 }
 

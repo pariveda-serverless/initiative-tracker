@@ -41,10 +41,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         success();
         break;
       }
-      // case InitiativeAction.DELETE: {
-      //   const { initiativeId } = parseValue(payload.actions[0].value);
-      //   break;
-      // }
       case InitiativeAction.VIEW_DETAILS: {
         const { initiativeId } = parseValue(payload.actions[0].value);
         const slackUserId = payload.user.id;
@@ -54,13 +50,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         success();
         break;
       }
-      // case InitiativeAction.OPEN_EDIT_DIALOG: {
-      //   const { initiativeId } = parseValue(payload.actions[0].value);
-      //   const initiative = await getInitiativeDetails(teamId, initiativeId);
-      //   response = new EditInitiativeDialogResponse(initiative, triggerId);
-      //   await sendDialogue(teamId, response);
-      //   success();
-      // }
       case InitiativeAction.UPDATE_INITIATIVE: {
         const { initiativeId, action } = parseValue(payload.actions[0].selected_option.value);
         switch (action) {

@@ -1,16 +1,13 @@
-import { Message, Section, DividerBlock, Action, ContextBlock, Overflow, Option, PlainText } from 'slack';
+import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
-  InitiativeDescriptionAndDelete,
+  InitiativeDescription,
   Divider,
   CreatedBy,
   InitiativeDetailActions,
-  InitiativeNameChannelStatusAndUpdateButton
+  InitiativeNameChannelStatusAndUpdate
 } from './initiatives';
 import { MemberSection } from './members';
-import { MemberAction, InitiativeAction } from '../interactions';
-import { MemberResponse } from '../member';
-import { stringifyValue } from './id-helper';
 
 export class DetailResponse implements Message {
   channel: string;
@@ -20,11 +17,11 @@ export class DetailResponse implements Message {
     const divider = new Divider();
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
-    const nameAndStatus = new InitiativeNameChannelStatusAndUpdateButton(initiative);
+    const nameAndStatus = new InitiativeNameChannelStatusAndUpdate(initiative);
     blocks.push(nameAndStatus);
 
     if (initiative.description) {
-      const description = new InitiativeDescriptionAndDelete(initiative);
+      const description = new InitiativeDescription(initiative);
       blocks.push(description);
     }
 
