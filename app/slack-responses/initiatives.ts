@@ -8,10 +8,11 @@ import {
   Option,
   MarkdownText,
   DividerBlock,
-  ContextBlock
+  ContextBlock,
+  Overflow
 } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
-import { InitiativeAction } from '../interactions';
+import { InitiativeAction, MemberAction } from '../interactions';
 import { stringifyValue } from './id-helper';
 
 export class InitiativeNameAndStatus implements Section {
@@ -51,7 +52,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
 export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: Button;
+  accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -62,7 +63,8 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, status];
-    this.accessory = new EditInitiativeButton(initiative);
+    // this.accessory = new EditInitiativeButton(initiative);
+    this.accessory = new InitiativeActions(initiative);
   }
 }
 
@@ -199,6 +201,37 @@ class JoinAsMemberButton implements Button {
   }
 }
 
+class InitiativeActions implements Overflow {
+  type: 'overflow' = 'overflow';
+  action_id: string;
+  options: Option[];
+  constructor(initiative: InitiativeResponse) {
+    this.action_id = InitiativeAction.UPDATE_INITIATIVE;
+    const edit = new EditOption(initiative);
+    const remove = new RemoveOption(initiative);
+    this.options = [edit, remove];
+  }
+}
+
+class EditOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = InitiativeAction.OPEN_EDIT_DIALOG;
+    this.text = { text: 'Edit initiative', type: 'plain_text' };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
+  }
+}
+
+class RemoveOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = MemberAction.REMOVE_MEMBER;
+    this.text = { text: 'Remove initiative', type: 'plain_text' };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
+  }
+}
 
 class EditInitiativeButton implements Button {
   type: 'button' = 'button';

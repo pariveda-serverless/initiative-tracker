@@ -1,4 +1,4 @@
-import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
+import { Message, Section, DividerBlock, Action, ContextBlock, Overflow, Option, PlainText } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
   InitiativeDescriptionAndDelete,
@@ -8,6 +8,9 @@ import {
   InitiativeNameChannelStatusAndUpdateButton
 } from './initiatives';
 import { MemberSection } from './members';
+import { MemberAction, InitiativeAction } from '../interactions';
+import { MemberResponse } from '../member';
+import { stringifyValue } from './id-helper';
 
 export class DetailResponse implements Message {
   channel: string;
