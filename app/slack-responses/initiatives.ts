@@ -227,7 +227,7 @@ class RemoveOption implements Option {
   text: PlainText;
   value: string;
   constructor(initiative: InitiativeResponse) {
-    const action = MemberAction.REMOVE_MEMBER;
+    const action = InitiativeAction.DELETE;
     this.text = { text: 'Remove initiative', type: 'plain_text' };
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
   }

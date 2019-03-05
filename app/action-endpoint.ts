@@ -70,7 +70,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
             break;
           }
           case InitiativeAction.OPEN_EDIT_DIALOG: {
-            const { initiativeId } = parseValue(payload.actions[0].value);
             const initiative = await getInitiativeDetails(teamId, initiativeId);
             response = new EditInitiativeDialogResponse(initiative, triggerId);
             await sendDialogue(teamId, response);
