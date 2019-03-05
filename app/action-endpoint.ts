@@ -77,6 +77,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
             break;
           }
         }
+        break;
       }
       case MemberAction.UPDATE_ROLE: {
         const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
