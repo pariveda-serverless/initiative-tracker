@@ -52,7 +52,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
 export class InitiativeNameStatusAndUpdateStatus implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: Overflow;
+  accessory: Button;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -63,15 +63,14 @@ export class InitiativeNameStatusAndUpdateStatus implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, status];
-    // this.accessory = new EditInitiativeButton(initiative);
-    this.accessory = new InitiativeActions(initiative);
+    this.accessory = new EditInitiativeButton(initiative);
   }
 }
 
 export class InitiativeNameChannelStatusAndUpdateButton implements Section {
   type: 'section' = 'section';
   fields: MarkdownText[];
-  accessory: Button;
+  accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
     const name: MarkdownText = {
       type: 'mrkdwn',
@@ -86,7 +85,8 @@ export class InitiativeNameChannelStatusAndUpdateButton implements Section {
       text: `*Status*\n${initiative.statusDisplay}`
     };
     this.fields = [name, channel, status];
-    this.accessory = new EditInitiativeButton(initiative);
+    // this.accessory = new EditInitiativeButton(initiative);
+    this.accessory = new InitiativeActions(initiative);
   }
 }
 
