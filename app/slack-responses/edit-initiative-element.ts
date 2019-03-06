@@ -4,7 +4,8 @@ import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
 export enum EditInitiativeFieldName {
   INITIATIVE_NAME = 'initiative_name',
   INITIATIVE_DESCRIPTION = 'initiative_description',
-  INITIATIVE_STATUS = 'initiative_status'
+  INITIATIVE_STATUS = 'initiative_status',
+  INITIATIVE_CHANNEL = 'INITIATIVE_CHANNEL'
 }
 
 export enum EditInitiativeFieldError {
@@ -29,10 +30,21 @@ export class EditInitiativeStatus implements SelectElement {
   options: SelectElementOption[];
   constructor(initiative: InitiativeResponse) {
     this.name = EditInitiativeFieldName.INITIATIVE_STATUS;
-    this.label = 'Select a stuatus for this initiative';
+    this.label = 'Select a status for this initiative';
     this.value = initiative.status;
     this.options = Object.values(Status).map(status => new SelectIniatitiveStatus(getStatusDisplay(status), status));
     this.type = 'select';
+  }
+}
+
+export class EditInitiativeChannel implements SelectElement {
+  label: string = 'Select a channel for this initiative';
+  name: string;
+  value: string;
+  type: 'select';
+  data_source: 'channels' = 'channels';
+  constructor(initiative: InitiativeResponse) {
+    this.value = initiative.channel.name;
   }
 }
 

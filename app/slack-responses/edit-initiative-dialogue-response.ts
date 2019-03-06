@@ -6,7 +6,8 @@ import {
   EditInitiativeDescription,
   EditInitiativeFieldName,
   DialogFieldError,
-  EditInitiativeFieldError
+  EditInitiativeFieldError,
+  EditInitiativeChannel
 } from './edit-initiative-element';
 import { InitiativeCallbackAction } from '../interactions';
 
@@ -30,11 +31,13 @@ export class EditInitiativeDialog implements Dialog {
     const statusField = new EditInitiativeStatus(initiative);
     const nameField = new EditInitiativeName(initiative);
     const descriptionField = new EditInitiativeDescription(initiative);
-    this.elements = [statusField, nameField, descriptionField];
+    const channel = new EditInitiativeChannel(initiative);
+    this.elements = [statusField, nameField, descriptionField, channel];
     this.state = JSON.stringify({
       originalName: initiative.name,
       originalDescription: initiative.description,
       originalStatus: initiative.status,
+      originalChannel: initiative.channel.id,
       initiativeId: initiative.initiativeId
     });
   }
