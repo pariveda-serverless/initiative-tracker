@@ -1,10 +1,5 @@
-import { post } from 'request-promise';
 import { WebClient } from '@slack/client';
-import { Dialog } from 'slack';
 import { getToken } from './profile';
-import {
-  EditInitiativeFieldValidator
-} from '../slack-responses/edit-initiative-dialogue-response';
 
 const slack = new WebClient();
 
