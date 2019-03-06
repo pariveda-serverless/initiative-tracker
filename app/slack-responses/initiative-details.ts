@@ -1,12 +1,6 @@
 import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse } from '../initiative';
-import {
-  InitiativeDescription,
-  Divider,
-  CreatedBy,
-  InitiativeDetailActions,
-  InitiativeNameChannelStatusAndUpdate
-} from './initiatives';
+import { Divider, CreatedBy, InitiativeDetailActions, InitiativeInformationAndUpdateActions } from './initiatives';
 import { MemberSection } from './members';
 
 export class DetailResponse implements Message {
@@ -17,13 +11,8 @@ export class DetailResponse implements Message {
     const divider = new Divider();
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
-    const nameAndStatus = new InitiativeNameChannelStatusAndUpdate(initiative);
+    const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
     blocks.push(nameAndStatus);
-
-    if (initiative.description) {
-      const description = new InitiativeDescription(initiative);
-      blocks.push(description);
-    }
 
     const metaInformation = new CreatedBy(initiative);
     blocks.push(metaInformation);

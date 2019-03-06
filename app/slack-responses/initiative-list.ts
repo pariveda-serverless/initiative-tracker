@@ -1,6 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
-import { InitiativeNameStatusAndViewDetails, InitiativeDescription, CreatedBy, Divider } from './initiatives';
+import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './initiatives';
 
 export class ListResponse implements Message {
   channel: string;
@@ -11,12 +11,8 @@ export class ListResponse implements Message {
     } else {
       this.blocks = initiatives
         .map(initiative => {
-          const nameAndStatus = new InitiativeNameStatusAndViewDetails(initiative);
+          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
-          if (initiative.description) {
-            const description = new InitiativeDescription(initiative);
-            blocks.push(description);
-          }
           const metaInformation = new CreatedBy(initiative);
           const divider = new Divider();
           blocks = [...blocks, metaInformation, divider];

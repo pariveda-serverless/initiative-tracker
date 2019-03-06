@@ -15,7 +15,7 @@ import { InitiativeResponse } from '../initiative';
 import { InitiativeAction } from '../interactions';
 import { stringifyValue } from './id-helper';
 
-export class InitiativeNameAndStatus implements Section {
+export class InitiativeInformation implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: InitiativeResponse) {
@@ -23,7 +23,7 @@ export class InitiativeNameAndStatus implements Section {
   }
 }
 
-export class InitiativeNameStatusAndViewDetails implements Section {
+export class InitiativeInformationAndViewDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
@@ -33,7 +33,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
   }
 }
 
-export class InitiativeNameChannelStatusAndUpdate implements Section {
+export class InitiativeInformationAndUpdateActions implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Overflow;
@@ -59,18 +59,6 @@ export class CreatedBy implements ContextBlock {
     this.elements = [createdByIcon, createdBy];
   }
 }
-
-export class InitiativeDescription implements Section {
-  type: 'section' = 'section';
-  text: MarkdownText;
-  constructor(initiative: InitiativeResponse) {
-    this.text = {
-      type: 'mrkdwn',
-      text: `*Description*\n${initiative.description}`
-    };
-  }
-}
-
 export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
