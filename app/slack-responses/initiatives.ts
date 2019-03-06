@@ -19,15 +19,23 @@ export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
   fields?: (PlainText | MarkdownText)[];
   constructor(initiative: InitiativeResponse) {
-    const name: MarkdownText = {
+    // const name: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Name*\n${initiative.name}`
+    // };
+    // const status: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Status*\n${initiative.statusDisplay}`
+    // };
+    // this.fields = [name, status];
+
+    const information: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Name*\n${initiative.name}`
+      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
+        initiative.channel ? initiative.channel.parsed : ''
+      }`
     };
-    const status: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Status*\n${initiative.statusDisplay}`
-    };
-    this.fields = [name, status];
+    this.fields = [information];
   }
 }
 
@@ -36,15 +44,23 @@ export class InitiativeNameStatusAndViewDetails implements Section {
   fields?: (PlainText | MarkdownText)[];
   accessory?: ImageContext | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    const name: MarkdownText = {
+    // const name: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Name*\n${initiative.name}`
+    // };
+    // const status: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Status*\n${initiative.statusDisplay}`
+    // };
+
+    const information: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Name*\n${initiative.name}`
+      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
+        initiative.channel ? initiative.channel.parsed : ''
+      }`
     };
-    const status: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Status*\n${initiative.statusDisplay}`
-    };
-    this.fields = [name, status];
+    this.fields = [information];
+    // this.fields = [name, status];
     this.accessory = new ViewDetailsButton(initiative);
   }
 }
@@ -54,19 +70,26 @@ export class InitiativeNameChannelStatusAndUpdate implements Section {
   fields: MarkdownText[];
   accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
-    const name: MarkdownText = {
+    // const name: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Name*\n${initiative.name}`
+    // };
+    // const channel: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Channel*\n${initiative.channel ? initiative.channel.parsed : ''}`
+    // };
+    // const status: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `*Status*\n${initiative.statusDisplay}`
+    // };
+    // this.fields = [name, channel, status];
+    const information: MarkdownText = {
       type: 'mrkdwn',
-      text: `*Name*\n${initiative.name}`
+      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
+        initiative.channel ? initiative.channel.parsed : ''
+      }`
     };
-    const channel: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Channel*\n${initiative.channel ? initiative.channel.parsed : ''}`
-    };
-    const status: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Status*\n${initiative.statusDisplay}`
-    };
-    this.fields = [name, channel, status];
+    this.fields = [information];
     // this.accessory = new EditInitiativeButton(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
