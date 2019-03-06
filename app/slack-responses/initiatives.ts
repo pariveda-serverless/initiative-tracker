@@ -17,7 +17,8 @@ import { stringifyValue } from './id-helper';
 
 export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
-  fields?: (PlainText | MarkdownText)[];
+  // fields?: (PlainText | MarkdownText)[];
+  text: MarkdownText;
   constructor(initiative: InitiativeResponse) {
     // const name: MarkdownText = {
     //   type: 'mrkdwn',
@@ -35,13 +36,14 @@ export class InitiativeNameAndStatus implements Section {
         initiative.channel ? initiative.channel.parsed : ''
       }`
     };
-    this.fields = [information];
+    this.text = information;
   }
 }
 
 export class InitiativeNameStatusAndViewDetails implements Section {
   type: 'section' = 'section';
-  fields?: (PlainText | MarkdownText)[];
+  // fields?: (PlainText | MarkdownText)[];
+  text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
     // const name: MarkdownText = {
@@ -59,7 +61,7 @@ export class InitiativeNameStatusAndViewDetails implements Section {
         initiative.channel ? initiative.channel.parsed : ''
       }`
     };
-    this.fields = [information];
+    this.text = information;
     // this.fields = [name, status];
     this.accessory = new ViewDetailsButton(initiative);
   }
@@ -67,7 +69,8 @@ export class InitiativeNameStatusAndViewDetails implements Section {
 
 export class InitiativeNameChannelStatusAndUpdate implements Section {
   type: 'section' = 'section';
-  fields: MarkdownText[];
+  // fields: MarkdownText[];
+  text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
     // const name: MarkdownText = {
@@ -89,7 +92,7 @@ export class InitiativeNameChannelStatusAndUpdate implements Section {
         initiative.channel ? initiative.channel.parsed : ''
       }`
     };
-    this.fields = [information];
+    this.text = information;
     // this.accessory = new EditInitiativeButton(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
