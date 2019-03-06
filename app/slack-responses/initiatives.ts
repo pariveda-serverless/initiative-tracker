@@ -146,8 +146,8 @@ class InitiativeNameStatusAndChannel implements MarkdownText {
   text: string;
   constructor(initiative: InitiativeResponse) {
     const name = initiative.name ? `*Name*: ${initiative.name}` : '';
-    const status = initiative.statusDisplay ? `    *Status*: ${initiative.statusDisplay}` : '';
-    const channel = initiative.channel ? `    *Channel*: ${initiative.channel ? initiative.channel.parsed : ''}` : '';
+    const status = initiative.statusDisplay ? `\n*Status*: ${initiative.statusDisplay}` : '';
+    const channel = initiative.channel ? `\n*Channel*: ${initiative.channel ? initiative.channel.parsed : ''}` : '';
     const description = initiative.description ? `\n*Description*: ${initiative.description}` : '';
     this.text = name + status + channel + description;
   }

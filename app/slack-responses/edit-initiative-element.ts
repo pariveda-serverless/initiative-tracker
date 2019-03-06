@@ -41,11 +41,11 @@ export class EditInitiativeStatus implements SelectElement {
 export class EditInitiativeChannel implements SelectElement {
   label: string = 'Select a channel for this initiative';
   name: string;
-  value: string;
+  // value: string;
   type: 'select';
   data_source: 'channels' = 'channels';
   constructor(initiative: InitiativeResponse) {
-    this.value = initiative.channel.name;
+    // this.value = initiative.channel.name;
   }
 }
 
