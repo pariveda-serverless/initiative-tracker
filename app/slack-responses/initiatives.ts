@@ -17,83 +17,28 @@ import { stringifyValue } from './id-helper';
 
 export class InitiativeNameAndStatus implements Section {
   type: 'section' = 'section';
-  // fields?: (PlainText | MarkdownText)[];
   text: MarkdownText;
   constructor(initiative: InitiativeResponse) {
-    // const name: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Name*\n${initiative.name}`
-    // };
-    // const status: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Status*\n${initiative.statusDisplay}`
-    // };
-    // this.fields = [name, status];
-
-    const information: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
-        initiative.channel ? initiative.channel.parsed : ''
-      }`
-    };
-    this.text = information;
+    this.text = new InitiativeNameStatusAndChannel(initiative);
   }
 }
 
 export class InitiativeNameStatusAndViewDetails implements Section {
   type: 'section' = 'section';
-  // fields?: (PlainText | MarkdownText)[];
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
   constructor(initiative: InitiativeResponse) {
-    // const name: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Name*\n${initiative.name}`
-    // };
-    // const status: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Status*\n${initiative.statusDisplay}`
-    // };
-
-    const information: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
-        initiative.channel ? initiative.channel.parsed : ''
-      }`
-    };
-    this.text = information;
-    // this.fields = [name, status];
+    this.text = new InitiativeNameStatusAndChannel(initiative);
     this.accessory = new ViewDetailsButton(initiative);
   }
 }
 
 export class InitiativeNameChannelStatusAndUpdate implements Section {
   type: 'section' = 'section';
-  // fields: MarkdownText[];
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: InitiativeResponse) {
-    // const name: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Name*\n${initiative.name}`
-    // };
-    // const channel: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Channel*\n${initiative.channel ? initiative.channel.parsed : ''}`
-    // };
-    // const status: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `*Status*\n${initiative.statusDisplay}`
-    // };
-    // this.fields = [name, channel, status];
-    const information: MarkdownText = {
-      type: 'mrkdwn',
-      text: `*Name*: ${initiative.name}    *Status*: ${initiative.statusDisplay}    *Channel*: ${
-        initiative.channel ? initiative.channel.parsed : ''
-      }`
-    };
-    this.text = information;
-    // this.accessory = new EditInitiativeButton(initiative);
+    this.text = new InitiativeNameStatusAndChannel(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
@@ -144,10 +89,7 @@ export class DeleteButton implements Button {
   constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.DELETE;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = {
-      type: 'plain_text',
-      text: 'Delete'
-    };
+    this.text = { type: 'plain_text', text: 'Delete' };
   }
 }
 
@@ -159,10 +101,7 @@ export class ViewDetailsButton implements Button {
   constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = {
-      type: 'plain_text',
-      text: 'View details'
-    };
+    this.text = { type: 'plain_text', text: 'View details' };
   }
 }
 
@@ -174,10 +113,7 @@ class JoinAsChampionButton implements Button {
   constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.JOIN_AS_CHAMPION;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, champion: true });
-    this.text = {
-      type: 'plain_text',
-      text: 'Champion initiative'
-    };
+    this.text = { type: 'plain_text', text: 'Champion initiative' };
   }
 }
 
@@ -189,10 +125,7 @@ class JoinAsMemberButton implements Button {
   constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.JOIN_AS_MEMBER;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, champion: false });
-    this.text = {
-      type: 'plain_text',
-      text: 'Join initiative'
-    };
+    this.text = { type: 'plain_text', text: 'Join initiative' };
   }
 }
 
@@ -228,21 +161,17 @@ class RemoveOption implements Option {
   }
 }
 
-class EditInitiativeButton implements Button {
-  type: 'button' = 'button';
-  text: PlainText;
-  action_id: string;
-  value?: string;
-  constructor(initiative: InitiativeResponse) {
-    this.action_id = InitiativeAction.OPEN_EDIT_DIALOG;
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = {
-      type: 'plain_text',
-      text: 'Edit initiative'
-    };
-  }
-}
-
 export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
+}
+
+class InitiativeNameStatusAndChannel implements MarkdownText {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  constructor(initiative: InitiativeResponse) {
+    const name = initiative.name ? `*Name*: ${initiative.name}` : '';
+    const status = initiative.statusDisplay ? `    *Status*: ${initiative.statusDisplay}` : '';
+    const channel = initiative.channel ? `    *Channel*: ${initiative.channel ? initiative.channel.parsed : ''}` : '';
+    this.text = name + status + channel;
+  }
 }
