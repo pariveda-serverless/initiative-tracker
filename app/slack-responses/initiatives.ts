@@ -81,18 +81,6 @@ export class InitiativeDetailActions implements Action {
   }
 }
 
-export class DeleteButton implements Button {
-  type: 'button' = 'button';
-  text: PlainText;
-  action_id: string;
-  value: string;
-  constructor(initiative: InitiativeResponse) {
-    this.action_id = InitiativeAction.DELETE;
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = { type: 'plain_text', text: 'Delete' };
-  }
-}
-
 export class ViewDetailsButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
@@ -172,6 +160,7 @@ class InitiativeNameStatusAndChannel implements MarkdownText {
     const name = initiative.name ? `*Name*: ${initiative.name}` : '';
     const status = initiative.statusDisplay ? `    *Status*: ${initiative.statusDisplay}` : '';
     const channel = initiative.channel ? `    *Channel*: ${initiative.channel ? initiative.channel.parsed : ''}` : '';
-    this.text = name + status + channel;
+    const description = initiative.description ? `\n*Description*: ${initiative.description}` : '';
+    this.text = name + status + channel + description;
   }
 }
