@@ -39,8 +39,8 @@ export class EditInitiativeStatus implements SelectElement {
 
 // https://api.slack.com/dialogs#select_elements
 export class EditInitiativeChannel implements SelectElement {
-  label: string = 'Select a channel for this initiative';
-  name: string;
+  label = 'Select a channel for this initiative';
+  name = EditInitiativeFieldName.INITIATIVE_CHANNEL;
   // value: string;
   type: 'select';
   data_source: 'channels' = 'channels';
