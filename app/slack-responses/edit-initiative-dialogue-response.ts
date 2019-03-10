@@ -1,15 +1,16 @@
 import { Dialog, DialogError, TextElement, SelectElement } from 'slack';
 import { InitiativeResponse } from '../initiative';
 import {
-  EditInitiativeName,
-  EditInitiativeStatus,
-  EditInitiativeDescription,
+  NameInput,
+  StatusSelect,
+  DescriptionInput,
   EditInitiativeFieldName,
   DialogFieldError,
   EditInitiativeFieldError,
-  EditInitiativeChannel
+  ChannelSelect
 } from './edit-initiative-element';
 import { InitiativeCallbackAction } from '../interactions';
+import { stringifyValue } from './id-helper';
 
 export class EditInitiativeDialogResponse {
   trigger_id: string;
@@ -28,18 +29,19 @@ export class EditInitiativeDialog implements Dialog {
   constructor(initiative: InitiativeResponse) {
     this.title = 'Update Initiative';
     this.callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
-    const statusField = new EditInitiativeStatus(initiative);
-    const nameField = new EditInitiativeName(initiative);
-    const descriptionField = new EditInitiativeDescription(initiative);
-    const channel = new EditInitiativeChannel(initiative);
-    this.elements = [statusField, nameField, descriptionField, channel];
-    this.state = JSON.stringify({
-      originalName: initiative.name,
-      originalDescription: initiative.description,
-      originalStatus: initiative.status,
-      originalChannel: initiative.channel ? initiative.channel.id : null,
-      initiativeId: initiative.initiativeId
-    });
+    const status = new StatusSelect(initiative);
+    const name = new NameInput(initiative);
+    const description = new DescriptionInput(initiative);
+    const channel = new ChannelSelect(initiative);
+    this.elements = [status, name, description, channel];
+    // this.state = JSON.stringify({
+    //   name: initiative.name,
+    //   description: initiative.description,
+    //   status: initiative.status,
+    //   channelId: initiative.channel ? initiative.channel.id : null,
+    //   initiativeId: initiative.initiativeId
+    // });
+    this.state = stringifyValue({ initiativeId: initiative.initiativeId });
   }
 }
 
@@ -59,9 +61,9 @@ export class EditInitiativeFieldValidator {
       initiativeStatus === oldInitiativeStatus
     ) {
       this.errors = [
-        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_NAME, EditInitiativeFieldError.UNCHANGED_ERROR),
-        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_DESCRIPTION, EditInitiativeFieldError.UNCHANGED_ERROR),
-        new DialogFieldError(EditInitiativeFieldName.INITIATIVE_STATUS, EditInitiativeFieldError.UNCHANGED_ERROR)
+        new DialogFieldError(EditInitiativeFieldName.NAME, EditInitiativeFieldError.UNCHANGED_ERROR),
+        new DialogFieldError(EditInitiativeFieldName.DESCRIPTION, EditInitiativeFieldError.UNCHANGED_ERROR),
+        new DialogFieldError(EditInitiativeFieldName.STATUS, EditInitiativeFieldError.UNCHANGED_ERROR)
       ];
     } else {
       this.errors = [];

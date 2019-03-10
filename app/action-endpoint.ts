@@ -98,23 +98,24 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
         const { initiative_name, initiative_description, initiative_status } = payload.submission;
-        const { originalName, originalDescription, originalStatus, initiativeId } = JSON.parse(payload.state);
-        const fieldValidator = new EditInitiativeFieldValidator(
-          initiative_name,
-          initiative_description,
-          initiative_status,
-          originalName,
-          originalDescription,
-          originalStatus
-        );
-        if (fieldValidator.errors.length > 0) {
-          response = fieldValidator;
-          success(response);
-        } else {
-          await updateInitiative(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
-          const initiative = await getInitiativeDetails(teamId, initiativeId);
-          response = new DetailResponse(initiative, slackUserId, channel);
-        }
+        // const { originalName, originalDescription, originalStatus, initiativeId } = JSON.parse(payload.state);
+        const { initiativeId } = parseValue(payload.state);
+        // const fieldValidator = new EditInitiativeFieldValidator(
+        //   initiative_name,
+        //   initiative_description,
+        //   initiative_status,
+        //   originalName,
+        //   originalDescription,
+        //   originalStatus
+        // );
+        // if (fieldValidator.errors.length > 0) {
+        //   response = fieldValidator;
+        //   success(response);
+        // } else {
+        await updateInitiative(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
+        const initiative = await getInitiativeDetails(teamId, initiativeId);
+        response = new DetailResponse(initiative, slackUserId, channel);
+        // }
         break;
       }
       default: {

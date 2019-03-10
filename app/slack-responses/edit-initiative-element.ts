@@ -2,18 +2,33 @@ import { TextElement, DialogError, SelectElement, SelectElementOption } from 'sl
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
 
 export enum EditInitiativeFieldName {
-  INITIATIVE_NAME = 'initiative_name',
-  INITIATIVE_DESCRIPTION = 'initiative_description',
-  INITIATIVE_STATUS = 'initiative_status',
-  INITIATIVE_CHANNEL = 'INITIATIVE_CHANNEL'
+  NAME = 'name',
+  DESCRIPTION = 'description',
+  STATUS = 'status',
+  CHANNEL_ID = 'channelId'
 }
 
 export enum EditInitiativeFieldError {
-  EMPTY_ERROR = 'This field cannot be empty',
-  UNCHANGED_ERROR = 'Please update a field'
+  EMPTY = 'This field cannot be empty',
+  UNCHANGED = 'Please update a field'
 }
 
-export class SelectIniatitiveStatus implements SelectElementOption {
+export class StatusSelect implements SelectElement {
+  label: string;
+  name: string;
+  value: string;
+  type: 'select';
+  options: SelectElementOption[];
+  constructor(initiative: InitiativeResponse) {
+    this.name = EditInitiativeFieldName.STATUS;
+    this.label = 'Select a status for this initiative';
+    this.value = initiative.status;
+    this.options = Object.values(Status).map(status => new StatusOption(getStatusDisplay(status), status));
+    this.type = 'select';
+  }
+}
+
+class StatusOption implements SelectElementOption {
   label: string;
   value: string;
   constructor(label: string, value: string) {
@@ -22,54 +37,39 @@ export class SelectIniatitiveStatus implements SelectElementOption {
   }
 }
 
-export class EditInitiativeStatus implements SelectElement {
-  label: string;
-  name: string;
-  value: string;
-  type: 'select';
-  options: SelectElementOption[];
-  constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.INITIATIVE_STATUS;
-    this.label = 'Select a status for this initiative';
-    this.value = initiative.status;
-    this.options = Object.values(Status).map(status => new SelectIniatitiveStatus(getStatusDisplay(status), status));
-    this.type = 'select';
-  }
-}
-
 // https://api.slack.com/dialogs#select_elements
-export class EditInitiativeChannel implements SelectElement {
+export class ChannelSelect implements SelectElement {
   label = 'Select a channel for this initiative';
-  name = EditInitiativeFieldName.INITIATIVE_CHANNEL;
-  // value: string;
+  name = EditInitiativeFieldName.CHANNEL_ID;
+  value: string;
   type: 'select' = 'select';
   data_source: 'channels' = 'channels';
   constructor(initiative: InitiativeResponse) {
-    // this.value = initiative.channel.name;
+    this.value = initiative.channel ? initiative.channel.id : null;
   }
 }
 
-export class EditInitiativeName implements TextElement {
+export class NameInput implements TextElement {
   label: string;
   name: string;
   type: string;
   value: string;
   constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.INITIATIVE_NAME;
+    this.name = EditInitiativeFieldName.NAME;
     this.label = 'Enter a new name for this initiative';
     this.value = initiative.name;
     this.type = 'text';
   }
 }
 
-export class EditInitiativeDescription implements TextElement {
+export class DescriptionInput implements TextElement {
   label: string;
   name: string;
   type: string;
   value: string;
   optional: boolean;
   constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.INITIATIVE_DESCRIPTION;
+    this.name = EditInitiativeFieldName.DESCRIPTION;
     this.label = 'Enter a new description for this initiative';
     this.value = initiative.description;
     this.type = 'textarea';
