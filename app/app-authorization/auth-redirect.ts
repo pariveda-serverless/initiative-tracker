@@ -2,6 +2,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { get } from 'request-promise';
 import { SSM } from 'aws-sdk';
 import { AccessTokenResponse } from 'slack';
+import { saveToken } from './token-manager';
 
 const ssm = new SSM({ apiVersion: '2014-11-06' });
 
@@ -21,7 +22,7 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
     const response: AccessTokenResponse = JSON.parse(await get(params));
     console.log('Authorizing app response', response);
     if (response.ok) {
-      await saveAccessToken(response);
+      await saveToken(response);
       success('Initiative tracker was successfully added!');
     } else {
       error('There was a problem adding initiative tracker');
@@ -30,18 +31,3 @@ export const handler = apiWrapper(async ({ query, success, error }: ApiSignature
     error(err);
   }
 });
-
-export function getAccessTokenParameterPath(teamId: string) {
-  return `/initiative-trackers/${process.env.STAGE}/teams/${teamId}/access-token`;
-}
-
-async function saveAccessToken(token: AccessTokenResponse): Promise<any> {
-  const params = {
-    Name: getAccessTokenParameterPath(token.team_id),
-    Type: 'SecureString',
-    Value: token.access_token,
-    Description: `${token.team_name} Slack access token for the ${process.env.STAGE} Initiative Tracker`,
-    Overwrite: true
-  };
-  return ssm.putParameter(params).promise();
-}

@@ -1,7 +1,12 @@
 import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse } from '../initiative';
-import { Divider, CreatedBy, InitiativeDetailActions, InitiativeInformationAndUpdateActions } from './initiatives';
-import { MemberSection } from './members';
+import { InitiativeResponse } from '../common';
+import {
+  Divider,
+  CreatedBy,
+  InitiativeDetailActions,
+  InitiativeInformationAndUpdateActions,
+  MemberSection
+} from './shared-messages';
 
 export class DetailResponse implements Message {
   channel: string;

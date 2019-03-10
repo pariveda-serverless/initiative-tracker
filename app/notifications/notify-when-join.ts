@@ -1,8 +1,8 @@
 import { DynamoDB } from 'aws-sdk';
 import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../initiative';
-import { MemberResponse, MEMBER_TYPE } from '../member';
-import { send } from '../slack-api';
+import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../common/initiative';
+import { MemberResponse, MEMBER_TYPE } from '../common/member';
+import { sendMessage } from '../slack-api';
 import { NewMemberNotification } from '../slack-messages';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -12,7 +12,7 @@ export const handler = snsWrapper(async ({ message, success, error }: SnsSignatu
     const initiative = await getInitiativeDetails(message.initiativeId);
     if (initiative.channel) {
       const notification = new NewMemberNotification(initiative, <MemberResponse>message);
-      await send(notification, initiative.team.id);
+      await sendMessage(notification, initiative.team.id);
     }
     success();
   } catch (err) {

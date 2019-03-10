@@ -1,10 +1,8 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
-import { SSM } from 'aws-sdk';
-import { getAccessTokenParameterPath } from '../app-authorization/auth-redirect';
 import { getParsedChannel } from '../slash-commands/add-initiative';
+import { getToken } from '../app-authorization';
 
 const slack = new WebClient();
-const ssm = new SSM({ apiVersion: '2014-11-06' });
 
 export async function getChannelInfo(channelId: string, teamId: string): Promise<Channel> {
   console.log('Getting channel information', channelId);
@@ -15,18 +13,6 @@ export async function getChannelInfo(channelId: string, teamId: string): Promise
     .then(result => result.channel);
   console.log('Received channel result from Slack', channel);
   return { id: channel.id, name: channel.name, parsed: getParsedChannel(channel.id, channel.name) };
-}
-
-async function getToken(teamId: string): Promise<string> {
-  const params = {
-    Name: getAccessTokenParameterPath(teamId),
-    WithDecryption: true
-  };
-  console.log('Getting access token with params', params);
-  return ssm
-    .getParameter(params)
-    .promise()
-    .then(res => res.Parameter.Value);
 }
 
 interface Channel {

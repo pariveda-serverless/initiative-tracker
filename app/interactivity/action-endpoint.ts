@@ -1,24 +1,23 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, ActionPayload } from 'slack';
-import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from '../interactions';
+import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
 import {
   CreateMemberRequest,
   MEMBER_TYPE,
   MemberResponse,
   DeleteMemberRequest,
   getTeamIdentifier,
-  getMemberIdentifiers
-} from '../member';
-import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiative';
-import { sendDialogue, getUserProfile, reply, getChannelInfo } from '../slack-api';
-import {
-  DetailResponse,
-  NotImplementedResponse,
-  parseValue,
-  DeleteResponse,
-  EditInitiativeDialog
-} from '../slack-messages';
+  getMemberIdentifiers,
+  INITIATIVE_TYPE,
+  InitiativeRecord,
+  InitiativeResponse,
+  Status,
+  getInitiativeIdentifiers
+} from '../common';
+import { sendDialogue, getUserProfile, replyWithMessage, getChannelInfo } from '../slack-api';
+import { DetailResponse, NotImplementedResponse, DeleteResponse, EditInitiativeDialog } from '../slack-messages';
+import { parseValue } from './id-helper';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
@@ -108,7 +107,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     if (response) {
       console.log('Replying with response', JSON.stringify(response));
-      await reply(responseUrl, response as Message);
+      await replyWithMessage(responseUrl, response as Message);
     }
     success();
   } catch (err) {

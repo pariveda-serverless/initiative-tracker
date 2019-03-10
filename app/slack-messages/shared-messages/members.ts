@@ -1,8 +1,6 @@
 import { Section, PlainText, MarkdownText, Overflow, Option } from 'slack';
-import { MemberResponse } from '../member';
-import { InitiativeResponse } from '../initiative';
-import { MemberAction } from '../interactions';
-import { stringifyValue } from './id-helper';
+import { MemberResponse, InitiativeResponse } from '../../common';
+import { MemberAction, stringifyValue } from '../../interactivity';
 
 export class MemberSection implements Section {
   type: 'section' = 'section';

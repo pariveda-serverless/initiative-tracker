@@ -1,7 +1,6 @@
 import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button } from 'slack';
-import { InitiativeResponse } from '../initiative';
-import { MemberResponse } from '../member';
-import { ViewDetailsButton } from './initiatives';
+import { InitiativeResponse, MemberResponse } from '../common';
+import { ViewDetailsButton } from './shared-messages';
 
 export class NewMemberNotification implements Message {
   channel: string;

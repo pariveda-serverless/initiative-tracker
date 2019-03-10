@@ -1,6 +1,6 @@
 import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
-import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './initiatives';
+import { InitiativeResponse, Status, getStatusDisplay } from '../common';
+import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
 
 export class ListResponse implements Message {
   channel: string;

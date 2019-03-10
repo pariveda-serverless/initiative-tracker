@@ -9,11 +9,9 @@ import {
   StaticSelect,
   Button
 } from 'slack';
-import { InitiativeResponse, Status } from '../initiative';
-import { InitiativeInformation, CreatedBy } from './initiatives';
-import { MemberResponse } from '../member';
-import { StatusUpdateAction } from '../interactions';
-import { stringifyValue } from './id-helper';
+import { InitiativeResponse, Status, MemberResponse } from '../common';
+import { InitiativeInformation, CreatedBy } from './shared-messages';
+import { stringifyValue, StatusUpdateAction } from '../interactivity';
 
 export class StatusUpdateRequest implements Message {
   channel: string;

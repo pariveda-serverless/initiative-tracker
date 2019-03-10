@@ -1,9 +1,7 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
-import { SSM } from 'aws-sdk';
-import { getAccessTokenParameterPath } from '../app-authorization/auth-redirect';
+import { getToken } from '../app-authorization';
 
 const slack = new WebClient();
-const ssm = new SSM({ apiVersion: '2014-11-06' });
 
 export async function getUserProfile(user: string, teamId: string): Promise<Profile> {
   console.log('Getting user profile information', user);
@@ -19,18 +17,6 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
     slackUserId: user,
     office: getOffice(profile)
   };
-}
-
-async function getToken(teamId: string): Promise<string> {
-  const params = {
-    Name: getAccessTokenParameterPath(teamId),
-    WithDecryption: true
-  };
-  console.log('Getting access token with params', params);
-  return ssm
-    .getParameter(params)
-    .promise()
-    .then(res => res.Parameter.Value);
 }
 
 function getOffice(profile: SlackProfile): string {

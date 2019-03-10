@@ -1,7 +1,6 @@
 import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
-import { stringifyValue } from './id-helper';
-import { InitiativeCallbackAction } from '../interactions';
+import { InitiativeResponse, Status, getStatusDisplay } from '../common';
+import { stringifyValue, InitiativeCallbackAction } from '../interactivity';
 
 export class EditInitiativeDialog {
   trigger_id: string;
@@ -20,9 +19,9 @@ export class InitiativeDialog implements Dialog {
   constructor(initiative: InitiativeResponse) {
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
-    const status = new StatusSelect(initiative);
     const channel = new ChannelSelect(initiative);
-    this.elements = [name, description, status, channel];
+    const status = new StatusSelect(initiative);
+    this.elements = [name, description, channel, status];
     this.state = stringifyValue({ initiativeId: initiative.initiativeId });
   }
 }
