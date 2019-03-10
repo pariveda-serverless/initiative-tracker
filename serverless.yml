@@ -104,14 +104,14 @@ functions:
       - sns: ${self:custom.requestUpdateTopic}
 
   add-initiative:
-    handler: app/add-initiative.handler
+    handler: app/slash-commands/add-initiative.handler
     events:
       - http:
           method: post
           path: add
 
   list-initiatives:
-    handler: app/list-initiatives.handler
+    handler: app/slash-commands/list-initiatives.handler
     events:
       - http:
           method: post
@@ -125,7 +125,7 @@ functions:
           path: actions
 
   stream-updates:
-    handler: app/stream-updates.handler
+    handler: app/status-updates/stream-updates.handler
     events:
       - stream:
           type: dynamodb
@@ -137,7 +137,7 @@ functions:
       - sns: ${self:custom.notifyWhenJoinTopic}
 
   auth-redirect:
-    handler: app/auth-redirect.handler
+    handler: app/app-authorization/auth-redirect.handler
     events:
       - http:
           method: get
