@@ -17,7 +17,7 @@ declare module 'slack' {
   export interface TextElement {
     label: string;
     name: string;
-    type: string;
+    type: 'text' | 'textarea';
     max_length?: number;
     min_length?: number;
     optional?: boolean;
@@ -199,8 +199,8 @@ declare module 'slack' {
     trigger_id: string;
     callback_id: string;
     response_url: string;
-    submission: {[key: string]: any},
-    state: string,
+    submission: { [key: string]: any };
+    state: string;
     actions: [
       {
         action_id: string;

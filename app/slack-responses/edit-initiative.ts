@@ -1,4 +1,4 @@
-import { TextElement, DialogError, SelectElement, SelectElementOption, Dialog } from 'slack';
+import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
 import { stringifyValue } from './id-helper';
 import { InitiativeCallbackAction } from '../interactions';
@@ -13,53 +13,29 @@ export class EditInitiativeDialog {
 }
 
 export class InitiativeDialog implements Dialog {
-  title: string;
-  callback_id: string;
+  title = 'Update initiative';
+  callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
   elements: (TextElement | SelectElement)[];
   state: string;
   constructor(initiative: InitiativeResponse) {
-    this.title = 'Update Initiative';
-    this.callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
     const status = new StatusSelect(initiative);
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
     const channel = new ChannelSelect(initiative);
     this.elements = [status, name, description, channel];
-    // this.state = JSON.stringify({
-    //   name: initiative.name,
-    //   description: initiative.description,
-    //   status: initiative.status,
-    //   channelId: initiative.channel ? initiative.channel.id : null,
-    //   initiativeId: initiative.initiativeId
-    // });
     this.state = stringifyValue({ initiativeId: initiative.initiativeId });
   }
 }
 
-enum EditInitiativeFieldName {
-  NAME = 'name',
-  DESCRIPTION = 'description',
-  STATUS = 'status',
-  CHANNEL_ID = 'channelId'
-}
-
-// enum EditInitiativeFieldError {
-//   EMPTY = 'This field cannot be empty',
-//   UNCHANGED = 'Please update a field'
-// }
-
 class StatusSelect implements SelectElement {
-  label: string;
-  name: string;
+  label = 'Select a status for this initiative';
+  name = 'status';
   value: string;
-  type: 'select';
+  type: 'select' = 'select';
   options: SelectElementOption[];
   constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.STATUS;
-    this.label = 'Select a status for this initiative';
     this.value = initiative.status;
     this.options = Object.values(Status).map(status => new StatusOption(getStatusDisplay(status), status));
-    this.type = 'select';
   }
 }
 
@@ -75,48 +51,33 @@ class StatusOption implements SelectElementOption {
 // https://api.slack.com/dialogs#select_elements
 class ChannelSelect implements SelectElement {
   label = 'Select a channel for this initiative';
-  name = EditInitiativeFieldName.CHANNEL_ID;
+  name = 'channelId';
   value: string;
   type: 'select' = 'select';
   data_source: 'channels' = 'channels';
+  optional = true;
   constructor(initiative: InitiativeResponse) {
     this.value = initiative.channel ? initiative.channel.id : null;
   }
 }
 
 class NameInput implements TextElement {
-  label: string;
-  name: string;
-  type: string;
+  label = 'Enter a new name for this initiative';
+  name = 'name';
+  type: 'text' = 'text';
   value: string;
   constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.NAME;
-    this.label = 'Enter a new name for this initiative';
     this.value = initiative.name;
-    this.type = 'text';
   }
 }
 
 class DescriptionInput implements TextElement {
-  label: string;
-  name: string;
-  type: string;
+  label = 'Enter a new description for this initiative';
+  name = 'description';
+  type: 'textarea' = 'textarea';
   value: string;
-  optional: boolean;
+  optional: boolean = true;
   constructor(initiative: InitiativeResponse) {
-    this.name = EditInitiativeFieldName.DESCRIPTION;
-    this.label = 'Enter a new description for this initiative';
     this.value = initiative.description;
-    this.type = 'textarea';
-    this.optional = true;
   }
 }
-
-// export class DialogFieldError implements DialogError {
-//   name: string;
-//   error: string;
-//   constructor(fieldName: EditInitiativeFieldName, fieldError: EditInitiativeFieldError) {
-//     this.name = fieldName;
-//     this.error = fieldError;
-//   }
-// }

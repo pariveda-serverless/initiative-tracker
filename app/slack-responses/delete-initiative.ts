@@ -1,4 +1,4 @@
-import { Section, Message, DividerBlock, Action, ContextBlock, PlainText, MarkdownText } from 'slack';
+import { Section, Message, MarkdownText } from 'slack';
 
 export class DeleteResponse implements Message {
   channel: string;

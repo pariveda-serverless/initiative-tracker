@@ -11,7 +11,6 @@ import {
   getMemberIdentifiers
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
-// import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
 import { sendDialogue } from './slack/dialogues';
 import { DetailResponse } from './slack-responses/initiative-details';
 import { getUserProfile } from './slack/profile';
@@ -19,7 +18,7 @@ import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
 import { parseValue } from './slack-responses/id-helper';
 import { DeleteResponse } from './slack-responses/delete-initiative';
-import { EditInitiativeDialog } from './slack-responses/edit-initiative-element';
+import { EditInitiativeDialog } from './slack-responses/edit-initiative';
 import { getChannelInfo } from './slack/channel';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
@@ -97,24 +96,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
         const { name, description, status, channelId } = payload.submission;
-        // const { originalName, originalDescription, originalStatus, initiativeId } = JSON.parse(payload.state);
         const { initiativeId } = parseValue(payload.state);
-        // const fieldValidator = new EditInitiativeFieldValidator(
-        //   initiative_name,
-        //   initiative_description,
-        //   initiative_status,
-        //   originalName,
-        //   originalDescription,
-        //   originalStatus
-        // );
-        // if (fieldValidator.errors.length > 0) {
-        //   response = fieldValidator;
-        //   success(response);
-        // } else {
         await updateInitiative(teamId, initiativeId, name, description, status, channelId);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
-        // }
         break;
       }
       default: {
@@ -150,7 +135,7 @@ async function updateInitiative(
   status: string,
   channelId: string
 ): Promise<any> {
-  const channel = await getChannelInfo(channelId, teamId);
+  const channel = channelId ? await getChannelInfo(channelId, teamId) : null;
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
