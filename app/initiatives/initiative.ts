@@ -1,5 +1,5 @@
 import * as id from 'nanoid';
-import { MemberResponse, TEAM } from './member';
+import { MemberResponse, TEAM } from '../members';
 
 export enum Status {
   ACTIVE = 'ACTIVE',

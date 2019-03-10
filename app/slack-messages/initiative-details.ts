@@ -1,5 +1,5 @@
 import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse } from '../common';
+import { InitiativeResponse } from '../initiatives';
 import {
   Divider,
   CreatedBy,

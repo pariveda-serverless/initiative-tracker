@@ -93,7 +93,7 @@ custom:
 
 functions:
   initiate-update-request:
-    handler: app/status/updates/initiate-update-request.handler
+    handler: app/status-updates/initiate-update-request.handler
     events:
       - schedule: cron(0 15 ? * MON *) # 3PM UTC (10 AM EST) every Monday
       # - schedule: cron(0/5 * * * ? *) # every 5 minutes for testing
@@ -125,7 +125,7 @@ functions:
           path: actions
 
   stream-updates:
-    handler: app/status-updates/stream-updates.handler
+    handler: app/notifications/stream-updates.handler
     events:
       - stream:
           type: dynamodb

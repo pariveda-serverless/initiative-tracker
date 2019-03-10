@@ -1,5 +1,5 @@
 import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../common';
+import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { stringifyValue, InitiativeCallbackAction } from '../interactivity';
 
 export class EditInitiativeDialog {

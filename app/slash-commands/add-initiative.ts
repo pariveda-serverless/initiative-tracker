@@ -1,9 +1,14 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../common/initiative';
+import {
+  CreateInitiativeRequest,
+  InitiativeResponse,
+  InitiativeRecord,
+  INITIATIVE_TYPE
+} from '../initiatives/initiative';
 import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
-import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../common/member';
+import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
