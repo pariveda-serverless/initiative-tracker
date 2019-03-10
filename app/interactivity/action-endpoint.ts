@@ -2,22 +2,25 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, ActionPayload } from 'slack';
 import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
-import {
-  CreateMemberRequest,
-  MEMBER_TYPE,
-  MemberResponse,
-  DeleteMemberRequest,
-  getTeamIdentifier,
-  getMemberIdentifiers,
-  INITIATIVE_TYPE,
-  InitiativeRecord,
-  InitiativeResponse,
-  Status,
-  getInitiativeIdentifiers
-} from '../common';
+
 import { sendDialogue, getUserProfile, replyWithMessage, getChannelInfo } from '../slack-api';
 import { DetailResponse, NotImplementedResponse, DeleteResponse, EditInitiativeDialog } from '../slack-messages';
 import { parseValue } from './id-helper';
+import {
+  getInitiativeIdentifiers,
+  Status,
+  InitiativeRecord,
+  InitiativeResponse,
+  INITIATIVE_TYPE
+} from '../initiatives';
+import {
+  CreateMemberRequest,
+  getMemberIdentifiers,
+  getTeamIdentifier,
+  DeleteMemberRequest,
+  MEMBER_TYPE,
+  MemberResponse
+} from '../members';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 

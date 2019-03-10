@@ -11,7 +11,7 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { InitiativeResponse } from '../../common/';
+import { InitiativeResponse } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
 export class InitiativeInformation implements Section {
