@@ -18,17 +18,17 @@ export class InitiativeDialog implements Dialog {
   elements: (TextElement | SelectElement)[];
   state: string;
   constructor(initiative: InitiativeResponse) {
-    const status = new StatusSelect(initiative);
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
+    const status = new StatusSelect(initiative);
     const channel = new ChannelSelect(initiative);
-    this.elements = [status, name, description, channel];
+    this.elements = [name, description, status, channel];
     this.state = stringifyValue({ initiativeId: initiative.initiativeId });
   }
 }
 
 class StatusSelect implements SelectElement {
-  label = 'Select a status for this initiative';
+  label = 'Status';
   name = 'status';
   value: string;
   type: 'select' = 'select';
@@ -50,7 +50,7 @@ class StatusOption implements SelectElementOption {
 
 // https://api.slack.com/dialogs#select_elements
 class ChannelSelect implements SelectElement {
-  label = 'Select a channel for this initiative';
+  label = 'Channel';
   name = 'channelId';
   value: string;
   type: 'select' = 'select';
@@ -62,7 +62,7 @@ class ChannelSelect implements SelectElement {
 }
 
 class NameInput implements TextElement {
-  label = 'Enter a new name for this initiative';
+  label = 'Name';
   name = 'name';
   type: 'text' = 'text';
   value: string;
@@ -72,7 +72,7 @@ class NameInput implements TextElement {
 }
 
 class DescriptionInput implements TextElement {
-  label = 'Enter a new description for this initiative';
+  label = 'Description';
   name = 'description';
   type: 'textarea' = 'textarea';
   value: string;
