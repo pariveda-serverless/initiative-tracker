@@ -1,8 +1,8 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../initiative';
-import { getUserProfile } from '../common/slack-api';
-import { DetailResponse } from '../common/slack-messages';
+import { getUserProfile } from '../slack-api';
+import { DetailResponse } from '../slack-messages';
 import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../member';
 import { SlashCommandBody } from 'slack';
 
