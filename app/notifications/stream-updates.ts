@@ -1,7 +1,7 @@
 import { SNS } from 'aws-sdk';
 import { StreamSignature, streamWrapper } from '@manwaring/lambda-wrapper';
-import { MEMBER_TYPE, MemberResponse } from './member';
-import { InitiativeRecord } from './initiative';
+import { MEMBER_TYPE, MemberResponse } from '../member';
+import { InitiativeRecord } from '../initiative';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
 

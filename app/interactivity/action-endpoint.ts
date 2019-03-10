@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, ActionPayload } from 'slack';
-import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from './interactions';
+import { InitiativeCallbackAction, InitiativeAction, MemberAction, StatusUpdateAction } from '../interactions';
 import {
   CreateMemberRequest,
   MEMBER_TYPE,
@@ -9,17 +9,16 @@ import {
   DeleteMemberRequest,
   getTeamIdentifier,
   getMemberIdentifiers
-} from './member';
-import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
-import { sendDialogue } from './slack/dialogues';
-import { DetailResponse } from './slack-responses/initiative-details';
-import { getUserProfile } from './slack/profile';
-import { NotImplementedResponse } from './slack-responses/not-implemented';
-import { reply } from './slack/messages';
-import { parseValue } from './slack-responses/id-helper';
-import { DeleteResponse } from './slack-responses/delete-initiative';
-import { EditInitiativeDialog } from './slack-responses/edit-initiative';
-import { getChannelInfo } from './slack/channel';
+} from '../member';
+import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiative';
+import { sendDialogue, getUserProfile, reply, getChannelInfo } from '../common/slack-api';
+import {
+  DetailResponse,
+  NotImplementedResponse,
+  parseValue,
+  DeleteResponse,
+  EditInitiativeDialog
+} from '../common/slack-messages';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 

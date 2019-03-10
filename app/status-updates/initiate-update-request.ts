@@ -1,6 +1,6 @@
 import { SNS, DynamoDB } from 'aws-sdk';
 import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from './initiative';
+import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from '../initiative';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
 const table = new DynamoDB.DocumentClient({ region: process.env.REGION, apiVersion: '2012-08-10' });

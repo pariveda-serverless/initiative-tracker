@@ -1,9 +1,11 @@
 import { post } from 'request-promise';
 import { WebClient } from '@slack/client';
+import { SSM } from 'aws-sdk';
 import { Message } from 'slack';
-import { getToken } from './profile';
+import { getAccessTokenParameterPath } from '../../app-authorization/auth-redirect';
 
 const slack = new WebClient();
+const ssm = new SSM({ apiVersion: '2014-11-06' });
 
 export async function reply(url: string, message: Message) {
   const params = {
@@ -15,6 +17,18 @@ export async function reply(url: string, message: Message) {
   console.log('Replying to message with params', JSON.stringify(params));
   const response = await post(params);
   console.log('Received response', JSON.stringify(response));
+}
+
+async function getToken(teamId: string): Promise<string> {
+  const params = {
+    Name: getAccessTokenParameterPath(teamId),
+    WithDecryption: true
+  };
+  console.log('Getting access token with params', params);
+  return ssm
+    .getParameter(params)
+    .promise()
+    .then(res => res.Parameter.Value);
 }
 
 export async function send(message: any, teamId: string): Promise<any> {
