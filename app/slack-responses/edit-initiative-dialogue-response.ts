@@ -37,7 +37,7 @@ export class EditInitiativeDialog implements Dialog {
       originalName: initiative.name,
       originalDescription: initiative.description,
       originalStatus: initiative.status,
-      originalChannel: initiative.channel.id,
+      originalChannel: initiative.channel ? initiative.channel.id : null,
       initiativeId: initiative.initiativeId
     });
   }
