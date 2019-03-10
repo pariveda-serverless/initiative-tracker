@@ -38,7 +38,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run generate-swagger"
+      "pre-commit": "echo 'npm run generate-swagger'"
     }
   },
   "iopipe": {

@@ -42,7 +42,7 @@ export class EditInitiativeChannel implements SelectElement {
   label = 'Select a channel for this initiative';
   name = EditInitiativeFieldName.INITIATIVE_CHANNEL;
   // value: string;
-  type: 'select';
+  type: 'select' = 'select';
   data_source: 'channels' = 'channels';
   constructor(initiative: InitiativeResponse) {
     // this.value = initiative.channel.name;
