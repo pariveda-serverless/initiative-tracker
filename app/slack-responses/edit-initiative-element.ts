@@ -1,19 +1,54 @@
-import { TextElement, DialogError, SelectElement, SelectElementOption } from 'slack';
+import { TextElement, DialogError, SelectElement, SelectElementOption, Dialog } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiative';
+import { stringifyValue } from './id-helper';
+import { InitiativeCallbackAction } from '../interactions';
 
-export enum EditInitiativeFieldName {
+export class EditInitiativeDialog {
+  trigger_id: string;
+  dialog: Dialog;
+  constructor(initiative: InitiativeResponse, triggerId: string) {
+    this.dialog = new InitiativeDialog(initiative);
+    this.trigger_id = triggerId;
+  }
+}
+
+export class InitiativeDialog implements Dialog {
+  title: string;
+  callback_id: string;
+  elements: (TextElement | SelectElement)[];
+  state: string;
+  constructor(initiative: InitiativeResponse) {
+    this.title = 'Update Initiative';
+    this.callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
+    const status = new StatusSelect(initiative);
+    const name = new NameInput(initiative);
+    const description = new DescriptionInput(initiative);
+    const channel = new ChannelSelect(initiative);
+    this.elements = [status, name, description, channel];
+    // this.state = JSON.stringify({
+    //   name: initiative.name,
+    //   description: initiative.description,
+    //   status: initiative.status,
+    //   channelId: initiative.channel ? initiative.channel.id : null,
+    //   initiativeId: initiative.initiativeId
+    // });
+    this.state = stringifyValue({ initiativeId: initiative.initiativeId });
+  }
+}
+
+enum EditInitiativeFieldName {
   NAME = 'name',
   DESCRIPTION = 'description',
   STATUS = 'status',
   CHANNEL_ID = 'channelId'
 }
 
-export enum EditInitiativeFieldError {
-  EMPTY = 'This field cannot be empty',
-  UNCHANGED = 'Please update a field'
-}
+// enum EditInitiativeFieldError {
+//   EMPTY = 'This field cannot be empty',
+//   UNCHANGED = 'Please update a field'
+// }
 
-export class StatusSelect implements SelectElement {
+class StatusSelect implements SelectElement {
   label: string;
   name: string;
   value: string;
@@ -38,7 +73,7 @@ class StatusOption implements SelectElementOption {
 }
 
 // https://api.slack.com/dialogs#select_elements
-export class ChannelSelect implements SelectElement {
+class ChannelSelect implements SelectElement {
   label = 'Select a channel for this initiative';
   name = EditInitiativeFieldName.CHANNEL_ID;
   value: string;
@@ -49,7 +84,7 @@ export class ChannelSelect implements SelectElement {
   }
 }
 
-export class NameInput implements TextElement {
+class NameInput implements TextElement {
   label: string;
   name: string;
   type: string;
@@ -62,7 +97,7 @@ export class NameInput implements TextElement {
   }
 }
 
-export class DescriptionInput implements TextElement {
+class DescriptionInput implements TextElement {
   label: string;
   name: string;
   type: string;
@@ -77,11 +112,11 @@ export class DescriptionInput implements TextElement {
   }
 }
 
-export class DialogFieldError implements DialogError {
-  name: string;
-  error: string;
-  constructor(fieldName: EditInitiativeFieldName, fieldError: EditInitiativeFieldError) {
-    this.name = fieldName;
-    this.error = fieldError;
-  }
-}
+// export class DialogFieldError implements DialogError {
+//   name: string;
+//   error: string;
+//   constructor(fieldName: EditInitiativeFieldName, fieldError: EditInitiativeFieldError) {
+//     this.name = fieldName;
+//     this.error = fieldError;
+//   }
+// }

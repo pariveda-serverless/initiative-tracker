@@ -11,10 +11,7 @@ import {
   getMemberIdentifiers
 } from './member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from './initiative';
-import {
-  EditInitiativeDialogResponse,
-  EditInitiativeFieldValidator
-} from './slack-responses/edit-initiative-dialogue-response';
+// import { EditInitiativeDialogResponse } from './slack-responses/edit-initiative-dialogue-response';
 import { sendDialogue } from './slack/dialogues';
 import { DetailResponse } from './slack-responses/initiative-details';
 import { getUserProfile } from './slack/profile';
@@ -22,12 +19,14 @@ import { NotImplementedResponse } from './slack-responses/not-implemented';
 import { reply } from './slack/messages';
 import { parseValue } from './slack-responses/id-helper';
 import { DeleteResponse } from './slack-responses/delete-initiative';
+import { EditInitiativeDialog } from './slack-responses/edit-initiative-element';
+import { getChannelInfo } from './slack/channel';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    let response: Message | EditInitiativeDialogResponse | EditInitiativeFieldValidator;
+    let response: Message | EditInitiativeDialog;
     const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.JOIN_AS_MEMBER:
@@ -56,7 +55,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
           }
           case InitiativeAction.OPEN_EDIT_DIALOG: {
             const initiative = await getInitiativeDetails(teamId, initiativeId);
-            const dialog = new EditInitiativeDialogResponse(initiative, triggerId);
+            const dialog = new EditInitiativeDialog(initiative, triggerId);
             await sendDialogue(teamId, dialog);
             break;
           }
@@ -97,7 +96,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
-        const { initiative_name, initiative_description, initiative_status } = payload.submission;
+        const { name, description, status, channelId } = payload.submission;
         // const { originalName, originalDescription, originalStatus, initiativeId } = JSON.parse(payload.state);
         const { initiativeId } = parseValue(payload.state);
         // const fieldValidator = new EditInitiativeFieldValidator(
@@ -112,7 +111,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         //   response = fieldValidator;
         //   success(response);
         // } else {
-        await updateInitiative(teamId, initiativeId, initiative_name, initiative_description, initiative_status);
+        await updateInitiative(teamId, initiativeId, name, description, status, channelId);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
         // }
@@ -143,28 +142,28 @@ function getFieldsFromBody(body: any) {
   return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
-function updateInitiative(
+async function updateInitiative(
   teamId: string,
   initiativeId: string,
-  initiativeName: string,
-  initiativeDescription: string,
-  initiativeStatus: string
+  name: string,
+  description: string,
+  status: string,
+  channelId: string
 ): Promise<any> {
-  const UpdateExpression = 'set #name = :name, #description = :description, #status = :status';
-  const ExpressionAttributeNames = { '#name': 'name', '#description': 'description', '#status': 'status' };
-  const ExpressionAttributeValues = {
-    ':name': initiativeName,
-    ':description': initiativeDescription,
-    ':status': initiativeStatus
-  };
+  const channel = await getChannelInfo(channelId, teamId);
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
-    UpdateExpression,
-    ExpressionAttributeNames,
-    ExpressionAttributeValues
+    UpdateExpression: 'set #name = :name, #description = :description, #status = :status, #channel = :channel',
+    ExpressionAttributeNames: {
+      '#name': 'name',
+      '#description': 'description',
+      '#status': 'status',
+      '#channel': 'channel'
+    },
+    ExpressionAttributeValues: { ':name': name, ':description': description, ':status': status, ':channel': channel }
   };
-  console.log('Updating Initiative Name and/or Description', params);
+  console.log('Updating initiative with params', params);
   return initiatives.update(params).promise();
 }
 

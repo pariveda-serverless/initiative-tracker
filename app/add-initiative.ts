@@ -68,6 +68,10 @@ function getChannel(channel: string): { id: string; name: string; parsed: string
   return { id, name, parsed };
 }
 
+export function getParsedChannel(id: string, name: string): string {
+  return `<#${id}|${name}>`;
+}
+
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Creating new initiative with params', params);
