@@ -2,7 +2,7 @@ import { post } from 'request-promise';
 import { WebClient } from '@slack/client';
 import { SSM } from 'aws-sdk';
 import { Message } from 'slack';
-import { getAccessTokenParameterPath } from '../../app-authorization/auth-redirect';
+import { getAccessTokenParameterPath } from '../app-authorization/auth-redirect';
 
 const slack = new WebClient();
 const ssm = new SSM({ apiVersion: '2014-11-06' });

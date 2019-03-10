@@ -11,14 +11,14 @@ import {
   getMemberIdentifiers
 } from '../member';
 import { INITIATIVE_TYPE, InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiative';
-import { sendDialogue, getUserProfile, reply, getChannelInfo } from '../common/slack-api';
+import { sendDialogue, getUserProfile, reply, getChannelInfo } from '../slack-api';
 import {
   DetailResponse,
   NotImplementedResponse,
   parseValue,
   DeleteResponse,
   EditInitiativeDialog
-} from '../common/slack-messages';
+} from '../slack-messages';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 

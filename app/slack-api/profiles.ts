@@ -1,6 +1,6 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
 import { SSM } from 'aws-sdk';
-import { getAccessTokenParameterPath } from '../../app-authorization/auth-redirect';
+import { getAccessTokenParameterPath } from '../app-authorization/auth-redirect';
 
 const slack = new WebClient();
 const ssm = new SSM({ apiVersion: '2014-11-06' });
