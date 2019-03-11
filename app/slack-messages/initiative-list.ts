@@ -9,7 +9,7 @@ export class ListResponse implements Message {
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
     } else {
-      this.blocks = initiatives
+      const initiativeSections = initiatives
         .map(initiative => {
           const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
@@ -21,13 +21,28 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
+      this.blocks = [new Results(status), ...initiativeSections];
     }
+  }
+}
+
+class Results implements Section {
+  type: 'section' = 'section';
+  text: MarkdownText;
+  constructor(status?: Status) {
+    const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
+    const text = `Here are all the ${search}initiatives we could find :telescope: ...  see one you want to join? :thinking_face:
+    To add a new initiative use the /add-initiative [name], [optional description], [optional #channel] slash command`.replace(
+      /  +/g,
+      ''
+    );
+    this.text = { type: 'mrkdwn', text };
   }
 }
 
 class NoResults implements Section {
   type: 'section' = 'section';
-  text: PlainText | MarkdownText;
+  text: MarkdownText;
   constructor(status?: Status) {
     const search = status ? `${getStatusDisplay(status).toLowerCase()} ` : '';
     this.text = {
