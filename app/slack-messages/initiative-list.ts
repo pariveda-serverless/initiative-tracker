@@ -5,7 +5,13 @@ import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './share
 export class ListResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiatives: InitiativeResponse[], channelId: string, status?: Status) {
+  constructor(
+    initiatives: InitiativeResponse[],
+    channelId: string,
+    slackUserId: string,
+    isPublic: boolean,
+    status?: Status
+  ) {
     this.channel = channelId;
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
@@ -22,7 +28,7 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [new Results(status), ...initiativeSections];
+      this.blocks = [new Results(slackUserId, isPublic, status), ...initiativeSections];
     }
   }
 }
@@ -30,10 +36,11 @@ export class ListResponse implements Message {
 class Results implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  constructor(status?: Status) {
+  constructor(slackUserId: string, isPublic: boolean, status?: Status) {
+    const publicNote = isPublic ? `, sharing here because <@${slackUserId}> requested it` : '';
     const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
-    const text = `Here are all the ${search}initiatives we could find :bookmark_tabs: ... see one you want to join? :smiley:
-    If you're not seeing anything you want to help with you should start a new initiative! :muscle:
+    const text = `Here are all the ${search}initiatives we could find :bookmark_tabs:${publicNote}
+    Not seeing anything you want to join? You should start a new initiative! :muscle:
     :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
@@ -43,7 +50,7 @@ class NoResults implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(status?: Status) {
-    const search = status ? `${getStatusDisplay(status).toLowerCase()} ` : '';
+    const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
     const text = `Darn, we couldn't find any ${search}initiatives :thinking_face: ...  maybe you should add one! :muscle:
     :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };

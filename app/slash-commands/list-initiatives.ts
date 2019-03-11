@@ -11,7 +11,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   try {
     const { teamId, status, office, isPublic, channelId, userId } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
-    const message = new ListResponse(initiatives, channelId, status);
+    const message = new ListResponse(initiatives, channelId, userId, isPublic, status);
     console.log(message);
     console.log(JSON.stringify(message));
     if (isPublic) {

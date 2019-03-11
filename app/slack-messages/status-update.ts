@@ -62,7 +62,7 @@ class MarkActiveButton implements Button {
       initiativeId: initiative.initiativeId,
       status: Status.ACTIVE
     });
-    this.text = { type: 'plain_text', text: 'Actively being worked on' };
+    this.text = { type: 'plain_text', text: 'Active' };
   }
 }
 
@@ -77,7 +77,7 @@ class MarkAbandonedButton implements Button {
       initiativeId: initiative.initiativeId,
       status: Status.ABANDONED
     });
-    this.text = { type: 'plain_text', text: 'Not being worked on' };
+    this.text = { type: 'plain_text', text: 'Abandoned' };
   }
 }
 
@@ -92,7 +92,7 @@ class MarkOnHoldButton implements Button {
       initiativeId: initiative.initiativeId,
       status: Status.ON_HOLD
     });
-    this.text = { type: 'plain_text', text: 'Temporarily on hold' };
+    this.text = { type: 'plain_text', text: 'On hold' };
   }
 }
 
@@ -107,6 +107,6 @@ class MarkCompleteButton implements Button {
       initiativeId: initiative.initiativeId,
       status: Status.COMPLETE
     });
-    this.text = { type: 'plain_text', text: 'Complete!' };
+    this.text = { type: 'plain_text', text: 'Complete' };
   }
 }
