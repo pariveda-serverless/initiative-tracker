@@ -16,10 +16,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log(JSON.stringify(message));
     if (isPublic) {
       await sendMessage(message, teamId);
+      success();
     } else {
-      await sendEphemeralMessage(message, teamId, userId);
+      success(message);
     }
-    success();
   } catch (err) {
     error(err);
   }
