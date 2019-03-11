@@ -3,19 +3,23 @@ import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../initiatives';
 import { MemberResponse, MEMBER_TYPE } from '../members';
 import { sendMessage } from '../slack-api';
-import { StatusUpdateRequest } from '../slack-messages';
+import { StatusUpdateRequest, ParticipationUpdateRequest } from '../slack-messages';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
     const initiative = await getInitiativeDetails(message.initiativeId);
-    const champions = initiative.members.filter(member => member.champion);
-    await Promise.all(
-      champions
-        .map(champion => new StatusUpdateRequest(initiative, champion))
-        .map(request => sendMessage(request, initiative.team.id))
-    );
+    const championRequests = initiative.members
+      .filter(member => member.champion)
+      .map(champion => new StatusUpdateRequest(initiative, champion))
+      .map(request => sendMessage(request, initiative.team.id));
+    const memberRequests = initiative.members
+      .filter(member => !member.champion)
+      .map(champion => new ParticipationUpdateRequest(initiative, champion))
+      .map(request => sendMessage(request, initiative.team.id));
+    const requests = [...championRequests, ...memberRequests];
+    await Promise.all(requests);
     success();
   } catch (err) {
     error(err);
