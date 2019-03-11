@@ -52,7 +52,7 @@ class ResultsFooter implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor() {
-    const text = `Not seeing an initiative you want to join? :muscle: You should start a new one!
+    const text = `Not seeing an initiative you want to join? You should start a new one! :muscle:
     :tada: */add-initiative [name], [optional description], [optional #channel]* :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
