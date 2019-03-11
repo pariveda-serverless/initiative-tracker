@@ -5,7 +5,8 @@ import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './share
 export class ListResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiatives: InitiativeResponse[], status?: Status) {
+  constructor(initiatives: InitiativeResponse[], channelId: string, status?: Status) {
+    this.channel = channelId;
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
     } else {

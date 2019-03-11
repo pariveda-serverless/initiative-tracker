@@ -24,3 +24,12 @@ export async function sendMessage(message: any, teamId: string): Promise<any> {
   console.log('Received response', JSON.stringify(response));
   return response;
 }
+
+export async function sendEphemeralMessage(message: any, teamId: string, userId: string): Promise<any> {
+  message.token = await getToken(teamId);
+  message.user = userId;
+  console.log('Sending slack message', JSON.stringify(message));
+  const response = await slack.chat.postEphemeral(message);
+  console.log('Received response', JSON.stringify(response));
+  return response;
+}

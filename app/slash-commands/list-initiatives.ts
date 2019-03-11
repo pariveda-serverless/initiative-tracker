@@ -2,19 +2,24 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
-import { getUserProfile } from '../slack-api';
+import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 
 const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { teamId, status, office } = await getFieldsFromBody(body);
+    const { teamId, status, office, isPublic, channelId, userId } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
-    const message = new ListResponse(initiatives, status);
+    const message = new ListResponse(initiatives, channelId, status);
     console.log(message);
     console.log(JSON.stringify(message));
-    success(message);
+    if (isPublic) {
+      await sendMessage(message, teamId);
+    } else {
+      await sendEphemeralMessage(message, teamId, userId);
+    }
+    success();
   } catch (err) {
     error(err);
   }
@@ -22,15 +27,37 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 
 async function getFieldsFromBody(body: SlashCommandBody) {
   const { office } = await getUserProfile(body.user_id, body.team_id);
-  const teamId = body.team_id;
-  const text = body.text
-    ? body.text
-        .toUpperCase()
-        .trim()
-        .replace(' ', '_')
-    : '';
-  const status: Status | undefined = <any>Status[text];
-  return { teamId, status, office };
+  const { status, isPublic } = getVisibilityAndStatus(body.text);
+  return { teamId: body.team_id, status, office, isPublic, channelId: body.channel_id, userId: body.user_id };
+}
+
+function getVisibilityAndStatus(text: string) {
+  const statuses = text
+    .split(',')
+    .map(arg => getStatus(arg))
+    .filter(status => status !== undefined);
+  const isPublics = text
+    .split(',')
+    .map(arg => getIsPublic(arg))
+    .filter(isPublic => isPublic !== undefined);
+  const status = statuses && statuses.length > 0 && statuses[0];
+  const isPublic = isPublics && isPublics.length > 0 && isPublics[0];
+  console.log(`Status: ${status}, Public: ${isPublic}`);
+  return { status, isPublic };
+}
+
+function getStatus(arg: string): Status {
+  const text = arg
+    .toUpperCase()
+    .trim()
+    .replace(' ', '');
+  const isStatus = Object.values(Status).includes(text);
+  return isStatus ? Status[text] : undefined;
+}
+
+function getIsPublic(arg: string): boolean {
+  const isPublic = arg.toUpperCase().trim() === 'PUBLIC';
+  return isPublic || undefined;
 }
 
 export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
