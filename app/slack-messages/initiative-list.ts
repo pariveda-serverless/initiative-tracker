@@ -31,9 +31,9 @@ class Results implements Section {
   text: MarkdownText;
   constructor(status?: Status) {
     const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
-    const text = `:card_file_box: Here are all the ${search}initiatives we could find ... see one you want to join? :thinking_face:
-    If not you should create a new initiative! :muscle:
-    :tada: /add-initiative [name], [optional description], [optional #channel]`.replace(/  +/g, '');
+    const text = `Here are all the ${search}initiatives we could find :card_file_box: ... see one you want to join? :smiley:
+    If you're not seeing anything you want to help with you should start a new initiative! :muscle:
+    :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
 }
@@ -44,7 +44,7 @@ class NoResults implements Section {
   constructor(status?: Status) {
     const search = status ? `${getStatusDisplay(status).toLowerCase()} ` : '';
     const text = `Darn, we couldn't find any ${search}initiatives :thinking_face: ...  maybe you should add one! :muscle:
-    :tada: /add-initiative [name], [optional description], [optional #channel] slash command`.replace(/  +/g, '');
+    :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
 }
