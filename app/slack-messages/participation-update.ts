@@ -10,9 +10,9 @@ import {
   Button
 } from 'slack';
 import { InitiativeInformation, CreatedBy } from './shared-messages';
-import { stringifyValue, StatusUpdateAction, MemberAction } from '../interactivity';
+import { stringifyValue, MemberAction } from '../interactivity';
 import { MemberResponse } from '../members';
-import { InitiativeResponse, Status } from '../initiatives';
+import { InitiativeResponse } from '../initiatives';
 
 export class ParticipationUpdateRequest implements Message {
   channel: string;
