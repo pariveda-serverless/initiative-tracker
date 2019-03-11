@@ -1,4 +1,4 @@
-import { PlainText, MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
+import { MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
 
@@ -31,7 +31,7 @@ class Results implements Section {
   text: MarkdownText;
   constructor(status?: Status) {
     const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
-    const text = `Here are all the ${search}initiatives we could find :card_file_box: ... see one you want to join? :smiley:
+    const text = `Here are all the ${search}initiatives we could find :bookmark_tabs: ... see one you want to join? :smiley:
     If you're not seeing anything you want to help with you should start a new initiative! :muscle:
     :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
