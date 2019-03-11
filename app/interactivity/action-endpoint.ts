@@ -5,11 +5,14 @@ import { replyWithMessage } from '../slack-api';
 import { NotImplementedResponse, EditInitiativeDialog } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
 import { getInitiativeDetailsAction } from './get-initiative-details';
-import { modifyInitiativeAction } from './modify-initiative';
-import { modifyMemberAction } from './modify-member';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
 import { remainMemberAction } from './remain-member';
+import { parseValue } from './id-helper';
+import { deleteInitiativeAction } from './delete-initiative';
+import { openEditDialogAction } from './open-edit-dialog';
+import { changeMembershipAction } from './change-membership';
+import { leaveInitiativeAction } from './leave-initiative';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -20,8 +23,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = await getInitiativeDetailsAction(teamId, channel, payload);
         break;
       }
-      case InitiativeAction.MODIFY_INITIATIVE: {
-        response = await modifyInitiativeAction(teamId, channel, payload, triggerId);
+      case InitiativeAction.DELETE: {
+        response = await deleteInitiativeAction(teamId, channel, payload);
+        break;
+      }
+      case InitiativeAction.OPEN_EDIT_DIALOG: {
+        await openEditDialogAction(teamId, channel, payload, triggerId);
+        break;
+      }
+      case InitiativeAction.EDIT_INITIATIVE: {
+        response = await editInitiativeAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -32,17 +43,18 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = await updateStatusAction(teamId, channel, payload);
         break;
       }
-      case InitiativeAction.EDIT_INITIATIVE: {
-        response = await editInitiativeAction(teamId, channel, payload);
-        break;
-      }
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
         response = await joinInitiativeAction(teamId, channel, payload);
         break;
       }
-      case MemberAction.MODIFY_MEMBER: {
-        response = await modifyMemberAction(teamId, channel, payload);
+      case MemberAction.REMOVE_MEMBER: {
+        await leaveInitiativeAction(teamId, channel, payload);
+        break;
+      }
+      case MemberAction.MAKE_CHAMPION:
+      case MemberAction.MAKE_MEMBER: {
+        await changeMembershipAction(teamId, channel, payload);
         break;
       }
       case MemberAction.REMAIN_MEMBER: {
@@ -69,7 +81,14 @@ function getFieldsFromBody(body: any) {
   const teamId = payload.team.id;
   const responseUrl = payload.response_url;
   const channel = payload.channel.id;
-  const action = payload.actions ? payload.actions[0].action_id : payload.callback_id;
+  const action = getAction(payload);
   const triggerId = payload.trigger_id;
   return { payload, teamId, responseUrl, channel, action, triggerId };
+}
+
+function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
+  const callbackAction = payload.callback_id;
+  const buttonAction = payload.actions && payload.actions.length > 0 && payload.actions[0].action_id;
+  const { action: optionAction } = parseValue(payload.actions[0].selected_option.value);
+  return buttonAction || optionAction || callbackAction;
 }
