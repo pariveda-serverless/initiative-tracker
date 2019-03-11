@@ -89,10 +89,10 @@ function getFieldsFromBody(body: any) {
 function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
   const callbackAction = payload.callback_id;
   const buttonAction = payload.actions && payload.actions.length > 0 && payload.actions[0].action_id;
-  const { action: optionAction } =
+  const option =
     payload.actions &&
     payload.actions.length &&
     payload.actions[0].selected_option &&
     parseValue(payload.actions[0].selected_option.value);
-  return buttonAction || optionAction || callbackAction;
+  return buttonAction || callbackAction || (option && option.action);
 }
