@@ -5,7 +5,6 @@ import { MemberResponse } from '../members';
 
 export class NewMemberNotification implements Message {
   channel: string;
-  text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor(initiative: InitiativeResponse, member: MemberResponse) {
     this.channel = initiative.channel.id;

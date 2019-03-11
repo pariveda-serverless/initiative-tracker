@@ -9,27 +9,19 @@ import { modifyInitiativeAction } from './modify-initiative';
 import { modifyMemberAction } from './modify-member';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
+import { remainMemberAction } from './remain-member';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     let response: Message | EditInitiativeDialog;
     const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
-      case InitiativeAction.JOIN_AS_MEMBER:
-      case InitiativeAction.JOIN_AS_CHAMPION: {
-        response = await joinInitiativeAction(teamId, channel, payload);
-        break;
-      }
       case InitiativeAction.VIEW_DETAILS: {
         response = await getInitiativeDetailsAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.MODIFY_INITIATIVE: {
         response = await modifyInitiativeAction(teamId, channel, payload, triggerId);
-        break;
-      }
-      case MemberAction.MODIFY_MEMBER: {
-        response = await modifyMemberAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -42,6 +34,19 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeAction.EDIT_INITIATIVE: {
         response = await editInitiativeAction(teamId, channel, payload);
+        break;
+      }
+      case InitiativeAction.JOIN_AS_MEMBER:
+      case InitiativeAction.JOIN_AS_CHAMPION: {
+        response = await joinInitiativeAction(teamId, channel, payload);
+        break;
+      }
+      case MemberAction.MODIFY_MEMBER: {
+        response = await modifyMemberAction(teamId, channel, payload);
+        break;
+      }
+      case MemberAction.REMAIN_MEMBER: {
+        response = await remainMemberAction(teamId, channel, payload);
         break;
       }
       default: {
