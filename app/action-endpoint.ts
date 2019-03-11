@@ -94,6 +94,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         await updateInitiativeStatus(initiativeId, teamId, status);
         const initiative = await getInitiativeDetails(teamId, initiativeId);
         response = new DetailResponse(initiative, slackUserId, channel);
+        break;
       }
       case InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG: {
         const slackUserId = payload.user.id;
