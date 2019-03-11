@@ -94,5 +94,7 @@ function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
     payload.actions.length &&
     payload.actions[0].selected_option &&
     parseValue(payload.actions[0].selected_option.value);
-  return buttonAction || callbackAction || (option && option.action);
+  const action = buttonAction || callbackAction || (option && option.action);
+  console.log('Action', action);
+  return action;
 }
