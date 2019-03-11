@@ -1,9 +1,9 @@
-import { SNS, DynamoDB } from 'aws-sdk';
+import { SNS } from 'aws-sdk';
 import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
+import { initiativesTable } from '../shared';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
-const table = new DynamoDB.DocumentClient({ region: process.env.REGION, apiVersion: '2012-08-10' });
 
 export const handler = wrapper(async ({ event, success, error }: WrapperSignature) => {
   try {
@@ -31,12 +31,12 @@ async function getAllInitiatives(): Promise<InitiativeResponse[]> {
     ExpressionAttributeValues
   };
   console.log('Getting all initiatives with params', params);
-  const records = await table
+  const initiatives = await initiativesTable
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
-  console.log('Received initiatives', records);
-  return records.map(initiative => new InitiativeResponse(initiative));
+  console.log('Received initiatives', initiatives);
+  return initiatives.map(initiative => new InitiativeResponse(initiative));
 }
 
 async function publishInitiativeForStatusUpdateRequest(initiative: InitiativeResponse): Promise<any> {

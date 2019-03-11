@@ -1,12 +1,10 @@
-import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
 import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
 import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
-
-const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
+import { initiativesTable } from '../shared';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -75,7 +73,7 @@ export function getParsedChannel(id: string, name: string): string {
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Creating new initiative with params', params);
-  return initiatives.put(params).promise();
+  return initiativesTable.put(params).promise();
 }
 
 async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
@@ -86,7 +84,7 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
     ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiatives
+  const records = await initiativesTable
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

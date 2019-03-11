@@ -1,11 +1,9 @@
-import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
-import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
+import { getUserProfile, sendMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
-
-const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
+import { initiativesTable } from '../shared';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -78,7 +76,7 @@ export async function getInitiatives(teamId: string, status?: Status): Promise<I
     ExpressionAttributeValues
   };
   console.log('Getting all initiatives with params', params);
-  const records = await initiatives
+  const records = await initiativesTable
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

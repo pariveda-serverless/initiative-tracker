@@ -1,6 +1,6 @@
 import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
-import { stringifyValue, InitiativeCallbackAction } from '../interactivity';
+import { stringifyValue, InitiativeAction } from '../interactivity';
 
 export class EditInitiativeDialog {
   trigger_id: string;
@@ -13,7 +13,7 @@ export class EditInitiativeDialog {
 
 export class InitiativeDialog implements Dialog {
   title = 'Update initiative';
-  callback_id = InitiativeCallbackAction.EDIT_INITIATIVE_DIALOG;
+  callback_id = InitiativeAction.EDIT_INITIATIVE;
   elements: (TextElement | SelectElement)[];
   state: string;
   constructor(initiative: InitiativeResponse) {

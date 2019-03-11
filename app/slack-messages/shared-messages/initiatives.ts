@@ -109,7 +109,7 @@ class InitiativeActions implements Overflow {
   action_id: string;
   options: Option[];
   constructor(initiative: InitiativeResponse) {
-    this.action_id = InitiativeAction.UPDATE_INITIATIVE;
+    this.action_id = InitiativeAction.MODIFY_INITIATIVE;
     const edit = new EditOption(initiative);
     const remove = new RemoveOption(initiative);
     this.options = [edit, remove];

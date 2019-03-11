@@ -10,7 +10,7 @@ import {
   Button
 } from 'slack';
 import { InitiativeInformation, CreatedBy } from './shared-messages';
-import { stringifyValue, StatusUpdateAction } from '../interactivity';
+import { stringifyValue, InitiativeAction } from '../interactivity';
 import { MemberResponse } from '../members';
 import { InitiativeResponse, Status } from '../initiatives';
 
@@ -57,7 +57,7 @@ class MarkActiveButton implements Button {
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse) {
-    this.action_id = StatusUpdateAction.MARK_ACTIVE;
+    this.action_id = InitiativeAction.MARK_ACTIVE;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
       status: Status.ACTIVE
@@ -72,7 +72,7 @@ class MarkAbandonedButton implements Button {
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse) {
-    this.action_id = StatusUpdateAction.MARK_ABANDONED;
+    this.action_id = InitiativeAction.MARK_ABANDONED;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
       status: Status.ABANDONED
@@ -87,7 +87,7 @@ class MarkOnHoldButton implements Button {
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse) {
-    this.action_id = StatusUpdateAction.MARK_ON_HOLD;
+    this.action_id = InitiativeAction.MARK_ON_HOLD;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
       status: Status.ON_HOLD
@@ -102,7 +102,7 @@ class MarkCompleteButton implements Button {
   action_id: string;
   value?: string;
   constructor(initiative: InitiativeResponse) {
-    this.action_id = StatusUpdateAction.MARK_COMPLETE;
+    this.action_id = InitiativeAction.MARK_COMPLETE;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
       status: Status.COMPLETE

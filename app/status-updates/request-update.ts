@@ -1,11 +1,9 @@
-import { DynamoDB } from 'aws-sdk';
 import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../initiatives';
 import { MemberResponse, MEMBER_TYPE } from '../members';
 import { sendMessage } from '../slack-api';
 import { StatusUpdateRequest, ParticipationUpdateRequest } from '../slack-messages';
-
-const initiatives = new DynamoDB.DocumentClient({ region: process.env.REGION });
+import { initiativesTable } from '../shared';
 
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
@@ -34,7 +32,7 @@ async function getInitiativeDetails(initiativeId: string): Promise<InitiativeRes
     ExpressionAttributeValues: { ':initiativeId': initiativeId }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiatives
+  const records = await initiativesTable
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

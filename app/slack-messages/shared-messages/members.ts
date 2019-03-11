@@ -23,7 +23,7 @@ class MemberActions implements Overflow {
   action_id: string;
   options: Option[];
   constructor(member: MemberResponse, initiative: InitiativeResponse) {
-    this.action_id = MemberAction.UPDATE_ROLE;
+    this.action_id = MemberAction.MODIFY_MEMBER;
     const changeMembership = new ChangeMembershipOption(member, initiative);
     const remove = new RemoveOption(member, initiative);
     this.options = [changeMembership, remove];
