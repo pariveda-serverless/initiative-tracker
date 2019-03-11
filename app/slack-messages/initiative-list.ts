@@ -28,23 +28,31 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [new Results(slackUserId, isPublic, status), ...initiativeSections];
+      this.blocks = [new ResultsHeader(slackUserId, isPublic, status), ...initiativeSections, new ResultsFooter()];
     }
   }
 }
 
-class Results implements Section {
+class ResultsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(slackUserId: string, isPublic: boolean, status?: Status) {
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';
-    const publicNote = isPublic
-      ? `, sharing <!here> because <@${slackUserId}> requested it with the ${searchCommand} slash command`
-      : '';
-    const text = `Here are all the${searchBold}initiatives we could find :bookmark_tabs:${publicNote}
-    Not seeing anything you want to join? You should start a new initiative! :muscle:
+    const publicNote = `, sharing <!here> because <@${slackUserId}> requested it with the ${searchCommand} slash command`;
+    const text = `Here are all the${searchBold}initiatives we could find :bookmark_tabs:${
+      isPublic ? publicNote : ''
+    }`.replace(/  +/g, '');
+    this.text = { type: 'mrkdwn', text };
+  }
+}
+
+class ResultsFooter implements Section {
+  type: 'section' = 'section';
+  text: MarkdownText;
+  constructor() {
+    const text = `Not seeing an initiative you want to join? You should start a new one! :muscle:
     :tada: */add-initiative [name], [optional description], [optional #channel]* :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
