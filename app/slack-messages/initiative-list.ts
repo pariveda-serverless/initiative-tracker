@@ -37,11 +37,15 @@ class Results implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(slackUserId: string, isPublic: boolean, status?: Status) {
-    const publicNote = isPublic ? `, sharing here because <@${slackUserId}> requested it` : '';
+    const publicNote = isPublic
+      ? `, sharing here because <@${slackUserId}> requested it with the '/show-initiatives public${
+          status ? ' ' + status : ''
+        } slash command'`
+      : '';
     const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
     const text = `Here are all the ${search}initiatives we could find :bookmark_tabs:${publicNote}
     Not seeing anything you want to join? You should start a new initiative! :muscle:
-    :tada: /add-initiative [name], [optional description], [optional #channel] :confetti_ball:`.replace(/  +/g, '');
+    :tada: '/add-initiative [name], [optional description], [optional #channel]' :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
 }
