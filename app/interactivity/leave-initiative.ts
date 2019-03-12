@@ -6,7 +6,10 @@ import { DeleteMemberRequest } from '../members';
 import { initiativesTable } from '../shared';
 
 export async function leaveInitiativeAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
-  const { initiativeId, slackUserId } = parseValue(payload.actions[0].selected_option.value);
+  const action = payload.actions[0];
+  const { initiativeId, slackUserId } = parseValue(
+    action.selected_option ? action.selected_option.value : action.value
+  );
   await leaveInitiative(initiativeId, teamId, slackUserId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
   return new DetailResponse(initiative, slackUserId, channel);
