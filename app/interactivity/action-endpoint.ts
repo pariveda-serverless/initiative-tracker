@@ -49,12 +49,12 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case MemberAction.REMOVE_MEMBER: {
-        await leaveInitiativeAction(teamId, channel, payload);
+        response = await leaveInitiativeAction(teamId, channel, payload);
         break;
       }
       case MemberAction.MAKE_CHAMPION:
       case MemberAction.MAKE_MEMBER: {
-        await changeMembershipAction(teamId, channel, payload);
+        response = await changeMembershipAction(teamId, channel, payload);
         break;
       }
       case MemberAction.REMAIN_MEMBER: {
