@@ -93,51 +93,51 @@ custom:
 
 functions:
   initiate-update-request:
-    handler: app/initiate-update-request.handler
+    handler: app/status-updates/initiate-update-request.handler
     events:
       - schedule: cron(0 15 ? * MON *) # 3PM UTC (10 AM EST) every Monday
       # - schedule: cron(0/5 * * * ? *) # every 5 minutes for testing
 
   request-update:
-    handler: app/request-update.handler
+    handler: app/status-updates/request-update.handler
     events:
       - sns: ${self:custom.requestUpdateTopic}
 
   add-initiative:
-    handler: app/add-initiative.handler
+    handler: app/slash-commands/add-initiative.handler
     events:
       - http:
           method: post
           path: add
 
   list-initiatives:
-    handler: app/list-initiatives.handler
+    handler: app/slash-commands/list-initiatives.handler
     events:
       - http:
           method: post
           path: list
 
   action-endpoint:
-    handler: app/action-endpoint.handler
+    handler: app/interactivity/action-endpoint.handler
     events:
       - http:
           method: post
           path: actions
 
   stream-updates:
-    handler: app/stream-updates.handler
+    handler: app/notifications/stream-updates.handler
     events:
       - stream:
           type: dynamodb
           arn: { Fn::GetAtt: [InitiativesTable, StreamArn] }
 
   notify-when-join:
-    handler: app/notify-when-join.handler
+    handler: app/notifications/notify-when-join.handler
     events:
       - sns: ${self:custom.notifyWhenJoinTopic}
 
   auth-redirect:
-    handler: app/auth-redirect.handler
+    handler: app/app-authorization/auth-redirect.handler
     events:
       - http:
           method: get

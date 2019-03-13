@@ -7,8 +7,8 @@ Steps for setting up a new slack app and adding configuration in project
 1. Create a new app at https://api.slack.com/apps
 1. Record the Client ID, Client Secret, and Signing Secret from the basic info section
 1. Once you install the app an Access Token will be generated for you
-    1. You must add the permissions specified at the bottom of this document before you will be able to install this app
-1. Under the Manage Distribution Section, pase the shareable URL into your browser and hit enter, this should enable your app 
+   1. You must add the permissions specified at the bottom of this document before you will be able to install this app
+1. Under the Manage Distribution Section, paste the shareable URL into your browser and hit enter, this should enable your app
 
 Steps for setting up your slack app with Circle CI deployments (username = GitHub username)
 
@@ -34,3 +34,4 @@ Slack app setup (username = GitHub username)
 1. Add the following scopes to enable reading basic profile information and direct messaging users
    1. chat:write:bot and chat:write:user to send direct messages
    1. users.profile:read to read basic profile information
+   1. channels:read to read basic channel information
