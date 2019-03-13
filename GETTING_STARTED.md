@@ -8,7 +8,7 @@ Steps for setting up a new slack app and adding configuration in project
 1. Record the Client ID, Client Secret, and Signing Secret from the basic info section
 1. Once you install the app an Access Token will be generated for you
    1. You must add the permissions specified at the bottom of this document before you will be able to install this app
-1. Under the Manage Distribution Section, pase the shareable URL into your browser and hit enter, this should enable your app
+1. Under the Manage Distribution Section, paste the shareable URL into your browser and hit enter, this should enable your app
 
 Steps for setting up your slack app with Circle CI deployments (username = GitHub username)
 
