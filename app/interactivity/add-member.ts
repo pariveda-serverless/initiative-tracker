@@ -5,9 +5,10 @@ import { DetailResponse } from '../slack-messages';
 import { joinInitiative } from './join-initiative';
 
 export async function addMemberAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
-  const { slackUserId } = payload.submission;
+  const { slackUserId, role } = payload.submission;
+  const { champion } = parseValue(role);
   const { initiativeId } = parseValue(payload.state);
-  await joinInitiative(teamId, initiativeId, slackUserId, false);
+  await joinInitiative(teamId, initiativeId, slackUserId, champion);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
   return new DetailResponse(initiative, slackUserId, channel);
 }
