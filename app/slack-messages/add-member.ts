@@ -37,12 +37,12 @@ class MemberSelect implements SelectElement {
 class RoleSelect implements SelectElement {
   label = 'Role';
   name = 'role';
-  value: boolean;
+  value: string;
   type: 'select' = 'select';
   options: SelectElementOption[];
   constructor() {
-    const champion = { label: 'Champion', value: true };
-    const member = { label: 'Member', value: false };
+    const champion = { label: 'Champion', value: stringifyValue({ champion: true }) };
+    const member = { label: 'Member', value: stringifyValue({ champion: false }) };
     this.value = member.value;
     this.options = [champion, member];
   }

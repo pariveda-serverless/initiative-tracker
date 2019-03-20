@@ -36,7 +36,7 @@ declare module 'slack' {
     min_query_length?: number;
     placeholder?: string;
     optional?: boolean;
-    value?: any;
+    value?: string;
     selected_options?: string[];
     options?: SelectElementOption[];
     option_groups?: string[];
@@ -44,7 +44,7 @@ declare module 'slack' {
 
   export interface SelectElementOption {
     label: string;
-    value: any;
+    value: string;
   }
 
   // https://api.slack.com/reference/messaging/payload
