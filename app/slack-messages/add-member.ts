@@ -18,7 +18,8 @@ export class MemberDialog implements Dialog {
   state: string;
   constructor(initiative: InitiativeResponse) {
     const member = new MemberSelect();
-    this.elements = [member];
+    const role = new RoleSelect();
+    this.elements = [member, role];
     this.state = stringifyValue({ initiativeId: initiative.initiativeId });
   }
 }
@@ -26,31 +27,23 @@ export class MemberDialog implements Dialog {
 // https://api.slack.com/dialogs#select_elements
 class MemberSelect implements SelectElement {
   label = 'Member';
-  name = 'member';
+  name = 'slackUserId';
   value: string;
   type: 'select' = 'select';
   data_source: 'users' = 'users';
   constructor() {}
 }
 
-class StatusOption implements SelectElementOption {
-  label: string;
-  value: string;
-  constructor(label: string, value: string) {
-    this.label = label;
-    this.value = value;
-  }
-}
-
-// https://api.slack.com/dialogs#select_elements
-class ChannelSelect implements SelectElement {
-  label = 'Channel';
-  name = 'channelId';
-  value: string;
+class RoleSelect implements SelectElement {
+  label = 'Role';
+  name = 'role';
+  value: boolean;
   type: 'select' = 'select';
-  data_source: 'channels' = 'channels';
-  optional = true;
-  constructor(initiative: InitiativeResponse) {
-    this.value = initiative.channel ? initiative.channel.id : null;
+  options: SelectElementOption[];
+  constructor() {
+    const champion = { label: 'Champion', value: true };
+    const member = { label: 'Member', value: false };
+    this.value = member.value;
+    this.options = [champion, member];
   }
 }
