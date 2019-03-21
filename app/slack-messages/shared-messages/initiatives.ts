@@ -111,8 +111,9 @@ class InitiativeActions implements Overflow {
   constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.MODIFY_INITIATIVE;
     const edit = new EditOption(initiative);
+    const add = new AddMemberOption(initiative);
     const remove = new RemoveOption(initiative);
-    this.options = [edit, remove];
+    this.options = [edit, add, remove];
   }
 }
 
@@ -122,6 +123,16 @@ class EditOption implements Option {
   constructor(initiative: InitiativeResponse) {
     const action = InitiativeAction.OPEN_EDIT_DIALOG;
     this.text = { text: 'Edit initiative', type: 'plain_text' };
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
+  }
+}
+
+class AddMemberOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(initiative: InitiativeResponse) {
+    const action = InitiativeAction.OPEN_ADD_MEMBER_DIALOG;
+    this.text = { text: 'Add member', type: 'plain_text' };
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, action });
   }
 }

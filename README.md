@@ -12,7 +12,7 @@
 
 # Initiative Tracker
 
-Initiative Tracker is a slackbot which helps teams track the internal initiatives that people are working on. In addition to creating initiatives users can indicate their participation as an initiative champion or member.
+Initiative Tracker is a slackbot which helps teams track the internal initiatives that people are working on. In addition to creating initiatives users can indicate their participation as an initiative champion or member and update the status of initiatives for others to see.
 
 Available slash commands are:
 

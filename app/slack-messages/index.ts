@@ -1,5 +1,6 @@
 export * from './delete-initiative';
 export * from './edit-initiative';
+export * from './add-member';
 export * from './initiative-details';
 export * from './initiative-list';
 export * from './new-member';

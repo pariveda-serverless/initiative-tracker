@@ -13,6 +13,8 @@ import { deleteInitiativeAction } from './delete-initiative';
 import { openEditDialogAction } from './open-edit-dialog';
 import { changeMembershipAction } from './change-membership';
 import { leaveInitiativeAction } from './leave-initiative';
+import { openAddMemberDialogAction } from './open-add-member-dialog';
+import { addMemberAction } from './add-member';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -33,6 +35,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeAction.EDIT_INITIATIVE: {
         response = await editInitiativeAction(teamId, channel, payload);
+        break;
+      }
+      case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
+        await openAddMemberDialogAction(teamId, channel, payload, triggerId);
+        break;
+      }
+      case InitiativeAction.ADD_MEMBER: {
+        response = await addMemberAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:

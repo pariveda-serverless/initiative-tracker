@@ -14,7 +14,7 @@ export async function joinInitiativeAction(teamId: string, channel: string, payl
   return new DetailResponse(initiative, slackUserId, channel);
 }
 
-async function joinInitiative(
+export async function joinInitiative(
   teamId: string,
   initiativeId: string,
   slackUserId: string,
