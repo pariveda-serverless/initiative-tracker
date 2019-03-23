@@ -10,7 +10,7 @@
     "generate-swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
-    "@iopipe/iopipe": "^1.12.3",
+    "@iopipe/iopipe": "1.12.8",
     "@iopipe/logger": "^1.2.0",
     "@manwaring/lambda-wrapper": "^0.3.7",
     "@slack/client": "^4.9.0",

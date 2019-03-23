@@ -14,7 +14,7 @@ export async function changeMembershipAction(
   const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
   await changeMembership(initiativeId, teamId, slackUserId, action === MemberAction.MAKE_CHAMPION);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function changeMembership(

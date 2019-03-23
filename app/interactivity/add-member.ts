@@ -10,5 +10,5 @@ export async function addMemberAction(teamId: string, channel: string, payload: 
   const { initiativeId } = parseValue(payload.state);
   await joinInitiative(teamId, initiativeId, slackUserId, champion);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }

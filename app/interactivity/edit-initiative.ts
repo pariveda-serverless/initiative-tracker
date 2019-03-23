@@ -12,7 +12,7 @@ export async function editInitiativeAction(teamId: string, channel: string, payl
   const { initiativeId } = parseValue(payload.state);
   await updateInitiative(teamId, initiativeId, name, description, status, channelId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function updateInitiative(

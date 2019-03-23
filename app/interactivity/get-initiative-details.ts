@@ -10,10 +10,10 @@ export async function getInitiativeDetailsAction(
   channel: string,
   payload: ActionPayload
 ): Promise<Message> {
-  const { initiativeId } = parseValue(payload.actions[0].value);
+  const { initiativeId, status } = parseValue(payload.actions[0].value);
   const slackUserId = payload.user.id;
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel, status });
 }
 
 export async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {

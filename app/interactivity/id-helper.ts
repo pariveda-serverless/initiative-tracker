@@ -8,7 +8,8 @@ const keyMappings = {
   action: 'a',
   status: 's',
   champion: 'c',
-  remove: 'r'
+  remove: 'r',
+  isPublic: 'ip'
 };
 
 let mappings = {};
@@ -37,10 +38,11 @@ export function parseValue(value: any): Value {
 }
 
 interface Value {
-  initiativeId?: any;
-  slackUserId?: any;
+  initiativeId?: string;
+  slackUserId?: string;
   action?: any;
   status?: any;
-  champion?: any;
-  remove?: any;
+  champion?: boolean;
+  remove?: boolean;
+  isPublic?: boolean;
 }

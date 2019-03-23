@@ -11,7 +11,7 @@ export async function updateStatusAction(teamId: string, channel: string, payloa
   const slackUserId = payload.user.id;
   await updateInitiativeStatus(initiativeId, teamId, status);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {

@@ -12,7 +12,7 @@ export async function leaveInitiativeAction(teamId: string, channel: string, pay
   );
   await leaveInitiative(initiativeId, teamId, slackUserId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function leaveInitiative(initiativeId: string, teamId: string, slackUserId: string): Promise<any> {

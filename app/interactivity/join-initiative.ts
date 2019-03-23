@@ -11,7 +11,7 @@ export async function joinInitiativeAction(teamId: string, channel: string, payl
   const slackUserId = payload.user.id;
   await joinInitiative(teamId, initiativeId, slackUserId, champion);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 export async function joinInitiative(

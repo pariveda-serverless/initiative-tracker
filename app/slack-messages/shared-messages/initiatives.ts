@@ -11,7 +11,7 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { InitiativeResponse } from '../../initiatives/';
+import { InitiativeResponse, Status } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
 export class InitiativeInformation implements Section {
@@ -26,9 +26,9 @@ export class InitiativeInformationAndViewDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, status?: Status) {
     this.text = new InitiativeNameStatusAndChannel(initiative);
-    this.accessory = new ViewDetailsButton(initiative);
+    this.accessory = new ViewDetailsButton(initiative, status);
   }
 }
 
@@ -73,9 +73,9 @@ export class ViewDetailsButton implements Button {
   text: PlainText;
   action_id: string;
   value: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, status: Status) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, status });
     this.text = { type: 'plain_text', text: 'View details' };
   }
 }

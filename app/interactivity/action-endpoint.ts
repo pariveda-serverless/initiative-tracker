@@ -15,6 +15,7 @@ import { changeMembershipAction } from './change-membership';
 import { leaveInitiativeAction } from './leave-initiative';
 import { openAddMemberDialogAction } from './open-add-member-dialog';
 import { addMemberAction } from './add-member';
+import { getInitiativeListAction } from './get-initiative-list';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -23,6 +24,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
         response = await getInitiativeDetailsAction(teamId, channel, payload);
+        break;
+      }
+      case InitiativeAction.VIEW_LIST: {
+        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.DELETE: {
