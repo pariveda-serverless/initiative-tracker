@@ -163,6 +163,9 @@ resources:
           - AttributeName: identifiers
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: expiration
+          Enabled: true
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
         GlobalSecondaryIndexes:

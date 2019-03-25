@@ -9,7 +9,7 @@ const keyMappings = {
   status: 's',
   champion: 'c',
   remove: 'r',
-  isPublic: 'ip'
+  queryId: 'qid'
 };
 
 let mappings = {};
@@ -44,5 +44,5 @@ interface Value {
   status?: any;
   champion?: boolean;
   remove?: boolean;
-  isPublic?: boolean;
+  queryId?: string;
 }

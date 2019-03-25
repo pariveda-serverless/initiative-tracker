@@ -1,5 +1,5 @@
 import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button, PlainText } from 'slack';
-import { InitiativeResponse, Status } from '../initiatives';
+import { InitiativeResponse } from '../initiatives';
 import {
   Divider,
   CreatedBy,
@@ -12,7 +12,7 @@ import { InitiativeAction, stringifyValue } from '../interactivity';
 export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor({ initiative, slackUserId, isPublic = false, status, channel }: DetailResponseProperties) {
+  constructor({ initiative, slackUserId, isPublic = false, queryId, channel }: DetailResponseProperties) {
     this.channel = channel;
     const divider = new Divider();
 
@@ -43,7 +43,7 @@ export class DetailResponse implements Message {
       // Remove the last divider block
       .slice(0, -1);
 
-    const footer = new DetailsFooter(isPublic, status);
+    const footer = new DetailsFooter(queryId);
     this.blocks = [...blocks, divider, ...members, footer];
   }
 }
@@ -63,10 +63,10 @@ class DetailsFooter implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Button;
-  constructor(isPublic: boolean, status: Status) {
+  constructor(queryId: string) {
     const text = `Want to view a list of all initiatives? :bookmark_tabs:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
-    this.accessory = new ViewListButton(isPublic, status);
+    this.accessory = new ViewListButton(queryId);
   }
 }
 
@@ -75,10 +75,10 @@ class ViewListButton implements Button {
   text: PlainText;
   action_id = InitiativeAction.VIEW_LIST;
   value: string;
-  constructor(isPublic: boolean, status: Status) {
+  constructor(queryId: string) {
     const text = `View all initiatives`.replace(/  +/g, '');
     this.text = { type: 'plain_text', text };
-    this.value = stringifyValue({ isPublic, status });
+    this.value = stringifyValue({ queryId });
   }
 }
 
@@ -86,6 +86,6 @@ interface DetailResponseProperties {
   initiative: InitiativeResponse;
   slackUserId: string;
   isPublic?: boolean;
-  status?: Status;
+  queryId?: string;
   channel?: string;
 }

@@ -5,20 +5,14 @@ import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './share
 export class ListResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(
-    initiatives: InitiativeResponse[],
-    channelId: string,
-    slackUserId: string,
-    isPublic: boolean,
-    status?: Status
-  ) {
+  constructor({ initiatives, channelId, slackUserId, isPublic, queryId, status }: ListResponseProperties) {
     this.channel = channelId;
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
     } else {
       const initiativeSections = initiatives
         .map(initiative => {
-          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative, status, isPublic);
+          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative, queryId);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
           const metaInformation = new CreatedBy(initiative);
           const divider = new Divider();
@@ -31,6 +25,15 @@ export class ListResponse implements Message {
       this.blocks = [new ResultsHeader(slackUserId, isPublic, status), ...initiativeSections, new ResultsFooter()];
     }
   }
+}
+
+interface ListResponseProperties {
+  initiatives: InitiativeResponse[];
+  channelId: string;
+  slackUserId: string;
+  isPublic: boolean;
+  queryId: string;
+  status?: Status;
 }
 
 class ResultsHeader implements Section {

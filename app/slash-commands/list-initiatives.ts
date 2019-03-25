@@ -4,12 +4,13 @@ import { ListResponse } from '../slack-messages/';
 import { getUserProfile, sendMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { initiativesTable } from '../shared';
+import { CreateQueryRequest, getQueryIdentifier, Query } from '../queries';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { teamId, status, office, isPublic, channelId, userId } = await getFieldsFromBody(body);
+    const { teamId, status, office, isPublic, channelId, slackUserId, queryId } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
-    const message = new ListResponse(initiatives, channelId, userId, isPublic, status);
+    const message = new ListResponse({ initiatives, channelId, slackUserId, isPublic, status, queryId });
     console.log(message);
     console.log(JSON.stringify(message));
     if (isPublic) {
@@ -25,11 +26,41 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 
 async function getFieldsFromBody(body: SlashCommandBody) {
   const { office } = await getUserProfile(body.user_id, body.team_id);
-  const { status, isPublic } = getVisibilityAndStatus(body.text);
-  return { teamId: body.team_id, status, office, isPublic, channelId: body.channel_id, userId: body.user_id };
+  const { status, isPublic, queryId } = await parseAndSaveQuery(body.text);
+  return {
+    teamId: body.team_id,
+    status,
+    office,
+    isPublic,
+    channelId: body.channel_id,
+    slackUserId: body.user_id,
+    queryId
+  };
 }
 
-function getVisibilityAndStatus(text: string) {
+async function parseAndSaveQuery(text: string) {
+  const queryId = await saveQuery(text);
+  return { queryId, ...parseQuery(text) };
+}
+
+export async function getQuery(queryId: string): Promise<any> {
+  if (!queryId) {
+    return;
+  } else {
+    const params = {
+      TableName: process.env.INITIATIVES_TABLE,
+      Key: { initiativeId: queryId, identifiers: getQueryIdentifier(queryId) }
+    };
+    console.log('Getting query with params', params);
+    const query = await initiativesTable
+      .get(params)
+      .promise()
+      .then(res => new Query(res.Item));
+    return parseQuery(query.query);
+  }
+}
+
+export function parseQuery(text: string): { status: Status; isPublic: boolean } {
   const statuses = text
     .split(',')
     .map(arg => getStatus(arg))
@@ -40,7 +71,6 @@ function getVisibilityAndStatus(text: string) {
     .filter(isPublic => isPublic !== undefined);
   const status = statuses && statuses.length > 0 && statuses[0];
   const isPublic = isPublics && isPublics.length > 0 && isPublics[0];
-  console.log(`Status: ${status}, Public: ${isPublic}`);
   return { status, isPublic };
 }
 
@@ -56,6 +86,16 @@ function getStatus(arg: string): Status {
 function getIsPublic(arg: string): boolean {
   const isPublic = arg.toUpperCase().trim() === 'PUBLIC';
   return isPublic || undefined;
+}
+
+async function saveQuery(text: string): Promise<string> {
+  const query = new CreateQueryRequest(text);
+  const params = { TableName: process.env.INITIATIVES_TABLE, Item: query };
+  console.log('Saving list query with params', params);
+  return initiativesTable
+    .put(params)
+    .promise()
+    .then(() => query.queryId);
 }
 
 export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
