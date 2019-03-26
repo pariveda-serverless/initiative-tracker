@@ -39,6 +39,7 @@ interface ListResponseProperties {
 class ResultsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
+  block_id = 'THIS_IS_A_SECTION_BLOCK_ID';
   constructor(slackUserId: string, isPublic: boolean, status?: Status) {
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
