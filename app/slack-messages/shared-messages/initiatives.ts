@@ -26,6 +26,7 @@ export class InitiativeInformationAndViewDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
+  block_id = 'VIEW_DETAILS_BLOCK_ID';
   constructor(initiative: InitiativeResponse, queryId: string) {
     this.text = new InitiativeNameStatusAndChannel(initiative);
     this.accessory = new ViewDetailsButton(initiative, queryId);
