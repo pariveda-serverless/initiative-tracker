@@ -6,7 +6,7 @@ import { stringifyValue } from '../interactivity';
 export class ListResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor({ initiatives, channelId, slackUserId, isPublic, queryId, status }: ListResponseProperties) {
+  constructor({ initiatives, channelId, slackUserId, isPublic, status }: ListResponseProperties) {
     this.channel = channelId;
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(status)];
@@ -23,11 +23,7 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [
-        new ResultsHeader(slackUserId, isPublic, status, queryId),
-        ...initiativeSections,
-        new ResultsFooter()
-      ];
+      this.blocks = [new ResultsHeader(slackUserId, isPublic, status), ...initiativeSections, new ResultsFooter()];
     }
   }
 }
@@ -37,7 +33,6 @@ interface ListResponseProperties {
   channelId: string;
   slackUserId: string;
   isPublic: boolean;
-  queryId: string;
   status?: Status;
 }
 
@@ -45,8 +40,7 @@ class ResultsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   block_id: string;
-  constructor(slackUserId: string, isPublic: boolean, status: Status, queryId: string) {
-    this.block_id = stringifyValue({ queryId });
+  constructor(slackUserId: string, isPublic: boolean, status: Status) {
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';

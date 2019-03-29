@@ -12,5 +12,5 @@ export async function getInitiativeListAction(
   const { status, isPublic } = await getQuery(queryId);
   const slackUserId = payload.user.id;
   const initiatives = await getInitiatives(teamId);
-  return new ListResponse({ initiatives, channelId, slackUserId, isPublic, status, queryId });
+  return new ListResponse({ initiatives, channelId, slackUserId, isPublic, status });
 }

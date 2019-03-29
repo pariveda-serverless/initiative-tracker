@@ -2,13 +2,13 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, ActionPayload } from 'slack';
 import { InitiativeAction, MemberAction } from './interactions';
 import { replyWithMessage } from '../slack-api';
-import { NotImplementedResponse, EditInitiativeDialog } from '../slack-messages';
+import { NotImplementedResponse } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
 import { getInitiativeDetailsAction } from './get-initiative-details';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
 import { remainMemberAction } from './remain-member';
-import { parseValue } from './id-helper';
+import { parseValue, stringifyValue } from './id-helper';
 import { deleteInitiativeAction } from './delete-initiative';
 import { openEditDialogAction } from './open-edit-dialog';
 import { changeMembershipAction } from './change-membership';
@@ -19,7 +19,7 @@ import { getInitiativeListAction } from './get-initiative-list';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    let response: Message | EditInitiativeDialog;
+    let response: Message;
     const { payload, teamId, responseUrl, channel, action, triggerId, queryId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
@@ -82,6 +82,9 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
+      if (queryId && response.blocks && response.blocks.length > 0) {
+        response.blocks[0].block_id = stringifyValue({ queryId });
+      }
       console.log('Replying with response', JSON.stringify(response));
       await replyWithMessage(responseUrl, response as Message);
     }

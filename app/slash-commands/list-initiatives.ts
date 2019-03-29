@@ -5,12 +5,17 @@ import { getUserProfile, sendMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { initiativesTable } from '../shared';
 import { CreateQueryRequest, getQueryIdentifier, Query } from '../queries';
+import { stringifyValue } from '../interactivity';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const { teamId, status, office, isPublic, channelId, slackUserId, queryId } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, status);
-    const message = new ListResponse({ initiatives, channelId, slackUserId, isPublic, status, queryId });
+    const message = new ListResponse({ initiatives, channelId, slackUserId, isPublic, status });
+
+    if (queryId && message.blocks && message.blocks.length > 0) {
+      message.blocks[0].block_id = stringifyValue({ queryId });
+    }
     console.log(message);
     console.log(JSON.stringify(message));
     if (isPublic) {
