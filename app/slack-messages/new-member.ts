@@ -23,6 +23,6 @@ class NewMember implements Section {
     }> has joined as a *${member.role.toLowerCase()}*! :man-with-bunny-ears-partying::woman-with-bunny-ears-partying:
     If they aren't already <!here> in the channel why don't you go ahead and invite them to join?`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
-    this.accessory = new ViewDetailsButton(initiative, undefined);
+    this.accessory = new ViewDetailsButton(initiative);
   }
 }
