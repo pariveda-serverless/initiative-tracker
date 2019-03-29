@@ -18,7 +18,7 @@ export class DetailResponse implements Message {
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
 
-    const header = new DetailsHeader(initiative);
+    const header = new DetailsHeader(initiative, queryId);
     blocks.push(header);
 
     const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
@@ -51,7 +51,9 @@ export class DetailResponse implements Message {
 class DetailsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  constructor(initiative: InitiativeResponse) {
+  block_id: string;
+  constructor(initiative: InitiativeResponse, queryId: string) {
+    this.block_id = stringifyValue({ queryId });
     const text = `Here are the details for the ${
       initiative.name
     } initiative - if it looks interesting you should join! :muscle:`.replace(/  +/g, '');
