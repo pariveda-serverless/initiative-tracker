@@ -1,6 +1,7 @@
 import { MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
+import { stringifyValue } from '../interactivity';
 
 export class ListResponse implements Message {
   channel: string;
@@ -12,7 +13,7 @@ export class ListResponse implements Message {
     } else {
       const initiativeSections = initiatives
         .map(initiative => {
-          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative, queryId);
+          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
           const metaInformation = new CreatedBy(initiative);
           const divider = new Divider();
@@ -22,7 +23,11 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [new ResultsHeader(slackUserId, isPublic, status), ...initiativeSections, new ResultsFooter()];
+      this.blocks = [
+        new ResultsHeader(slackUserId, isPublic, status, queryId),
+        ...initiativeSections,
+        new ResultsFooter()
+      ];
     }
   }
 }
@@ -39,8 +44,9 @@ interface ListResponseProperties {
 class ResultsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  block_id = 'THIS_IS_A_SECTION_BLOCK_ID';
-  constructor(slackUserId: string, isPublic: boolean, status?: Status) {
+  block_id: string;
+  constructor(slackUserId: string, isPublic: boolean, status: Status, queryId: string) {
+    this.block_id = stringifyValue({ queryId });
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';

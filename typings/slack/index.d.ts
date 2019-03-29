@@ -201,6 +201,9 @@ declare module 'slack' {
     response_url: string;
     submission: { [key: string]: any };
     state: string;
+    message: {
+      blocks?: (Section | DividerBlock | Image | Action | ContextBlock)[];
+    };
     actions: [
       {
         action_id: string;

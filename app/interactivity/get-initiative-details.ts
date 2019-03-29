@@ -9,9 +9,10 @@ import { getQuery } from '../slash-commands/list-initiatives';
 export async function getInitiativeDetailsAction(
   teamId: string,
   channel: string,
+  queryId: string,
   payload: ActionPayload
 ): Promise<Message> {
-  const { initiativeId, queryId } = parseValue(payload.actions[0].value);
+  const { initiativeId } = parseValue(payload.actions[0].value);
   const { status, isPublic } = await getQuery(queryId);
   const slackUserId = payload.user.id;
   const initiative = await getInitiativeDetails(teamId, initiativeId);

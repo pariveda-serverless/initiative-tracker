@@ -20,14 +20,14 @@ import { getInitiativeListAction } from './get-initiative-list';
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     let response: Message | EditInitiativeDialog;
-    const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
+    const { payload, teamId, responseUrl, channel, action, triggerId, queryId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
-        response = await getInitiativeDetailsAction(teamId, channel, payload);
+        response = await getInitiativeDetailsAction(teamId, channel, queryId, payload);
         break;
       }
       case InitiativeAction.VIEW_LIST: {
-        response = await getInitiativeListAction(teamId, channel, payload);
+        response = await getInitiativeListAction(teamId, channel, queryId, payload);
         break;
       }
       case InitiativeAction.DELETE: {
@@ -98,7 +98,8 @@ function getFieldsFromBody(body: any) {
   const channel = payload.channel.id;
   const action = getAction(payload);
   const triggerId = payload.trigger_id;
-  return { payload, teamId, responseUrl, channel, action, triggerId };
+  const queryId = getQueryId(payload);
+  return { payload, teamId, responseUrl, channel, action, triggerId, queryId };
 }
 
 function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
@@ -112,4 +113,21 @@ function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
   const action = (option && option.action) || buttonAction || callbackAction;
   console.log('Action', action);
   return action;
+}
+
+function getQueryId(payload: ActionPayload): string {
+  let queryId;
+  const blocks = payload.message && payload.message.blocks;
+  if (blocks) {
+    // Find the block that has a JSON payload for the block_id - that's the one with the query Id in it
+    blocks.find(block => {
+      try {
+        queryId = parseValue(block.block_id).queryId;
+        return true;
+      } catch (err) {
+        return false;
+      }
+    });
+  }
+  return queryId;
 }

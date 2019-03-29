@@ -26,10 +26,9 @@ export class InitiativeInformationAndViewDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
-  block_id = 'VIEW_DETAILS_BLOCK_ID';
-  constructor(initiative: InitiativeResponse, queryId: string) {
+  constructor(initiative: InitiativeResponse) {
     this.text = new InitiativeNameStatusAndChannel(initiative);
-    this.accessory = new ViewDetailsButton(initiative, queryId);
+    this.accessory = new ViewDetailsButton(initiative);
   }
 }
 
@@ -74,9 +73,9 @@ export class ViewDetailsButton implements Button {
   text: PlainText;
   action_id: string;
   value: string;
-  constructor(initiative: InitiativeResponse, queryId: string) {
+  constructor(initiative: InitiativeResponse) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId, queryId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
     this.text = { type: 'plain_text', text: 'View details' };
   }
 }
