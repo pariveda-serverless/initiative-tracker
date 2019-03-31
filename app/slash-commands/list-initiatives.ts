@@ -9,16 +9,16 @@ import { stringifyValue } from '../interactivity';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { teamId, status, office, isPublic, channelId, slackUserId, queryId } = await getFieldsFromBody(body);
-    const initiatives = await getInitiatives(teamId, status);
-    const message = new ListResponse({ initiatives, channelId, slackUserId, isPublic, status });
+    const { teamId, office, channelId, slackUserId, query } = await getFieldsFromBody(body);
+    const initiatives = await getInitiatives(teamId, query);
+    const message = new ListResponse({ initiatives, channelId, slackUserId, query });
 
-    if (queryId && message.blocks && message.blocks.length > 0) {
-      message.blocks[0].block_id = stringifyValue({ queryId });
+    if (query && message.blocks && message.blocks.length > 0) {
+      message.blocks[0].block_id = stringifyValue({ queryId: query.queryId });
     }
     console.log(message);
     console.log(JSON.stringify(message));
-    if (isPublic) {
+    if (query && query.isPublic) {
       await sendMessage(message, teamId);
       success();
     } else {
@@ -29,78 +29,54 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function getFieldsFromBody(body: SlashCommandBody) {
+async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
   const { office } = await getUserProfile(body.user_id, body.team_id);
-  const { status, isPublic, queryId } = await parseAndSaveQuery(body.text);
-  return {
+  let fields: Fields = {
     teamId: body.team_id,
-    status,
     office,
-    isPublic,
     channelId: body.channel_id,
-    slackUserId: body.user_id,
-    queryId
+    slackUserId: body.user_id
   };
+  if (body.text) {
+    const query = await saveQuery(body.text);
+    fields = { ...fields, query };
+  }
+  return fields;
 }
 
-async function parseAndSaveQuery(text: string) {
-  const queryId = await saveQuery(text);
-  return { queryId, ...parseQuery(text) };
+interface Fields {
+  teamId: string;
+  office: string;
+  channelId: string;
+  slackUserId: string;
+  query?: Query;
 }
 
-export async function getQuery(queryId: string): Promise<any> {
+export async function getQuery(queryId: string): Promise<Query> {
   if (!queryId) {
-    return;
+    return undefined;
   } else {
     const params = { TableName: process.env.QUERIES_TABLE, Key: { queryId } };
     console.log('Getting query with params', params);
-    const query = await table
+    return await table
       .get(params)
       .promise()
       .then(res => new Query(res.Item));
-    return parseQuery(query.parameters);
   }
 }
 
-export function parseQuery(text: string): { status: Status; isPublic: boolean } {
-  const statuses = text
-    .split(',')
-    .map(arg => getStatus(arg))
-    .filter(status => status !== undefined);
-  const isPublics = text
-    .split(',')
-    .map(arg => getIsPublic(arg))
-    .filter(isPublic => isPublic !== undefined);
-  const status = statuses && statuses.length > 0 && statuses[0];
-  const isPublic = isPublics && isPublics.length > 0 && isPublics[0];
-  return { status, isPublic };
-}
-
-function getStatus(arg: string): Status {
-  const text = arg
-    .toUpperCase()
-    .trim()
-    .replace(' ', '');
-  const isStatus = Object.values(Status).includes(text);
-  return isStatus ? Status[text] : undefined;
-}
-
-function getIsPublic(arg: string): boolean {
-  const isPublic = arg.toUpperCase().trim() === 'PUBLIC';
-  return isPublic || undefined;
-}
-
-async function saveQuery(text: string): Promise<string> {
+async function saveQuery(text: string): Promise<Query> {
   const query = new CreateQueryRequest(text);
   const params = { TableName: process.env.QUERIES_TABLE, Item: query };
   console.log('Saving list query with params', params);
   return table
     .put(params)
     .promise()
-    .then(() => query.queryId);
+    .then(() => query);
 }
 
-export async function getInitiatives(teamId: string, status?: Status): Promise<InitiativeResponse[]> {
+export async function getInitiatives(teamId: string, query?: Query): Promise<InitiativeResponse[]> {
+  const status = query && query.status ? query.status : undefined;
   const KeyConditionExpression = status
     ? '#identifiers = :identifiers and #status = :status'
     : '#identifiers = :identifiers';

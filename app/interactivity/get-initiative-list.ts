@@ -8,8 +8,8 @@ export async function getInitiativeListAction(
   queryId: string,
   payload: ActionPayload
 ): Promise<Message> {
-  const { status, isPublic } = await getQuery(queryId);
+  const query = await getQuery(queryId);
   const slackUserId = payload.user.id;
   const initiatives = await getInitiatives(teamId);
-  return new ListResponse({ initiatives, channelId, slackUserId, isPublic, status });
+  return new ListResponse({ initiatives, channelId, slackUserId, query });
 }
