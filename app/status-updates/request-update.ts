@@ -3,7 +3,7 @@ import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../initia
 import { MemberResponse, MEMBER_TYPE } from '../members';
 import { sendMessage } from '../slack-api';
 import { StatusUpdateRequest, ParticipationUpdateRequest } from '../slack-messages';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 
 export const handler = snsWrapper(async ({ message, success, error }: SnsSignature) => {
   try {
@@ -32,7 +32,7 @@ async function getInitiativeDetails(initiativeId: string): Promise<InitiativeRes
     ExpressionAttributeValues: { ':initiativeId': initiativeId }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiativesTable
+  const records = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

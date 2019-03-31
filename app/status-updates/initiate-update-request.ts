@@ -1,7 +1,7 @@
 import { SNS } from 'aws-sdk';
 import { wrapper, WrapperSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeResponse, Status, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
 
@@ -31,7 +31,7 @@ async function getAllInitiatives(): Promise<InitiativeResponse[]> {
     ExpressionAttributeValues
   };
   console.log('Getting all initiatives with params', params);
-  const initiatives = await initiativesTable
+  const initiatives = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
