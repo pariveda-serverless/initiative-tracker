@@ -4,13 +4,12 @@ export class CreateQueryRequest {
   queryId: string;
   identifiers: string;
   expiration: number;
-  type: string;
-  query: string;
+  parameters: string;
 
-  constructor(query: string) {
+  constructor(parameters: string) {
     const queryId = id();
     this.queryId = queryId;
-    this.query = query;
+    this.parameters = parameters;
     this.expiration = getExpiration();
   }
 }
@@ -24,10 +23,10 @@ function getExpiration(): number {
 
 export class Query {
   queryId: string;
-  query: string;
+  parameters: string;
 
   constructor(record: any) {
     this.queryId = record.queryId;
-    this.query = record.query;
+    this.parameters = record.parameters;
   }
 }

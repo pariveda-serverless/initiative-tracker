@@ -58,7 +58,7 @@ export async function getQuery(queryId: string): Promise<any> {
       .get(params)
       .promise()
       .then(res => new Query(res.Item));
-    return parseQuery(query.query);
+    return parseQuery(query.parameters);
   }
 }
 
