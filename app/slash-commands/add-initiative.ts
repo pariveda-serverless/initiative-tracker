@@ -4,7 +4,7 @@ import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
 import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -73,7 +73,7 @@ export function getParsedChannel(id: string, name: string): string {
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Creating new initiative with params', params);
-  return initiativesTable.put(params).promise();
+  return table.put(params).promise();
 }
 
 async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
@@ -84,7 +84,7 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
     ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiativesTable
+  const records = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

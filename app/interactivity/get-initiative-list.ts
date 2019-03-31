@@ -1,5 +1,4 @@
 import { ActionPayload, Message } from 'slack';
-import { parseValue } from './id-helper';
 import { ListResponse } from '../slack-messages';
 import { getInitiatives, getQuery } from '../slash-commands/list-initiatives';
 

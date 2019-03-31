@@ -3,8 +3,8 @@ import { InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers 
 import { ListResponse } from '../slack-messages/';
 import { getUserProfile, sendMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
-import { initiativesTable } from '../shared';
-import { CreateQueryRequest, getQueryIdentifier, Query } from '../queries';
+import { table } from '../shared';
+import { CreateQueryRequest, Query } from '../queries';
 import { stringifyValue } from '../interactivity';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
@@ -52,12 +52,9 @@ export async function getQuery(queryId: string): Promise<any> {
   if (!queryId) {
     return;
   } else {
-    const params = {
-      TableName: process.env.INITIATIVES_TABLE,
-      Key: { initiativeId: queryId, identifiers: getQueryIdentifier(queryId) }
-    };
+    const params = { TableName: process.env.QUERIES_TABLE, Key: { queryId } };
     console.log('Getting query with params', params);
-    const query = await initiativesTable
+    const query = await table
       .get(params)
       .promise()
       .then(res => new Query(res.Item));
@@ -95,9 +92,9 @@ function getIsPublic(arg: string): boolean {
 
 async function saveQuery(text: string): Promise<string> {
   const query = new CreateQueryRequest(text);
-  const params = { TableName: process.env.INITIATIVES_TABLE, Item: query };
+  const params = { TableName: process.env.QUERIES_TABLE, Item: query };
   console.log('Saving list query with params', params);
-  return initiativesTable
+  return table
     .put(params)
     .promise()
     .then(() => query.queryId);
@@ -121,7 +118,7 @@ export async function getInitiatives(teamId: string, status?: Status): Promise<I
     ExpressionAttributeValues
   };
   console.log('Getting all initiatives with params', params);
-  const records = await initiativesTable
+  const records = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

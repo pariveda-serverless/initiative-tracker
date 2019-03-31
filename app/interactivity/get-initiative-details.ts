@@ -3,7 +3,7 @@ import { getTeamIdentifier, MEMBER_TYPE, MemberResponse } from '../members';
 import { ActionPayload, Message } from 'slack';
 import { parseValue } from './id-helper';
 import { DetailResponse } from '../slack-messages';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 import { getQuery } from '../slash-commands/list-initiatives';
 
 export async function getInitiativeDetailsAction(
@@ -27,7 +27,7 @@ export async function getInitiativeDetails(teamId: string, initiativeId: string)
     ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiativesTable
+  const records = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);

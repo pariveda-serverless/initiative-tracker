@@ -1,12 +1,6 @@
 import * as id from 'nanoid';
-export const QUERY_TYPE: string = 'QUERY';
-
-export function getQueryIdentifier(queryId: string): string {
-  return `${QUERY_TYPE}:${queryId}`;
-}
 
 export class CreateQueryRequest {
-  initiativeId: string;
   queryId: string;
   identifiers: string;
   expiration: number;
@@ -16,9 +10,6 @@ export class CreateQueryRequest {
   constructor(query: string) {
     const queryId = id();
     this.queryId = queryId;
-    this.initiativeId = queryId;
-    this.identifiers = getQueryIdentifier(queryId);
-    this.type = QUERY_TYPE;
     this.query = query;
     this.expiration = getExpiration();
   }
