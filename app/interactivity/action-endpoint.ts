@@ -121,8 +121,20 @@ function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
 
 function getQueryId(payload: ActionPayload): string {
   let queryId;
-  if (payload.actions) {
-    payload.actions.find(action => {
+  const blocks = payload.message && payload.message.blocks;
+  const actions = payload.actions;
+  if (blocks) {
+    // Find the block that has a JSON payload for the block_id - that's the one with the query Id in it
+    blocks.find(block => {
+      try {
+        queryId = parseValue(block.block_id).queryId;
+        return true;
+      } catch (err) {
+        return false;
+      }
+    });
+  } else if (actions) {
+    actions.find(action => {
       try {
         queryId = parseValue(action.value).queryId;
         return true;
