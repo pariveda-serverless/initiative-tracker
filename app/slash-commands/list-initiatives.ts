@@ -5,7 +5,6 @@ import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api'
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
 import { CreateQueryRequest, Query } from '../queries';
-import { stringifyValue } from '../interactivity';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
