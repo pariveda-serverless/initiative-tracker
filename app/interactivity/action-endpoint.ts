@@ -83,6 +83,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     if (response) {
       if (queryId && response.blocks && response.blocks.length > 0) {
+        console.log(`Adding queryId ${queryId} to the ${response.blocks[0]} block`);
         response.blocks[0].block_id = stringifyValue({ queryId });
       }
       console.log('Replying with response', JSON.stringify(response));
