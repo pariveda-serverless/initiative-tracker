@@ -133,9 +133,10 @@ function getQueryId(payload: ActionPayload): string {
 
 function getQueryIdFromElements(elements: any[]): string {
   let queryId;
-  elements.find(action => {
+  elements.find(element => {
     try {
-      queryId = parseValue(action.value).queryId;
+      const value = element.value ? element.value : element.block_id;
+      queryId = parseValue(value).queryId;
       return true;
     } catch (err) {
       return false;

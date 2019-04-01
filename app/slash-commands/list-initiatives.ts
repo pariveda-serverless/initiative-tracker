@@ -16,11 +16,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     console.log(JSON.stringify(message));
     if (query && query.isPublic) {
       await sendMessage(message, teamId);
-      success();
     } else {
       await sendEphemeralMessage(message, teamId, slackUserId);
-      success();
     }
+    success();
   } catch (err) {
     error(err);
   }
