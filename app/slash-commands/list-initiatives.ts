@@ -12,11 +12,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const { teamId, office, channelId, slackUserId, query } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId, query);
     const message = new ListResponse({ initiatives, channelId, slackUserId, query });
-
-    if (query && message.blocks && message.blocks.length > 0) {
-      console.log(`Adding queryId ${query.queryId} to the ${message.blocks[0]} block`);
-      message.blocks[0].block_id = stringifyValue({ queryId: query.queryId });
-    }
     console.log(message);
     console.log(JSON.stringify(message));
     if (query && query.isPublic) {
