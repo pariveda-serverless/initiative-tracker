@@ -74,9 +74,13 @@ export class ViewDetailsButton implements Button {
   text: PlainText;
   action_id: string;
   value: string;
+  block_id: string;
   constructor(initiative: InitiativeResponse, query?: Query) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId, queryId: query && query.queryId });
+    if (query) {
+      this.block_id = stringifyValue({ queryId: query.queryId });
+    }
     this.text = { type: 'plain_text', text: 'View details' };
   }
 }
