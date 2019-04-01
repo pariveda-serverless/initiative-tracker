@@ -1,5 +1,6 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { Message, ActionPayload } from 'slack';
+import * as id from 'nanoid';
 import { InitiativeAction, MemberAction } from './interactions';
 import { replyWithMessage } from '../slack-api';
 import { NotImplementedResponse } from '../slack-messages';
@@ -93,7 +94,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 async function sendResponse(response: Message, responseUrl: string, queryId: string): Promise<any> {
   if (queryId && response.blocks && response.blocks.length > 0) {
     console.log(`Adding queryId ${queryId} to all message blocks`);
-    response.blocks.forEach(block => (block.block_id = stringifyValue({ queryId })));
+    response.blocks.forEach(block => (block.block_id = stringifyValue({ blockId: id(), queryId })));
   }
   console.log('Replying with response', JSON.stringify(response));
   await replyWithMessage(responseUrl, response as Message);

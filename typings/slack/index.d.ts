@@ -51,7 +51,7 @@ declare module 'slack' {
   export interface Message {
     channel?: string;
     text?: PlainText | MarkdownText;
-    blocks?: any[];
+    blocks?: (Section | DividerBlock | Image | Action | ContextBlock)[];
     attachments?: any[];
     thread_ts?: string;
     mrkdwn?: boolean;
