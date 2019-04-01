@@ -82,18 +82,22 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
-      if (queryId && response.blocks && response.blocks.length > 0) {
-        console.log(`Adding queryId ${queryId} to all message blocks`);
-        response.blocks.forEach(block => (block.block_id = stringifyValue({ queryId })));
-      }
-      console.log('Replying with response', JSON.stringify(response));
-      await replyWithMessage(responseUrl, response as Message);
+      await sendResponse(response, responseUrl, queryId);
     }
     success();
   } catch (err) {
     error(err);
   }
 });
+
+async function sendResponse(response: Message, responseUrl: string, queryId: string): Promise<any> {
+  if (queryId && response.blocks && response.blocks.length > 0) {
+    console.log(`Adding queryId ${queryId} to all message blocks`);
+    response.blocks.forEach(block => (block.block_id = stringifyValue({ queryId })));
+  }
+  console.log('Replying with response', JSON.stringify(response));
+  await replyWithMessage(responseUrl, response as Message);
+}
 
 function getFieldsFromBody(body: any) {
   const payload: ActionPayload = JSON.parse(body.payload);
