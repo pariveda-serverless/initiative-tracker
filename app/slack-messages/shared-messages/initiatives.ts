@@ -13,6 +13,7 @@ import {
 } from 'slack';
 import { InitiativeResponse } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
+import { Query } from '../../queries';
 
 export class InitiativeInformation implements Section {
   type: 'section' = 'section';
@@ -26,9 +27,9 @@ export class InitiativeInformationAndViewDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory?: ImageContext | Button | StaticSelect;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, query: Query) {
     this.text = new InitiativeNameStatusAndChannel(initiative);
-    this.accessory = new ViewDetailsButton(initiative);
+    this.accessory = new ViewDetailsButton(initiative, query);
   }
 }
 
@@ -73,9 +74,9 @@ export class ViewDetailsButton implements Button {
   text: PlainText;
   action_id: string;
   value: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, query: Query) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
-    this.value = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.value = stringifyValue({ initiativeId: initiative.initiativeId, queryId: query.queryId });
     this.text = { type: 'plain_text', text: 'View details' };
   }
 }
