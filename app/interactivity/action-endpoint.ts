@@ -123,12 +123,10 @@ function getQueryId(payload: ActionPayload): string {
   let queryId;
   if (!queryId && payload.message && payload.message.blocks) {
     // Find the block that has a JSON payload for the block_id - that's the one with the query Id in it
-    console.log('Getting queryId from message blocks');
-    getQueryIdFromElements(payload.message.blocks);
+    queryId = getQueryIdFromElements(payload.message.blocks);
   }
   if (!queryId && payload.actions) {
-    console.log('Getting queryId from actions');
-    getQueryIdFromElements(payload.actions);
+    queryId = getQueryIdFromElements(payload.actions);
   }
   return queryId;
 }
@@ -137,11 +135,8 @@ function getQueryIdFromElements(elements: any[]): string {
   let queryId;
   elements.find(element => {
     try {
-      console.log('Getting queryId from element', JSON.stringify(element));
       const value = element.value ? element.value : element.block_id;
-      console.log('Value to parse', value);
       queryId = parseValue(value).queryId;
-      console.log('Parsed value', queryId);
       return true;
     } catch (err) {
       return false;
