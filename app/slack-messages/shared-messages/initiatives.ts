@@ -29,7 +29,9 @@ export class InitiativeInformationAndViewDetails implements Section {
   accessory?: ImageContext | Button | StaticSelect;
   block_id: string;
   constructor(initiative: InitiativeResponse, query: Query) {
-    this.block_id = stringifyValue({ queryId: query.queryId });
+    if (query) {
+      this.block_id = stringifyValue({ queryId: query.queryId });
+    }
     this.text = new InitiativeNameStatusAndChannel(initiative);
     this.accessory = new ViewDetailsButton(initiative, query);
   }

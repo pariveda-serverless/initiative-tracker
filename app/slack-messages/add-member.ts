@@ -1,12 +1,13 @@
 import { SelectElement, SelectElementOption, Dialog } from 'slack';
 import { InitiativeResponse } from '../initiatives';
 import { stringifyValue, InitiativeAction } from '../interactivity';
+import { Query } from '../queries';
 
 export class AddMemberDialog {
   trigger_id: string;
   dialog: Dialog;
-  constructor(initiative: InitiativeResponse, triggerId: string) {
-    this.dialog = new MemberDialog(initiative);
+  constructor(initiative: InitiativeResponse, query: Query, triggerId: string) {
+    this.dialog = new MemberDialog(initiative, query);
     this.trigger_id = triggerId;
   }
 }
@@ -16,11 +17,11 @@ export class MemberDialog implements Dialog {
   callback_id = InitiativeAction.ADD_MEMBER;
   elements: SelectElement[];
   state: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: InitiativeResponse, query: Query) {
     const member = new MemberSelect();
     const role = new RoleSelect();
     this.elements = [member, role];
-    this.state = stringifyValue({ initiativeId: initiative.initiativeId });
+    this.state = stringifyValue({ initiativeId: initiative.initiativeId, queryId: query.queryId });
   }
 }
 

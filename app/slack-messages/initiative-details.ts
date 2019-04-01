@@ -90,6 +90,6 @@ class ViewListButton implements Button {
 interface DetailResponseProperties {
   initiative: InitiativeResponse;
   slackUserId: string;
-  query?: Query;
+  query: Query;
   channel?: string;
 }

@@ -36,7 +36,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
-        await openEditDialogAction(teamId, channel, payload, triggerId);
+        await openEditDialogAction(teamId, channel, queryId, payload, triggerId);
         break;
       }
       case InitiativeAction.EDIT_INITIATIVE: {
@@ -44,7 +44,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
-        await openAddMemberDialogAction(teamId, channel, payload, triggerId);
+        await openAddMemberDialogAction(teamId, channel, queryId, payload, triggerId);
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
