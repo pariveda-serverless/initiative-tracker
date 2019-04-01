@@ -71,7 +71,7 @@ async function saveQuery(text: string): Promise<Query> {
     .then(() => query);
 }
 
-export async function getInitiatives(teamId: string, query?: Query): Promise<InitiativeResponse[]> {
+export async function getInitiatives(teamId: string, query: Query): Promise<InitiativeResponse[]> {
   const status = query && query.status ? query.status : undefined;
   const KeyConditionExpression = status
     ? '#identifiers = :identifiers and #status = :status'
