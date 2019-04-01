@@ -24,7 +24,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       success();
     } else {
       await sendEphemeralMessage(message, teamId, slackUserId);
-      success(message);
+      success();
     }
   } catch (err) {
     error(err);
