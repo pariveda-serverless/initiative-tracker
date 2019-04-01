@@ -1,7 +1,7 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeRecord, InitiativeResponse, Status, getInitiativeIdentifiers } from '../initiatives';
+import { InitiativeRecord, InitiativeResponse, getInitiativeIdentifiers } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
-import { getUserProfile, sendMessage } from '../slack-api';
+import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
 import { CreateQueryRequest, Query } from '../queries';
@@ -14,6 +14,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     const message = new ListResponse({ initiatives, channelId, slackUserId, query });
 
     if (query && message.blocks && message.blocks.length > 0) {
+      console.log(`Adding queryId ${query.queryId} to the ${message.blocks[0]} block`);
       message.blocks[0].block_id = stringifyValue({ queryId: query.queryId });
     }
     console.log(message);
@@ -22,6 +23,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       await sendMessage(message, teamId);
       success();
     } else {
+      await sendEphemeralMessage(message, teamId, slackUserId);
       success(message);
     }
   } catch (err) {
@@ -54,6 +56,7 @@ interface Fields {
 
 export async function getQuery(queryId: string): Promise<Query> {
   if (!queryId) {
+    console.log('No query id to retreive');
     return undefined;
   } else {
     const params = { TableName: process.env.QUERIES_TABLE, Key: { queryId } };
