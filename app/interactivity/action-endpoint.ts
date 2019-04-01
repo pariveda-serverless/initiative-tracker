@@ -83,8 +83,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     }
     if (response) {
       if (queryId && response.blocks && response.blocks.length > 0) {
-        console.log(`Adding queryId ${queryId} to the ${response.blocks[0]} block`);
-        response.blocks[0].block_id = stringifyValue({ queryId });
+        console.log(`Adding queryId ${queryId} to all message blocks`);
+        response.blocks.forEach(block => (block.block_id = stringifyValue({ queryId })));
       }
       console.log('Replying with response', JSON.stringify(response));
       await replyWithMessage(responseUrl, response as Message);
@@ -135,7 +135,7 @@ function getQueryIdFromElements(elements: any[]): string {
   let queryId;
   elements.find(element => {
     try {
-      const value = element.value ? element.value : element.block_id;
+      const value = element.block_id ? element.block_id : element.value;
       queryId = parseValue(value).queryId;
       return true;
     } catch (err) {
