@@ -16,8 +16,7 @@ export class ListResponse implements Message {
           const nameAndStatus = new InitiativeInformationAndViewDetails(initiative, query);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
           const metaInformation = new CreatedBy(initiative);
-          const divider = new Divider();
-          blocks = [...blocks, metaInformation, divider];
+          blocks = [...blocks, metaInformation, new Divider()];
           return blocks;
         })
         .reduce((all, block) => all.concat(block), [])

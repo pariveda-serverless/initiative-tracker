@@ -15,7 +15,6 @@ export class DetailResponse implements Message {
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor({ initiative, slackUserId, query, channel }: DetailResponseProperties) {
     this.channel = channel;
-    const divider = new Divider();
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
 
@@ -38,14 +37,14 @@ export class DetailResponse implements Message {
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
         const memberSection = new MemberSection(member, initiative);
-        return [memberSection, divider];
+        return [memberSection, new Divider()];
       })
       .reduce((all, block) => all.concat(block), [])
       // Remove the last divider block
       .slice(0, -1);
 
     const footer = new DetailsFooter(query);
-    this.blocks = [...blocks, divider, ...members, footer];
+    this.blocks = [...blocks, new Divider(), ...members, footer];
   }
 }
 
