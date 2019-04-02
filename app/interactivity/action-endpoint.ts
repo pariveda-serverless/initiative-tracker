@@ -140,12 +140,13 @@ function getQueryIdFromElements(elements: any[]): string {
   let queryId;
   elements.find(element => {
     try {
-      const value = element.block_id ? element.block_id : element.value;
-      queryId = parseValue(value).queryId;
+      queryId = parseValue(element.value).queryId;
+    } catch (err) {}
+    try {
+      queryId = parseValue(element.block_id).queryId;
       return true;
-    } catch (err) {
-      return false;
-    }
+    } catch (err) {}
+    return queryId;
   });
   return queryId;
 }
