@@ -7,14 +7,18 @@ import { getInitiativeIdentifiers } from '../initiatives';
 import { table } from '../shared';
 import { getQuery } from '../slash-commands/list-initiatives';
 
-export async function editInitiativeAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
+export async function editInitiativeAction(
+  teamId: string,
+  channel: string,
+  payload: ActionPayload
+): Promise<{ response: Message; responseUrl: string }> {
   const slackUserId = payload.user.id;
   const { name, description, status, channelId } = payload.submission;
-  const { initiativeId, queryId } = parseValue(payload.state);
+  const { initiativeId, queryId, responseUrl } = parseValue(payload.state);
   await updateInitiative(teamId, initiativeId, name, description, status, channelId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
   const query = await getQuery(queryId);
-  return new DetailResponse({ initiative, slackUserId, query, channel });
+  return { response: new DetailResponse({ initiative, slackUserId, query, channel }), responseUrl };
 }
 
 async function updateInitiative(

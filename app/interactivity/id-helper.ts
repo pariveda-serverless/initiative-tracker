@@ -10,7 +10,8 @@ const keyMappings = {
   champion: 'c',
   remove: 'r',
   queryId: 'qid',
-  blockId: 'bid'
+  blockId: 'bid',
+  responseUrl: 'rurl'
 };
 
 let mappings = {};
@@ -47,4 +48,5 @@ interface Value {
   remove?: boolean;
   queryId?: string;
   blockId?: string;
+  responseUrl?: string;
 }

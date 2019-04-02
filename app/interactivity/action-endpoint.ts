@@ -21,7 +21,7 @@ import { getInitiativeListAction } from './get-initiative-list';
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     let response: Message;
-    const { payload, teamId, responseUrl, channel, action, triggerId, queryId } = getFieldsFromBody(body);
+    let { payload, teamId, responseUrl, channel, action, triggerId, queryId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
         response = await getInitiativeDetailsAction(teamId, channel, queryId, payload);
@@ -36,11 +36,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
-        await openEditDialogAction(teamId, channel, queryId, payload, triggerId);
+        await openEditDialogAction(teamId, channel, queryId, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.EDIT_INITIATIVE: {
-        response = await editInitiativeAction(teamId, channel, payload);
+        console.log('Original responseUrl', responseUrl);
+        const props = await editInitiativeAction(teamId, channel, payload);
+        responseUrl = props.responseUrl;
+        console.log('New responseUrl', responseUrl);
+        response = props.response;
         break;
       }
       case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
