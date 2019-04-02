@@ -40,19 +40,15 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.EDIT_INITIATIVE: {
-        console.log('Original responseUrl', responseUrl);
-        const props = await editInitiativeAction(teamId, channel, payload);
-        responseUrl = props.responseUrl;
-        console.log('New responseUrl', responseUrl);
-        response = props.response;
+        ({ response, responseUrl } = await editInitiativeAction(teamId, channel, payload));
         break;
       }
       case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
-        await openAddMemberDialogAction(teamId, channel, queryId, payload, triggerId);
+        await openAddMemberDialogAction(teamId, channel, queryId, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
-        response = await addMemberAction(teamId, channel, payload);
+        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
         break;
       }
       case InitiativeAction.UPDATE_STATUS:

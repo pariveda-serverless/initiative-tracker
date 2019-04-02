@@ -10,11 +10,12 @@ export async function openAddMemberDialogAction(
   channel: string,
   queryId: string,
   payload: ActionPayload,
-  triggerId: string
+  triggerId: string,
+  responseUrl: string
 ): Promise<any> {
   const { initiativeId } = parseValue(payload.actions[0].selected_option.value);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
   const query = await getQuery(queryId);
-  const dialog = new AddMemberDialog(initiative, query, triggerId);
+  const dialog = new AddMemberDialog(initiative, query, triggerId, responseUrl);
   await sendDialogue(teamId, dialog);
 }

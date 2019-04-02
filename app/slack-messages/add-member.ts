@@ -6,8 +6,8 @@ import { Query } from '../queries';
 export class AddMemberDialog {
   trigger_id: string;
   dialog: Dialog;
-  constructor(initiative: InitiativeResponse, query: Query, triggerId: string) {
-    this.dialog = new MemberDialog(initiative, query);
+  constructor(initiative: InitiativeResponse, query: Query, triggerId: string, responseUrl: string) {
+    this.dialog = new MemberDialog(initiative, query, responseUrl);
     this.trigger_id = triggerId;
   }
 }
@@ -17,11 +17,15 @@ export class MemberDialog implements Dialog {
   callback_id = InitiativeAction.ADD_MEMBER;
   elements: SelectElement[];
   state: string;
-  constructor(initiative: InitiativeResponse, query: Query) {
+  constructor(initiative: InitiativeResponse, query: Query, responseUrl: string) {
     const member = new MemberSelect();
     const role = new RoleSelect();
     this.elements = [member, role];
-    this.state = stringifyValue({ initiativeId: initiative.initiativeId, queryId: query.queryId });
+    this.state = stringifyValue({
+      initiativeId: initiative.initiativeId,
+      queryId: query && query.queryId,
+      responseUrl
+    });
   }
 }
 
