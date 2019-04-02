@@ -1,3 +1,4 @@
+import * as id from 'nanoid';
 import {
   Section,
   StaticSelect,
@@ -30,7 +31,7 @@ export class InitiativeInformationAndViewDetails implements Section {
   block_id: string;
   constructor(initiative: InitiativeResponse, query: Query) {
     if (query) {
-      this.block_id = stringifyValue({ queryId: query.queryId });
+      this.block_id = stringifyValue({ blockId: id(), queryId: query.queryId });
     }
     this.text = new InitiativeNameStatusAndChannel(initiative);
     this.accessory = new ViewDetailsButton(initiative, query);
