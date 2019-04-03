@@ -39,7 +39,7 @@ export function parseValue(value: any): Value {
   return payload;
 }
 
-interface Value {
+export interface Value {
   initiativeId?: string;
   slackUserId?: string;
   action?: any;

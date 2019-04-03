@@ -9,7 +9,7 @@ import { getInitiativeDetailsAction } from './get-initiative-details';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
 import { remainMemberAction } from './remain-member';
-import { parseValue, stringifyValue } from './id-helper';
+import { parseValue, stringifyValue, Value } from './id-helper';
 import { deleteInitiativeAction } from './delete-initiative';
 import { openEditDialogAction } from './open-edit-dialog';
 import { changeMembershipAction } from './change-membership';
@@ -114,14 +114,24 @@ function getFieldsFromBody(body: any) {
 function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
   const callbackAction = payload.callback_id;
   const buttonAction = payload.actions && payload.actions.length > 0 && payload.actions[0].action_id;
-  const option =
-    payload.actions &&
-    payload.actions.length &&
-    payload.actions[0].selected_option &&
-    parseValue(payload.actions[0].selected_option.value);
+  const option = getOption(payload);
   const action = (option && option.action) || buttonAction || callbackAction;
   console.log('Action', action);
   return action;
+}
+
+function getOption(payload: ActionPayload): Value {
+  let option: Value;
+  try {
+    option =
+      payload.actions &&
+      payload.actions.length &&
+      payload.actions[0].selected_option &&
+      parseValue(payload.actions[0].selected_option.value);
+  } catch (err) {
+    console.error(`Couldn't get action from option`, option, err);
+  }
+  return option;
 }
 
 function getQueryId(payload: ActionPayload): string {
