@@ -1,4 +1,14 @@
-import { MarkdownText, Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
+import {
+  MarkdownText,
+  Message,
+  Section,
+  DividerBlock,
+  Action,
+  ContextBlock,
+  StaticSelect,
+  Option,
+  PlainText
+} from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
 import { Query } from '../queries';
@@ -22,7 +32,7 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [new ResultsHeader(slackUserId, query), ...initiativeSections, new ResultsFooter()];
+      this.blocks = [new ResultsHeader(slackUserId, query), new Filter(), ...initiativeSections, new ResultsFooter()];
     }
   }
 }
@@ -49,6 +59,41 @@ class ResultsHeader implements Section {
       isPublic ? publicNote : ''
     }`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
+  }
+}
+
+class Filter implements Action {
+  type: 'actions' = 'actions';
+  elements: StaticSelect[];
+  constructor() {
+    this.elements = [new StatusSelect()];
+  }
+}
+
+class StatusSelect implements StaticSelect {
+  type: 'static_select' = 'static_select';
+  placeholder: PlainText;
+  options: Option[];
+  action_id: 'TEST_STATUS_SELECT';
+  constructor() {
+    this.placeholder = {
+      type: 'plain_text',
+      text: 'Status',
+      emoji: true
+    };
+    this.options = [new StatusOption(Status.COMPLETE), new StatusOption(Status.ACTIVE)];
+  }
+}
+
+class StatusOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(status: Status) {
+    this.text = {
+      type: 'plain_text',
+      text: getStatusDisplay(status)
+    };
+    this.value = status;
   }
 }
 
