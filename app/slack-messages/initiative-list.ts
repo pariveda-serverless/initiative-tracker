@@ -32,7 +32,12 @@ export class ListResponse implements Message {
         .reduce((all, block) => all.concat(block), [])
         // Remove the last divider block
         .slice(0, -1);
-      this.blocks = [new ResultsHeader(slackUserId, query), new Filter(), ...initiativeSections, new ResultsFooter()];
+      this.blocks = [
+        new ResultsHeader(slackUserId, query),
+        new Filter(initiatives),
+        ...initiativeSections,
+        new ResultsFooter()
+      ];
     }
   }
 }
@@ -65,12 +70,44 @@ class ResultsHeader implements Section {
 class Filter implements Action {
   type: 'actions' = 'actions';
   elements: StaticSelect[];
-  constructor() {
-    this.elements = [new StatusSelect()];
+  constructor(initiatives: InitiativeResponse[]) {
+    const status = new StatusFilter();
+    this.elements = [status];
+    const offices = initiatives.filter(initiative => initiative.office).map(initiative => initiative.office);
+    if (offices && offices.length) {
+      this.elements.push(new OfficeFilter(offices));
+    }
   }
 }
 
-class StatusSelect implements StaticSelect {
+class OfficeFilter implements StaticSelect {
+  type: 'static_select' = 'static_select';
+  placeholder: PlainText;
+  options: Option[];
+  action_id = 'TEST_OFFICE_SELECT';
+  constructor(offices: string[]) {
+    this.placeholder = {
+      type: 'plain_text',
+      text: 'Office',
+      emoji: true
+    };
+    this.options = offices.map(office => new OfficeOption(office));
+  }
+}
+
+class OfficeOption implements Option {
+  text: PlainText;
+  value: string;
+  constructor(office: string) {
+    this.text = {
+      type: 'plain_text',
+      text: office
+    };
+    this.value = office;
+  }
+}
+
+class StatusFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];

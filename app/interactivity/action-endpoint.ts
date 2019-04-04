@@ -129,9 +129,7 @@ function getOption(payload: ActionPayload): Value {
       payload.actions[0].selected_option &&
       payload.actions[0].selected_option.value &&
       parseValue(payload.actions[0].selected_option.value);
-  } catch (err) {
-    console.error(`Couldn't get action from option`, option, err);
-  }
+  } catch (err) {}
   return option;
 }
 
