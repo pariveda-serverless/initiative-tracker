@@ -88,7 +88,7 @@ class OfficeFilter implements StaticSelect {
   constructor(offices: string[]) {
     this.placeholder = {
       type: 'plain_text',
-      text: 'Office',
+      text: 'Filter by office',
       emoji: true
     };
     this.options = offices.map(office => new OfficeOption(office));
@@ -115,7 +115,7 @@ class StatusFilter implements StaticSelect {
   constructor() {
     this.placeholder = {
       type: 'plain_text',
-      text: 'Status',
+      text: 'Filter by status',
       emoji: true
     };
     this.options = [new StatusOption(Status.COMPLETE), new StatusOption(Status.ACTIVE)];

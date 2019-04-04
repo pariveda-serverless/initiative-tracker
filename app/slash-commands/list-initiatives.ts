@@ -1,5 +1,5 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeRecord, InitiativeResponse, getInitiativeIdentifiers } from '../initiatives';
+import { InitiativeRecord, InitiativeResponse, getInitiativeIdentifiers, Status } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
 import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
@@ -71,7 +71,12 @@ async function saveQuery(text: string): Promise<Query> {
     .then(() => query);
 }
 
-export async function getInitiatives(teamId: string, query: Query): Promise<InitiativeResponse[]> {
+export async function getInitiatives(
+  teamId: string,
+  query: Query,
+  statuss?: Status,
+  office?: string
+): Promise<InitiativeResponse[]> {
   const status = query && query.status ? query.status : undefined;
   const KeyConditionExpression = status
     ? '#identifiers = :identifiers and #status = :status'
