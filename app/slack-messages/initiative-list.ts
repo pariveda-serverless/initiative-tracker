@@ -74,7 +74,7 @@ class StatusSelect implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
-  action_id: 'TEST_STATUS_SELECT';
+  action_id = 'TEST_STATUS_SELECT';
   constructor() {
     this.placeholder = {
       type: 'plain_text',
