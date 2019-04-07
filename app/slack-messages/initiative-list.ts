@@ -12,6 +12,7 @@ import {
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
 import { Query } from '../queries';
+import { ListAction, stringifyValue } from '../interactivity';
 
 export class ListResponse implements Message {
   channel: string;
@@ -71,7 +72,8 @@ class Filter implements Action {
   type: 'actions' = 'actions';
   elements: StaticSelect[];
   constructor(initiatives: InitiativeResponse[]) {
-    const status = new StatusFilter();
+    const statuses = initiatives.map(initiative => initiative.status);
+    const status = new StatusFilter(statuses);
     this.elements = [status];
     const offices = initiatives.filter(initiative => initiative.office).map(initiative => initiative.office);
     if (offices && offices.length) {
@@ -84,7 +86,7 @@ class OfficeFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
-  action_id = 'TEST_OFFICE_SELECT';
+  action_id = ListAction.FILTER_BY_OFFICE;
   constructor(offices: string[]) {
     this.placeholder = {
       type: 'plain_text',
@@ -103,7 +105,7 @@ class OfficeOption implements Option {
       type: 'plain_text',
       text: office
     };
-    this.value = office;
+    this.value = stringifyValue({ office });
   }
 }
 
@@ -111,14 +113,14 @@ class StatusFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
-  action_id = 'TEST_STATUS_SELECT';
-  constructor() {
+  action_id = ListAction.FILTER_BY_STATUS;
+  constructor(statuses: Status[]) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by status',
       emoji: true
     };
-    this.options = [new StatusOption(Status.COMPLETE), new StatusOption(Status.ACTIVE)];
+    this.options = statuses.map(status => new StatusOption(Status[status]));
   }
 }
 
@@ -130,7 +132,7 @@ class StatusOption implements Option {
       type: 'plain_text',
       text: getStatusDisplay(status)
     };
-    this.value = status;
+    this.value = stringifyValue({ status });
   }
 }
 

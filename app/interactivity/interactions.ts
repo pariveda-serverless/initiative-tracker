@@ -16,6 +16,12 @@ export enum InitiativeAction {
   MARK_ABANDONED = 'MARK_ABANDONED'
 }
 
+export enum ListAction {
+  FILTER_BY_OFFICE = 'FILTER_BY_OFFICE',
+  FILTER_BY_STATUS = 'FILTER_BY_STATUS',
+  VIEW_DETAILS = 'VIEW_DETAILS'
+}
+
 export enum MemberAction {
   MAKE_CHAMPION = 'MAKE_CHAMPION',
   MAKE_MEMBER = 'MAKE_MEMBER',

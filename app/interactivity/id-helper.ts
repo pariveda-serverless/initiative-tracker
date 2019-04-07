@@ -7,6 +7,7 @@ const keyMappings = {
   slackUserId: 'suid',
   action: 'a',
   status: 's',
+  office: 'o',
   champion: 'c',
   remove: 'r',
   queryId: 'qid',
@@ -44,6 +45,7 @@ export interface Value {
   slackUserId?: string;
   action?: any;
   status?: any;
+  office?: string;
   champion?: boolean;
   remove?: boolean;
   queryId?: string;

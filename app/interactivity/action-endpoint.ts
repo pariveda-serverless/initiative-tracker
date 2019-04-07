@@ -1,7 +1,8 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
+import { label, metric } from '@iopipe/iopipe';
 import { Message, ActionPayload } from 'slack';
 import * as id from 'nanoid';
-import { InitiativeAction, MemberAction } from './interactions';
+import { InitiativeAction, MemberAction, ListAction } from './interactions';
 import { replyWithMessage } from '../slack-api';
 import { NotImplementedResponse } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
@@ -17,6 +18,7 @@ import { leaveInitiativeAction } from './leave-initiative';
 import { openAddMemberDialogAction } from './open-add-member-dialog';
 import { addMemberAction } from './add-member';
 import { getInitiativeListAction } from './get-initiative-list';
+import { updateQueryWithOfficeFilterAction, updateQueryWithStatusFilterAction } from './update-query-with-filter';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -49,6 +51,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeAction.ADD_MEMBER: {
         ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
+        break;
+      }
+      case ListAction.FILTER_BY_OFFICE: {
+        await updateQueryWithOfficeFilterAction(queryId, payload);
+        response = await getInitiativeListAction(teamId, channel, queryId, payload);
+        break;
+      }
+      case ListAction.FILTER_BY_STATUS: {
+        await updateQueryWithStatusFilterAction(queryId, payload);
+        response = await getInitiativeListAction(teamId, channel, queryId, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -111,12 +123,14 @@ function getFieldsFromBody(body: any) {
   return { payload, teamId, responseUrl, channel, action, triggerId, queryId };
 }
 
-function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
+function getAction(payload: ActionPayload): InitiativeAction | MemberAction | ListAction {
   const callbackAction = payload.callback_id;
   const buttonAction = payload.actions && payload.actions.length > 0 && payload.actions[0].action_id;
   const option = getOption(payload);
   const action = (option && option.action) || buttonAction || callbackAction;
   console.log('Action', action);
+  label(action);
+  metric('action', action);
   return action;
 }
 
