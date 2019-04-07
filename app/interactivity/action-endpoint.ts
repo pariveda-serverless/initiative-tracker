@@ -170,7 +170,7 @@ function getQueryIdFromElements(elements: any[]): string {
       return true;
     } catch (err) {}
     try {
-      ({ queryId } = parseValue(element.selection_option.value));
+      ({ queryId } = parseValue(element.selected_option.value));
     } catch (err) {}
     return queryId;
   });
