@@ -29,7 +29,7 @@ async function updateQueryWithOfficeFilter(query: Query, office: string): Promis
     console.log('Updating query with params', params);
     return table.update(params).promise();
   } else {
-    await saveQuery('', office);
+    await saveQuery(null, office);
   }
 }
 
