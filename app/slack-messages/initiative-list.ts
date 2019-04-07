@@ -88,29 +88,25 @@ class OfficeFilter implements StaticSelect {
   placeholder: PlainText;
   options: Option[];
   action_id = ListAction.FILTER_BY_OFFICE;
-  block_id: string;
   constructor(offices: string[], query: Query) {
-    if (query) {
-      this.block_id = stringifyValue({ blockId: id(), queryId: query.queryId });
-    }
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by office',
       emoji: true
     };
-    this.options = offices.map(office => new OfficeOption(office));
+    this.options = offices.map(office => new OfficeOption(office, query));
   }
 }
 
 class OfficeOption implements Option {
   text: PlainText;
   value: string;
-  constructor(office: string) {
+  constructor(office: string, query: Query) {
     this.text = {
       type: 'plain_text',
       text: office
     };
-    this.value = stringifyValue({ office });
+    this.value = stringifyValue({ office, queryId: query.queryId });
   }
 }
 
@@ -119,29 +115,25 @@ class StatusFilter implements StaticSelect {
   placeholder: PlainText;
   options: Option[];
   action_id = ListAction.FILTER_BY_STATUS;
-  block_id: string;
   constructor(statuses: Status[], query: Query) {
-    if (query) {
-      this.block_id = stringifyValue({ blockId: id(), queryId: query.queryId });
-    }
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by status',
       emoji: true
     };
-    this.options = statuses.map(status => new StatusOption(Status[status]));
+    this.options = statuses.map(status => new StatusOption(Status[status], query));
   }
 }
 
 class StatusOption implements Option {
   text: PlainText;
   value: string;
-  constructor(status: Status) {
+  constructor(status: Status, query: Query) {
     this.text = {
       type: 'plain_text',
       text: getStatusDisplay(status)
     };
-    this.value = stringifyValue({ status });
+    this.value = stringifyValue({ status, queryId: query.queryId });
   }
 }
 
