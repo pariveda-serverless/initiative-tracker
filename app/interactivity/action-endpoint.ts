@@ -163,11 +163,14 @@ function getQueryIdFromElements(elements: any[]): string {
   let queryId;
   elements.find(element => {
     try {
-      queryId = parseValue(element.value).queryId;
+      ({ queryId } = parseValue(element.value));
     } catch (err) {}
     try {
-      queryId = parseValue(element.block_id).queryId;
+      ({ queryId } = parseValue(element.block_id));
       return true;
+    } catch (err) {}
+    try {
+      ({ queryId } = parseValue(element.selection_option.value));
     } catch (err) {}
     return queryId;
   });
