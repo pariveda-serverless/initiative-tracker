@@ -106,7 +106,7 @@ class OfficeOption implements Option {
       type: 'plain_text',
       text: office
     };
-    this.value = stringifyValue({ office, queryId: query.queryId });
+    this.value = stringifyValue({ office, queryId: query && query.queryId });
   }
 }
 
@@ -133,7 +133,7 @@ class StatusOption implements Option {
       type: 'plain_text',
       text: getStatusDisplay(status)
     };
-    this.value = stringifyValue({ status, queryId: query.queryId });
+    this.value = stringifyValue({ status, queryId: query && query.queryId });
   }
 }
 
