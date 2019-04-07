@@ -1,3 +1,4 @@
+import * as id from 'nanoid';
 import {
   MarkdownText,
   Message,
@@ -35,7 +36,7 @@ export class ListResponse implements Message {
         .slice(0, -1);
       this.blocks = [
         new ResultsHeader(slackUserId, query),
-        new Filter(initiatives),
+        new Filter(initiatives, query),
         ...initiativeSections,
         new ResultsFooter()
       ];
@@ -71,13 +72,13 @@ class ResultsHeader implements Section {
 class Filter implements Action {
   type: 'actions' = 'actions';
   elements: StaticSelect[];
-  constructor(initiatives: InitiativeResponse[]) {
+  constructor(initiatives: InitiativeResponse[], query: Query) {
     const statuses = initiatives.map(initiative => initiative.status);
-    const status = new StatusFilter(statuses);
+    const status = new StatusFilter(statuses, query);
     this.elements = [status];
     const offices = initiatives.filter(initiative => initiative.office).map(initiative => initiative.office);
     if (offices && offices.length) {
-      this.elements.push(new OfficeFilter(offices));
+      this.elements.push(new OfficeFilter(offices, query));
     }
   }
 }
@@ -87,7 +88,11 @@ class OfficeFilter implements StaticSelect {
   placeholder: PlainText;
   options: Option[];
   action_id = ListAction.FILTER_BY_OFFICE;
-  constructor(offices: string[]) {
+  block_id: string;
+  constructor(offices: string[], query: Query) {
+    if (query) {
+      this.block_id = stringifyValue({ blockId: id(), queryId: query.queryId });
+    }
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by office',
@@ -114,7 +119,11 @@ class StatusFilter implements StaticSelect {
   placeholder: PlainText;
   options: Option[];
   action_id = ListAction.FILTER_BY_STATUS;
-  constructor(statuses: Status[]) {
+  block_id: string;
+  constructor(statuses: Status[], query: Query) {
+    if (query) {
+      this.block_id = stringifyValue({ blockId: id(), queryId: query.queryId });
+    }
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by status',

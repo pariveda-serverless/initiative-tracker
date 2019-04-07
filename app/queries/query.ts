@@ -3,19 +3,20 @@ import { Status } from '../initiatives';
 
 export class CreateQueryRequest {
   queryId: string;
-  identifiers: string;
   expiration: number;
   text: string;
   isPublic: boolean;
   status: Status;
+  office: string;
 
-  constructor(text: string) {
+  constructor(text: string, office?: string) {
     const queryId = id();
     this.queryId = queryId;
     this.text = text;
     const { isPublic, status } = getQueryProperties(text);
     this.isPublic = isPublic;
     this.status = status;
+    this.office = office;
     this.expiration = getExpiration();
   }
 }
@@ -25,12 +26,14 @@ export class Query {
   text: string;
   isPublic: boolean;
   status: Status;
+  office: string;
 
   constructor(record: any) {
     this.queryId = record.queryId;
     this.text = record.text;
     this.isPublic = record.isPublic;
     this.status = record.status;
+    this.office = record.office;
   }
 }
 

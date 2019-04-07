@@ -61,8 +61,8 @@ export async function getQuery(queryId: string): Promise<Query> {
   }
 }
 
-async function saveQuery(text: string): Promise<Query> {
-  const query = new CreateQueryRequest(text);
+export async function saveQuery(text: string, office?: string): Promise<Query> {
+  const query = new CreateQueryRequest(text, office);
   const params = { TableName: process.env.QUERIES_TABLE, Item: query };
   console.log('Saving list query with params', params);
   return table
