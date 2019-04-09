@@ -24,7 +24,7 @@ export class ListResponse implements Message {
     } else {
       const initiativeSections = initiatives
         .map(initiative => {
-          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative, query);
+          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
           let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
           const metaInformation = new CreatedBy(initiative);
           blocks = [...blocks, metaInformation, new Divider()];
