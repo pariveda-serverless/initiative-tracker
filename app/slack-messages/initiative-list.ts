@@ -88,7 +88,7 @@ class OfficeFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
-  value: string;
+  initial_option: Option;
   action_id = ListAction.FILTER_BY_OFFICE;
   constructor(offices: string[], office: string) {
     this.placeholder = {
@@ -97,7 +97,7 @@ class OfficeFilter implements StaticSelect {
       emoji: true
     };
     if (office) {
-      this.value = stringifyValue({ office });
+      this.initial_option = new OfficeOption(office);
     }
     this.options = offices.map(office => new OfficeOption(office));
   }
@@ -119,7 +119,7 @@ class StatusFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
-  value: string;
+  initial_option: Option;
   action_id = ListAction.FILTER_BY_STATUS;
   constructor(statuses: Status[], status: Status) {
     this.placeholder = {
@@ -128,7 +128,7 @@ class StatusFilter implements StaticSelect {
       emoji: true
     };
     if (status) {
-      this.value = stringifyValue({ status });
+      this.initial_option = new StatusOption(Status[status]);
     }
     this.options = statuses.map(status => new StatusOption(Status[status]));
   }
