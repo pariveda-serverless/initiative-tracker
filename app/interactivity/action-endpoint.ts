@@ -27,6 +27,8 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         response = await getInitiativeDetailsAction(teamId, channel, payload);
         break;
       }
+      case ListAction.FILTER_BY_OFFICE:
+      case ListAction.FILTER_BY_STATUS:
       case InitiativeAction.VIEW_LIST: {
         response = await getInitiativeListAction(teamId, channel, payload);
         break;
@@ -49,14 +51,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeAction.ADD_MEMBER: {
         ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
-        break;
-      }
-      case ListAction.FILTER_BY_OFFICE: {
-        response = await getInitiativeListAction(teamId, channel, payload);
-        break;
-      }
-      case ListAction.FILTER_BY_STATUS: {
-        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:

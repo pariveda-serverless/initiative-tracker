@@ -2,6 +2,7 @@ import { ActionPayload, Message } from 'slack';
 import { ListResponse } from '../slack-messages';
 import { getInitiatives } from '../slash-commands/list-initiatives';
 import { Query } from '../queries';
+import { parseValue } from './id-helper';
 
 export async function getInitiativeListAction(
   teamId: string,
@@ -9,7 +10,11 @@ export async function getInitiativeListAction(
   payload: ActionPayload
 ): Promise<Message> {
   const slackUserId = payload.user.id;
-  const query = new Query({});
+  let status, office;
+  if (payload.actions && payload.actions.length > 0) {
+    ({ status, office } = parseValue(payload.actions[0].selected_option.value));
+  }
+  const query = new Query({ status, office });
   const initiatives = await getInitiatives(teamId, query);
   return new ListResponse({ initiatives, channelId, slackUserId, query });
 }
