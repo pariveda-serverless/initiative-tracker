@@ -19,6 +19,7 @@ export async function getInitiativeListAction(
   }
   console.log(status, office);
   const query = new Query({ status, office });
+  console.log(query);
   const initiatives = await getInitiatives(teamId, query);
   return new ListResponse({ initiatives, channelId, slackUserId, query });
 }
