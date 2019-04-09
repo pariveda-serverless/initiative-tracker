@@ -7,18 +7,17 @@ import {
   InitiativeInformationAndUpdateActions,
   MemberSection
 } from './shared-messages';
-import { InitiativeAction, stringifyValue } from '../interactivity';
-import { Query } from '../queries';
+import { InitiativeAction } from '../interactivity';
 
 export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor({ initiative, slackUserId, query, channel }: DetailResponseProperties) {
+  constructor({ initiative, slackUserId, isPublic, channel }: DetailResponseProperties) {
     this.channel = channel;
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
 
-    const header = new DetailsHeader(initiative, query);
+    const header = new DetailsHeader(initiative);
     blocks.push(header);
 
     const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
@@ -28,7 +27,7 @@ export class DetailResponse implements Message {
     blocks.push(metaInformation);
 
     // Only add the join buttons if the user isn't already a member
-    if ((query && query.isPublic) || !initiative.members.find(member => member.slackUserId === slackUserId)) {
+    if (isPublic || !initiative.members.find(member => member.slackUserId === slackUserId)) {
       const initiativeActions = new InitiativeDetailActions(initiative);
       blocks.push(initiativeActions);
     }
@@ -43,7 +42,7 @@ export class DetailResponse implements Message {
       // Remove the last divider block
       .slice(0, -1);
 
-    const footer = new DetailsFooter(query);
+    const footer = new DetailsFooter();
     this.blocks = [...blocks, new Divider(), ...members, footer];
   }
 }
@@ -52,9 +51,7 @@ class DetailsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   block_id: string;
-  constructor(initiative: InitiativeResponse, query: Query) {
-    const queryId = query ? query.queryId : undefined;
-    this.block_id = stringifyValue({ queryId });
+  constructor(initiative: InitiativeResponse) {
     const text = `Here are the details for the ${
       initiative.name
     } initiative - if it looks interesting you should join! :muscle:`.replace(/  +/g, '');
@@ -66,10 +63,10 @@ class DetailsFooter implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Button;
-  constructor(query: Query) {
+  constructor() {
     const text = `Want to view a list of all initiatives? :bookmark_tabs:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
-    this.accessory = new ViewListButton(query);
+    this.accessory = new ViewListButton();
   }
 }
 
@@ -77,18 +74,15 @@ class ViewListButton implements Button {
   type: 'button' = 'button';
   text: PlainText;
   action_id = InitiativeAction.VIEW_LIST;
-  value: string;
-  constructor(query: Query) {
+  constructor() {
     const text = `View all initiatives`.replace(/  +/g, '');
     this.text = { type: 'plain_text', text };
-    const queryId = query ? query.queryId : undefined;
-    this.value = stringifyValue({ queryId });
   }
 }
 
 interface DetailResponseProperties {
   initiative: InitiativeResponse;
   slackUserId: string;
-  query?: Query;
+  isPublic?: boolean;
   channel?: string;
 }

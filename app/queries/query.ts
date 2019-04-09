@@ -1,47 +1,27 @@
-import * as id from 'nanoid';
 import { Status } from '../initiatives';
 
-export class CreateQueryRequest {
-  queryId: string;
-  expiration: number;
+export class Query {
   text: string;
   isPublic: boolean;
   status: Status;
   office: string;
 
-  constructor(text: string, office?: string) {
-    const queryId = id();
-    this.queryId = queryId;
+  constructor({ text, status, office, isPublic }: QueryParams) {
+    if (text) {
+      ({ status, isPublic } = getQueryProperties(text));
+    }
     this.text = text;
-    const { isPublic, status } = getQueryProperties(text);
     this.isPublic = isPublic;
     this.status = status;
     this.office = office;
-    this.expiration = getExpiration();
   }
 }
 
-export class Query {
-  queryId: string;
-  text: string;
-  isPublic: boolean;
-  status: Status;
-  office: string;
-
-  constructor(record: any) {
-    this.queryId = record.queryId;
-    this.text = record.text;
-    this.isPublic = record.isPublic;
-    this.status = record.status;
-    this.office = record.office;
-  }
-}
-
-function getExpiration(): number {
-  const hoursToExpire = 96;
-  const secondsInHour = 60 * 60;
-  const secondsSinceEpoch = Math.round(Date.now() / 1000);
-  return secondsSinceEpoch + hoursToExpire * secondsInHour;
+interface QueryParams {
+  text?: string;
+  status?: Status;
+  office?: string;
+  isPublic?: boolean;
 }
 
 function getQueryProperties(text: string): { status: Status; isPublic: boolean } {

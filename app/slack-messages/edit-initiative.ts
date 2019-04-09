@@ -1,13 +1,12 @@
 import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
 import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
 import { stringifyValue, InitiativeAction } from '../interactivity';
-import { Query } from '../queries';
 
 export class EditInitiativeDialog {
   trigger_id: string;
   dialog: Dialog;
-  constructor(initiative: InitiativeResponse, query: Query, triggerId: string, responseUrl: string) {
-    this.dialog = new InitiativeDialog(initiative, query, responseUrl);
+  constructor(initiative: InitiativeResponse, triggerId: string, responseUrl: string) {
+    this.dialog = new InitiativeDialog(initiative, responseUrl);
     this.trigger_id = triggerId;
   }
 }
@@ -17,13 +16,13 @@ export class InitiativeDialog implements Dialog {
   callback_id = InitiativeAction.EDIT_INITIATIVE;
   elements: (TextElement | SelectElement)[];
   state: string;
-  constructor(initiative: InitiativeResponse, query: Query, responseUrl: string) {
+  constructor(initiative: InitiativeResponse, responseUrl: string) {
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
     const channel = new ChannelSelect(initiative);
     const status = new StatusSelect(initiative);
     this.elements = [name, description, channel, status];
-    this.state = stringifyValue({ initiativeId: initiative.initiativeId, queryId: query.queryId, responseUrl });
+    this.state = stringifyValue({ initiativeId: initiative.initiativeId, responseUrl });
   }
 }
 

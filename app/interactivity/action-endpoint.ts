@@ -1,7 +1,6 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { label, metric } from '@iopipe/iopipe';
 import { Message, ActionPayload } from 'slack';
-import * as id from 'nanoid';
 import { InitiativeAction, MemberAction, ListAction } from './interactions';
 import { replyWithMessage } from '../slack-api';
 import { NotImplementedResponse } from '../slack-messages';
@@ -10,7 +9,7 @@ import { getInitiativeDetailsAction } from './get-initiative-details';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
 import { remainMemberAction } from './remain-member';
-import { parseValue, stringifyValue, Value } from './id-helper';
+import { parseValue, Value } from './id-helper';
 import { deleteInitiativeAction } from './delete-initiative';
 import { openEditDialogAction } from './open-edit-dialog';
 import { changeMembershipAction } from './change-membership';
@@ -18,19 +17,18 @@ import { leaveInitiativeAction } from './leave-initiative';
 import { openAddMemberDialogAction } from './open-add-member-dialog';
 import { addMemberAction } from './add-member';
 import { getInitiativeListAction } from './get-initiative-list';
-import { updateQueryWithOfficeFilterAction, updateQueryWithStatusFilterAction } from './update-query-with-filter';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     let response: Message;
-    let { payload, teamId, responseUrl, channel, action, triggerId, queryId } = getFieldsFromBody(body);
+    let { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
-        response = await getInitiativeDetailsAction(teamId, channel, queryId, payload);
+        response = await getInitiativeDetailsAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.VIEW_LIST: {
-        response = await getInitiativeListAction(teamId, channel, queryId, payload);
+        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.DELETE: {
@@ -38,7 +36,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
-        await openEditDialogAction(teamId, channel, queryId, payload, triggerId, responseUrl);
+        await openEditDialogAction(teamId, channel, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.EDIT_INITIATIVE: {
@@ -46,7 +44,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
-        await openAddMemberDialogAction(teamId, channel, queryId, payload, triggerId, responseUrl);
+        await openAddMemberDialogAction(teamId, channel, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
@@ -54,13 +52,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case ListAction.FILTER_BY_OFFICE: {
-        await updateQueryWithOfficeFilterAction(queryId, payload);
-        response = await getInitiativeListAction(teamId, channel, queryId, payload);
+        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case ListAction.FILTER_BY_STATUS: {
-        await updateQueryWithStatusFilterAction(queryId, payload);
-        response = await getInitiativeListAction(teamId, channel, queryId, payload);
+        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -95,22 +91,14 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
-      await sendResponse(response, responseUrl, queryId);
+      console.log('Replying with response', JSON.stringify(response));
+      await replyWithMessage(responseUrl, response as Message);
     }
     success();
   } catch (err) {
     error(err);
   }
 });
-
-async function sendResponse(response: Message, responseUrl: string, queryId: string): Promise<any> {
-  if (queryId && response.blocks && response.blocks.length > 0) {
-    console.log(`Adding queryId ${queryId} to all message blocks`);
-    response.blocks.forEach(block => (block.block_id = stringifyValue({ blockId: id(), queryId })));
-  }
-  console.log('Replying with response', JSON.stringify(response));
-  await replyWithMessage(responseUrl, response as Message);
-}
 
 function getFieldsFromBody(body: any) {
   const payload: ActionPayload = JSON.parse(body.payload);
@@ -119,8 +107,7 @@ function getFieldsFromBody(body: any) {
   const channel = payload.channel.id;
   const action = getAction(payload);
   const triggerId = payload.trigger_id;
-  const queryId = getQueryId(payload);
-  return { payload, teamId, responseUrl, channel, action, triggerId, queryId };
+  return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
 function getAction(payload: ActionPayload): InitiativeAction | MemberAction | ListAction {
@@ -145,34 +132,4 @@ function getOption(payload: ActionPayload): Value {
       parseValue(payload.actions[0].selected_option.value);
   } catch (err) {}
   return option;
-}
-
-function getQueryId(payload: ActionPayload): string {
-  let queryId;
-  if (!queryId && payload.message && payload.message.blocks) {
-    // Find the block that has a JSON payload for the block_id - that's the one with the query Id in it
-    queryId = getQueryIdFromElements(payload.message.blocks);
-  }
-  if (!queryId && payload.actions) {
-    queryId = getQueryIdFromElements(payload.actions);
-  }
-  return queryId;
-}
-
-function getQueryIdFromElements(elements: any[]): string {
-  let queryId;
-  elements.find(element => {
-    try {
-      ({ queryId } = parseValue(element.value));
-    } catch (err) {}
-    try {
-      ({ queryId } = parseValue(element.block_id));
-      return true;
-    } catch (err) {}
-    try {
-      ({ queryId } = parseValue(element.selected_option.value));
-    } catch (err) {}
-    return queryId;
-  });
-  return queryId;
 }

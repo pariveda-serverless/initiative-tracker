@@ -4,19 +4,16 @@ import { ActionPayload, Message } from 'slack';
 import { parseValue } from './id-helper';
 import { DetailResponse } from '../slack-messages';
 import { table } from '../shared';
-import { getQuery } from '../slash-commands/list-initiatives';
 
 export async function getInitiativeDetailsAction(
   teamId: string,
   channel: string,
-  queryId: string,
   payload: ActionPayload
 ): Promise<Message> {
   const { initiativeId } = parseValue(payload.actions[0].value);
-  const query = await getQuery(queryId);
   const slackUserId = payload.user.id;
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse({ initiative, slackUserId, channel, query });
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 export async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {

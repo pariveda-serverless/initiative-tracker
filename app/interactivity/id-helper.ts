@@ -10,7 +10,6 @@ const keyMappings = {
   office: 'o',
   champion: 'c',
   remove: 'r',
-  queryId: 'qid',
   blockId: 'bid',
   responseUrl: 'rurl'
 };
@@ -48,7 +47,6 @@ export interface Value {
   office?: string;
   champion?: boolean;
   remove?: boolean;
-  queryId?: string;
   blockId?: string;
   responseUrl?: string;
 }

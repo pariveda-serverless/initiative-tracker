@@ -1,4 +1,3 @@
-import * as id from 'nanoid';
 import {
   MarkdownText,
   Message,
@@ -56,8 +55,8 @@ class ResultsHeader implements Section {
   text: MarkdownText;
   block_id: string;
   constructor(slackUserId: string, query: Query) {
-    const status = query && query.status ? query.status : undefined;
-    const isPublic = query && query.isPublic ? query.isPublic : undefined;
+    const status = query && query.status;
+    const isPublic = query && query.isPublic;
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';
@@ -73,12 +72,14 @@ class Filter implements Action {
   type: 'actions' = 'actions';
   elements: StaticSelect[];
   constructor(initiatives: InitiativeResponse[], query: Query) {
-    const statuses = initiatives.map(initiative => initiative.status);
-    const status = new StatusFilter(statuses, query);
-    this.elements = [status];
-    const offices = initiatives.filter(initiative => initiative.office).map(initiative => initiative.office);
+    const statuses = [...new Set(initiatives.map(initiative => initiative.status))];
+    const statusFilter = new StatusFilter(statuses, query && query.status);
+    this.elements = [statusFilter];
+    const offices = [
+      ...new Set(initiatives.filter(initiative => initiative.office).map(initiative => initiative.office))
+    ];
     if (offices && offices.length) {
-      this.elements.push(new OfficeFilter(offices, query));
+      this.elements.push(new OfficeFilter(offices, query && query.office));
     }
   }
 }
@@ -87,26 +88,30 @@ class OfficeFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
+  value: string;
   action_id = ListAction.FILTER_BY_OFFICE;
-  constructor(offices: string[], query: Query) {
+  constructor(offices: string[], office: string) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by office',
       emoji: true
     };
-    this.options = offices.map(office => new OfficeOption(office, query));
+    if (office) {
+      this.value = stringifyValue({ office });
+    }
+    this.options = offices.map(office => new OfficeOption(office));
   }
 }
 
 class OfficeOption implements Option {
   text: PlainText;
   value: string;
-  constructor(office: string, query: Query) {
+  constructor(office: string) {
     this.text = {
       type: 'plain_text',
       text: office
     };
-    this.value = stringifyValue({ office, queryId: query && query.queryId });
+    this.value = stringifyValue({ office });
   }
 }
 
@@ -114,26 +119,30 @@ class StatusFilter implements StaticSelect {
   type: 'static_select' = 'static_select';
   placeholder: PlainText;
   options: Option[];
+  value: string;
   action_id = ListAction.FILTER_BY_STATUS;
-  constructor(statuses: Status[], query: Query) {
+  constructor(statuses: Status[], status: Status) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by status',
       emoji: true
     };
-    this.options = statuses.map(status => new StatusOption(Status[status], query));
+    if (status) {
+      this.value = stringifyValue({ status });
+    }
+    this.options = statuses.map(status => new StatusOption(Status[status]));
   }
 }
 
 class StatusOption implements Option {
   text: PlainText;
   value: string;
-  constructor(status: Status, query: Query) {
+  constructor(status: Status) {
     this.text = {
       type: 'plain_text',
       text: getStatusDisplay(status)
     };
-    this.value = stringifyValue({ status, queryId: query && query.queryId });
+    this.value = stringifyValue({ status });
   }
 }
 
@@ -151,7 +160,7 @@ class NoResults implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(query: Query) {
-    const status = query && query.status ? query.status : undefined;
+    const status = query && query.status;
     const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
     const text = `Darn, we couldn't find any ${search}initiatives :thinking_face: ...  maybe you should add one! :muscle:
     :tada: */add-initiative [name], [optional description], [optional #channel]* :confetti_ball:`.replace(/  +/g, '');

@@ -3,7 +3,6 @@ import { parseValue } from './id-helper';
 import { getInitiativeDetails } from './get-initiative-details';
 import { DetailResponse } from '../slack-messages';
 import { joinInitiative } from './join-initiative';
-import { getQuery } from '../slash-commands/list-initiatives';
 
 export async function addMemberAction(
   teamId: string,
@@ -12,9 +11,8 @@ export async function addMemberAction(
 ): Promise<{ response: Message; responseUrl: string }> {
   const { slackUserId, role } = payload.submission;
   const { champion } = parseValue(role);
-  const { initiativeId, queryId, responseUrl } = parseValue(payload.state);
+  const { initiativeId, responseUrl } = parseValue(payload.state);
   await joinInitiative(teamId, initiativeId, slackUserId, champion);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  const query = await getQuery(queryId);
-  return { response: new DetailResponse({ initiative, slackUserId, query, channel }), responseUrl };
+  return { response: new DetailResponse({ initiative, slackUserId, channel }), responseUrl };
 }

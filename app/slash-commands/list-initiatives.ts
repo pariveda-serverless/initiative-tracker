@@ -4,7 +4,7 @@ import { ListResponse } from '../slack-messages/';
 import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
-import { CreateQueryRequest, Query } from '../queries';
+import { Query } from '../queries';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -33,7 +33,7 @@ async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
     slackUserId: body.user_id
   };
   if (body.text) {
-    const query = await saveQuery(body.text);
+    const query = new Query({ text: body.text });
     fields = { ...fields, query };
   }
   return fields;
@@ -47,46 +47,20 @@ interface Fields {
   query?: Query;
 }
 
-export async function getQuery(queryId: string): Promise<Query> {
-  if (!queryId) {
-    console.log('No query id to retreive');
-    return undefined;
-  } else {
-    const params = { TableName: process.env.QUERIES_TABLE, Key: { queryId } };
-    console.log('Getting query with params', params);
-    return await table
-      .get(params)
-      .promise()
-      .then(res => new Query(res.Item));
+export async function getInitiatives(teamId: string, query: Query): Promise<InitiativeResponse[]> {
+  let KeyConditionExpression = '#identifiers = :identifiers';
+  let ExpressionAttributeNames = { '#identifiers': 'identifiers' };
+  let ExpressionAttributeValues = { ':identifiers': getInitiativeIdentifiers(teamId) };
+  if (query && query.status) {
+    KeyConditionExpression += ' and #status = :status';
+    ExpressionAttributeNames['#status'] = 'status';
+    ExpressionAttributeValues[':status'] = query.status;
   }
-}
-
-export async function saveQuery(text: string, office?: string): Promise<Query> {
-  const query = new CreateQueryRequest(text, office);
-  const params = { TableName: process.env.QUERIES_TABLE, Item: query };
-  console.log('Saving list query with params', params);
-  return table
-    .put(params)
-    .promise()
-    .then(() => query);
-}
-
-export async function getInitiatives(
-  teamId: string,
-  query: Query,
-  statuss?: Status,
-  office?: string
-): Promise<InitiativeResponse[]> {
-  const status = query && query.status ? query.status : undefined;
-  const KeyConditionExpression = status
-    ? '#identifiers = :identifiers and #status = :status'
-    : '#identifiers = :identifiers';
-  const ExpressionAttributeNames = status
-    ? { '#identifiers': 'identifiers', '#status': 'status' }
-    : { '#identifiers': 'identifiers' };
-  const ExpressionAttributeValues = status
-    ? { ':identifiers': getInitiativeIdentifiers(teamId), ':status': status }
-    : { ':identifiers': getInitiativeIdentifiers(teamId) };
+  if (query && query.office) {
+    KeyConditionExpression += ' and #office = :office';
+    ExpressionAttributeNames['#office'] = 'office';
+    ExpressionAttributeValues[':office'] = query.office;
+  }
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     IndexName: process.env.INITIATIVES_TABLE_STATUS_INDEX,

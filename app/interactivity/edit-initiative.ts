@@ -5,7 +5,6 @@ import { DetailResponse } from '../slack-messages';
 import { getChannelInfo } from '../slack-api';
 import { getInitiativeIdentifiers } from '../initiatives';
 import { table } from '../shared';
-import { getQuery } from '../slash-commands/list-initiatives';
 
 export async function editInitiativeAction(
   teamId: string,
@@ -14,11 +13,10 @@ export async function editInitiativeAction(
 ): Promise<{ response: Message; responseUrl: string }> {
   const slackUserId = payload.user.id;
   const { name, description, status, channelId } = payload.submission;
-  const { initiativeId, queryId, responseUrl } = parseValue(payload.state);
+  const { initiativeId, responseUrl } = parseValue(payload.state);
   await updateInitiative(teamId, initiativeId, name, description, status, channelId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  const query = await getQuery(queryId);
-  return { response: new DetailResponse({ initiative, slackUserId, query, channel }), responseUrl };
+  return { response: new DetailResponse({ initiative, slackUserId, channel }), responseUrl };
 }
 
 async function updateInitiative(
