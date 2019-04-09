@@ -51,6 +51,9 @@ export async function getInitiatives(teamId: string, query: Query): Promise<Init
   let KeyConditionExpression = '#identifiers = :identifiers';
   let ExpressionAttributeNames = { '#identifiers': 'identifiers' };
   let ExpressionAttributeValues = { ':identifiers': getInitiativeIdentifiers(teamId) };
+  console.log(query);
+  console.log(query.status);
+  console.log(query && query.status);
   if (query && query.status) {
     KeyConditionExpression += ' and #status = :status';
     ExpressionAttributeNames['#status'] = 'status';
