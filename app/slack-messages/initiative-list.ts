@@ -44,8 +44,8 @@ function getInitiativeList(
     .reduce((all, block) => all.concat(block), []);
   return [
     new Header(slackUserId, query),
-    new Divider(),
     new Filter(initiatives, query),
+    new Divider(),
     ...initiativeSections,
     new Footer()
   ];
