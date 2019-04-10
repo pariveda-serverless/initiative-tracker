@@ -11,14 +11,14 @@ import {
 } from 'slack';
 import { InitiativeInformation, CreatedBy } from './shared-messages';
 import { stringifyValue, MemberAction } from '../interactivity';
-import { MemberResponse } from '../members';
+import { Member } from '../members';
 import { Initiative } from '../initiatives';
 
 export class ParticipationUpdateRequest implements Message {
   channel: string;
   text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: Initiative, member: MemberResponse) {
+  constructor(initiative: Initiative, member: Member) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new InitiativeInformation(initiative);
@@ -31,7 +31,7 @@ export class ParticipationUpdateRequest implements Message {
 class RequestInfo implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  constructor(member: MemberResponse) {
+  constructor(member: Member) {
     this.text = {
       type: 'mrkdwn',
       text: `Hey ${member.name.split(' ')[0]}, are you still participating in this initiative?`
@@ -42,7 +42,7 @@ class RequestInfo implements Section {
 class UpdateParticipationActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
-  constructor(member: MemberResponse, initiative: Initiative) {
+  constructor(member: Member, initiative: Initiative) {
     const yes = new MarkParticipatingButton(member, initiative);
     const no = new MarkLeftButton(member, initiative);
     this.elements = [yes, no];
@@ -54,7 +54,7 @@ class MarkParticipatingButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(member: MemberResponse, initiative: Initiative) {
+  constructor(member: Member, initiative: Initiative) {
     this.action_id = MemberAction.REMAIN_MEMBER;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
@@ -69,7 +69,7 @@ class MarkLeftButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(member: MemberResponse, initiative: Initiative) {
+  constructor(member: Member, initiative: Initiative) {
     this.action_id = MemberAction.REMOVE_MEMBER;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,

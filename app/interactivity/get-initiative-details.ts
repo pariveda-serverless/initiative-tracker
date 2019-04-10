@@ -1,5 +1,5 @@
 import { Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
-import { getTeamIdentifier, MEMBER_TYPE, MemberResponse } from '../members';
+import { getTeamIdentifier, MEMBER_TYPE, Member } from '../members';
 import { ActionPayload, Message } from 'slack';
 import { parseValue } from './id-helper';
 import { DetailResponse } from '../slack-messages';
@@ -30,6 +30,6 @@ export async function getInitiativeDetails(teamId: string, initiativeId: string)
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
   let initiative: Initiative = new Initiative(records.find(record => record.type === INITIATIVE_TYPE));
-  initiative.members = records.filter(record => record.type === MEMBER_TYPE).map(record => new MemberResponse(record));
+  initiative.members = records.filter(record => record.type === MEMBER_TYPE).map(record => new Member(record));
   return initiative;
 }

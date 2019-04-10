@@ -42,8 +42,6 @@ export class Query {
   }
 
   getUpdateRequest({ status, office, statusChanged, officeChanged }: QueryUpdateParams): CreateQueryRequest {
-    console.log(`New status: ${status}, New office: ${office}`);
-    console.log(`Status changed: ${statusChanged}, Office changed: ${officeChanged}`);
     if (statusChanged) {
       this.status = status;
     }

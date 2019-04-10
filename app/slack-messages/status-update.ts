@@ -11,14 +11,14 @@ import {
 } from 'slack';
 import { InitiativeInformation, CreatedBy } from './shared-messages';
 import { stringifyValue, InitiativeAction } from '../interactivity';
-import { MemberResponse } from '../members';
+import { Member } from '../members';
 import { Initiative, Status } from '../initiatives';
 
 export class StatusUpdateRequest implements Message {
   channel: string;
   text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: Initiative, member: MemberResponse) {
+  constructor(initiative: Initiative, member: Member) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new InitiativeInformation(initiative);
@@ -31,7 +31,7 @@ export class StatusUpdateRequest implements Message {
 class RequestInfo implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  constructor(member: MemberResponse) {
+  constructor(member: Member) {
     this.text = {
       type: 'mrkdwn',
       text: `Hey ${member.name.split(' ')[0]}, what's the status of this initiative?`

@@ -43,7 +43,7 @@ interface CreateMemberRequestProperties {
   icon: string;
 }
 
-export class MemberResponse {
+export class Member {
   initiativeId: string;
   name: string;
   champion: boolean;

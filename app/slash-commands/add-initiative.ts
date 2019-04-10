@@ -2,7 +2,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
 import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
-import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
+import { Member, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
 
@@ -92,6 +92,6 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
   let initiative: Initiative = new Initiative(records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1));
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
-    .map(record => new MemberResponse(record));
+    .map(record => new Member(record));
   return initiative;
 }

@@ -1,6 +1,6 @@
 import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, Initiative, INITIATIVE_TYPE } from '../initiatives';
-import { MemberResponse, MEMBER_TYPE } from '../members';
+import { Member, MEMBER_TYPE } from '../members';
 import { sendMessage } from '../slack-api';
 import { StatusUpdateRequest, ParticipationUpdateRequest } from '../slack-messages';
 import { table } from '../shared';
@@ -40,6 +40,6 @@ async function getInitiativeDetails(initiativeId: string): Promise<Initiative> {
   let initiative: Initiative = new Initiative(records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1));
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
-    .map(record => new MemberResponse(record));
+    .map(record => new Member(record));
   return initiative;
 }

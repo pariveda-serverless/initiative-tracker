@@ -1,6 +1,6 @@
 import { snsWrapper, SnsSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, Initiative, INITIATIVE_TYPE } from '../initiatives';
-import { MemberResponse, MEMBER_TYPE } from '../members';
+import { Member, MEMBER_TYPE } from '../members';
 import { sendMessage } from '../slack-api';
 import { NewMemberNotification } from '../slack-messages';
 import { table } from '../shared';
@@ -9,7 +9,7 @@ export const handler = snsWrapper(async ({ message, success, error }: SnsSignatu
   try {
     const initiative = await getInitiativeDetails(message.initiativeId);
     if (initiative.channel) {
-      const notification = new NewMemberNotification(initiative, <MemberResponse>message);
+      const notification = new NewMemberNotification(initiative, <Member>message);
       await sendMessage(notification, initiative.team.id);
     }
     success();
@@ -34,6 +34,6 @@ async function getInitiativeDetails(initiativeId: string): Promise<Initiative> {
   let initiative: Initiative = new Initiative(records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1));
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
-    .map(record => new MemberResponse(record));
+    .map(record => new Member(record));
   return initiative;
 }

@@ -1,5 +1,5 @@
 import * as id from 'nanoid';
-import { MemberResponse, TEAM } from '../members';
+import { Member, TEAM } from '../members';
 
 export enum Status {
   ACTIVE = 'ACTIVE',
@@ -97,7 +97,7 @@ export class Initiative {
     domain: string;
   };
   office?: string;
-  members?: MemberResponse[];
+  members?: Member[];
   createdBy: {
     slackUserId: string;
     name: string;
