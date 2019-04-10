@@ -9,8 +9,8 @@ export class CreateQueryRequest {
   status: Status;
   office: string;
 
-  constructor({ text, status, office, isPublic }: QueryParams) {
-    this.queryId = id();
+  constructor({ queryId, text, status, office, isPublic }: QueryParams) {
+    this.queryId = queryId ? queryId : id();
     this.expiration = getExpiration();
     if (text) {
       ({ status, isPublic } = getQueryProperties(text));
@@ -61,6 +61,7 @@ export class Query {
 }
 
 interface QueryParams {
+  queryId?: string;
   text?: string;
   status?: Status;
   office?: string;
