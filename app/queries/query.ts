@@ -42,12 +42,15 @@ export class Query {
   }
 
   getUpdateRequest({ status, office }: QueryParams): CreateQueryRequest {
+    console.log(`Update request with new status ${status} and new office ${office}`);
     const officeChanged = this.office || (!status && !office);
     const statusChanged = this.status || (!status && !office);
     if (statusChanged) {
+      console.log('Status changed, updating');
       this.status = status;
     }
     if (officeChanged) {
+      console.log('Office changed, updating');
       this.office = office;
     }
     return new CreateQueryRequest(this);
