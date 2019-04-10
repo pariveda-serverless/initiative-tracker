@@ -26,7 +26,9 @@ async function getOrCreateQuery(payload: ActionPayload): Promise<Query> {
   if (queryId) {
     const existing = await getQuery(queryId);
     console.log('Existing', existing);
-    query = await saveQuery(existing.getUpdateRequest({ status, office }));
+    const updated = existing.getUpdateRequest({ status, office });
+    console.log('Updating', updated);
+    query = await saveQuery(updated);
     console.log('Updated', query);
   } else {
     const queryRequest = new CreateQueryRequest({ status, office });
