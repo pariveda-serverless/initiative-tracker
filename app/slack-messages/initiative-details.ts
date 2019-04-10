@@ -64,7 +64,7 @@ class DetailsFooter implements Section {
   text: MarkdownText;
   accessory: Button;
   constructor() {
-    const text = `Want to view a list of all initiatives? :bookmark_tabs:`.replace(/  +/g, '');
+    const text = `Click here to go back to the initiative search results :point_right:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
     this.accessory = new ViewListButton();
   }
