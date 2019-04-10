@@ -33,7 +33,7 @@ async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
     slackUserId: body.user_id
   };
   if (body.text) {
-    const query = new Query({ text: body.text });
+    const query = new Query({ text: body.text, office });
     fields = { ...fields, query };
   }
   return fields;
