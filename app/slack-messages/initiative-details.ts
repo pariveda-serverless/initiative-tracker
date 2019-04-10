@@ -38,9 +38,7 @@ export class DetailResponse implements Message {
         const memberSection = new MemberSection(member, initiative);
         return [memberSection, new Divider()];
       })
-      .reduce((all, block) => all.concat(block), [])
-      // Remove the last divider block
-      .slice(0, -1);
+      .reduce((all, block) => all.concat(block), []);
 
     const footer = new DetailsFooter();
     this.blocks = [...blocks, new Divider(), ...members, footer];
