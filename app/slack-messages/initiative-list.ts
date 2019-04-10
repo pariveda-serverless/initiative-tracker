@@ -109,7 +109,8 @@ class OfficeFilter implements StaticSelect {
     if (office) {
       this.initial_option = new OfficeOption(office);
     }
-    this.options = offices.map(office => new OfficeOption(office));
+    const options = offices.map(office => new OfficeOption(office));
+    this.options = [new ViewAllOption(), ...options];
   }
 }
 
@@ -140,8 +141,18 @@ class StatusFilter implements StaticSelect {
     if (status) {
       this.initial_option = new StatusOption(Status[status]);
     }
-    this.options = statuses.map(status => new StatusOption(Status[status]));
+    const options = statuses.map(status => new StatusOption(Status[status]));
+    this.options = [new ViewAllOption(), ...options];
   }
+}
+
+class ViewAllOption implements Option {
+  text: PlainText = {
+    type: 'plain_text',
+    text: 'View all'
+  };
+  value: string = stringifyValue({});
+  constructor() {}
 }
 
 class StatusOption implements Option {
