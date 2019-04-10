@@ -65,11 +65,13 @@ class Header implements Section {
   constructor(slackUserId: string, query: Query) {
     const status = query && query.status;
     const isPublic = query && query.isPublic;
+    const office = query && query.office;
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
-    const searchBold = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
+    const boldStatus = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
+    const boldOffice = office ? ` in *${office} ` : '';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';
     const publicNote = `, sharing <!here> because <@${slackUserId}> requested it with the ${searchCommand} slash command`;
-    const text = `Here are all the${searchBold}initiatives we could find :bookmark_tabs:${
+    const text = `Here are all the${boldStatus}initiatives we could find${boldOffice} :bookmark_tabs:${
       isPublic ? publicNote : ''
     }`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
@@ -165,7 +167,7 @@ class Footer implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor() {
-    const text = `Not seeing an initiative you want to join? :thinking_face: You should start a new one! :muscle:
+    const text = `Not seeing anything you want to join? :thinking_face: You should start a new initiative! :muscle:
     :tada: */add-initiative [name], [optional description], [optional #channel]* :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
