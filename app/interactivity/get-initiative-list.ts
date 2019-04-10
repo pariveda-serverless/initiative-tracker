@@ -11,7 +11,7 @@ export async function getInitiativeListAction(
 ): Promise<Message> {
   const slackUserId = payload.user.id;
   let status, office;
-  if (payload.actions && payload.actions.length > 0) {
+  if (payload.actions && payload.actions.length > 0 && payload.actions[0].selected_option) {
     ({ status, office } = parseValue(payload.actions[0].selected_option.value));
   }
   const query = new Query({ status, office });
