@@ -85,7 +85,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
-      console.log('Replying with response', JSON.stringify(response));
       await replyWithMessage(responseUrl, response as Message);
     }
     success();
