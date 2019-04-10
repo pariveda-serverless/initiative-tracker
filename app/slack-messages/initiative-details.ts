@@ -1,5 +1,5 @@
 import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button, PlainText } from 'slack';
-import { InitiativeResponse } from '../initiatives';
+import { Initiative } from '../initiatives';
 import {
   Divider,
   CreatedBy,
@@ -51,7 +51,7 @@ class DetailsHeader implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   block_id: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     const text = `Here are the details for the ${
       initiative.name
     } initiative - if it looks interesting you should join! :muscle:`.replace(/  +/g, '');
@@ -81,7 +81,7 @@ class ViewListButton implements Button {
 }
 
 interface DetailResponseProperties {
-  initiative: InitiativeResponse;
+  initiative: Initiative;
   slackUserId: string;
   isPublic?: boolean;
   channel?: string;

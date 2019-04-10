@@ -15,6 +15,6 @@ export async function getInitiativeListAction(
     ({ status, office } = parseValue(payload.actions[0].selected_option.value));
   }
   const query = new Query({ status, office });
-  const initiatives = await getInitiatives(teamId, query);
+  const initiatives = await getInitiatives(teamId);
   return new ListResponse({ initiatives, channelId, slackUserId, query });
 }

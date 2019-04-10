@@ -9,7 +9,7 @@ import {
   Option,
   PlainText
 } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
+import { Initiative, Status, getStatusDisplay } from '../initiatives';
 import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
 import { Query } from '../queries';
 import { ListAction, stringifyValue } from '../interactivity';
@@ -28,39 +28,37 @@ export class ListResponse implements Message {
 }
 
 function getInitiativeList(
-  initiatives: InitiativeResponse[],
+  initiatives: Initiative[],
   slackUserId: string,
   query: Query
 ): (Section | DividerBlock | Action | ContextBlock)[] {
   const initiativeSections = initiatives
+    // if a status was specified in query, filter to initiatives with that status
     .filter(initiative => !query || !query.status || query.status === initiative.status)
+    // if an office was specified in query, filter to initiatives in that office
     .filter(initiative => !query || !query.office || query.office === initiative.office)
     .map(initiative => {
-      const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
-      let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
-      const metaInformation = new CreatedBy(initiative);
-      blocks = [...blocks, metaInformation, new Divider()];
-      return blocks;
+      return [new InitiativeInformationAndViewDetails(initiative), new CreatedBy(initiative), new Divider()];
     })
-    .reduce((all, block) => all.concat(block), [])
-    // Remove the last divider block
-    .slice(0, -1);
+    // flatten the array of arrays into a single array
+    .reduce((all, block) => all.concat(block), []);
   return [
-    new ResultsHeader(slackUserId, query),
+    new Header(slackUserId, query),
+    new Divider(),
     new Filter(initiatives, query),
     ...initiativeSections,
-    new ResultsFooter()
+    new Footer()
   ];
 }
 
 interface ListResponseProperties {
-  initiatives: InitiativeResponse[];
+  initiatives: Initiative[];
   channelId: string;
   slackUserId: string;
   query?: Query;
 }
 
-class ResultsHeader implements Section {
+class Header implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   block_id: string;
@@ -81,7 +79,7 @@ class ResultsHeader implements Section {
 class Filter implements Action {
   type: 'actions' = 'actions';
   elements: StaticSelect[];
-  constructor(initiatives: InitiativeResponse[], query: Query) {
+  constructor(initiatives: Initiative[], query: Query) {
     const statuses = [...new Set(initiatives.map(initiative => initiative.status))];
     const statusFilter = new StatusFilter(statuses, query && query.status);
     this.elements = [statusFilter];
@@ -163,7 +161,7 @@ class StatusOption implements Option {
   }
 }
 
-class ResultsFooter implements Section {
+class Footer implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor() {

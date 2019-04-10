@@ -1,5 +1,5 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
+import { CreateInitiativeRequest, Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
 import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
 import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
@@ -76,7 +76,7 @@ function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   return table.put(params).promise();
 }
 
-async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<Initiative> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
@@ -89,9 +89,7 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
-  let initiative: InitiativeResponse = new InitiativeResponse(
-    records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
-  );
+  let initiative: Initiative = new Initiative(records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1));
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
     .map(record => new MemberResponse(record));

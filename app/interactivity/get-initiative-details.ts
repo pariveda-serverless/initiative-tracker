@@ -1,4 +1,4 @@
-import { InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
+import { Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
 import { getTeamIdentifier, MEMBER_TYPE, MemberResponse } from '../members';
 import { ActionPayload, Message } from 'slack';
 import { parseValue } from './id-helper';
@@ -16,7 +16,7 @@ export async function getInitiativeDetailsAction(
   return new DetailResponse({ initiative, slackUserId, channel });
 }
 
-export async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
+export async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<Initiative> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
@@ -29,7 +29,7 @@ export async function getInitiativeDetails(teamId: string, initiativeId: string)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
-  let initiative: InitiativeResponse = new InitiativeResponse(records.find(record => record.type === INITIATIVE_TYPE));
+  let initiative: Initiative = new Initiative(records.find(record => record.type === INITIATIVE_TYPE));
   initiative.members = records.filter(record => record.type === MEMBER_TYPE).map(record => new MemberResponse(record));
   return initiative;
 }

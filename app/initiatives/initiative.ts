@@ -81,7 +81,7 @@ export class CreateInitiativeRequest {
   }
 }
 
-export class InitiativeResponse {
+export class Initiative {
   initiativeId: string;
   name: string;
   description: string;

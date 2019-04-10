@@ -1,11 +1,11 @@
 import { TextElement, SelectElement, SelectElementOption, Dialog } from 'slack';
-import { InitiativeResponse, Status, getStatusDisplay } from '../initiatives';
+import { Initiative, Status, getStatusDisplay } from '../initiatives';
 import { stringifyValue, InitiativeAction } from '../interactivity';
 
 export class EditInitiativeDialog {
   trigger_id: string;
   dialog: Dialog;
-  constructor(initiative: InitiativeResponse, triggerId: string, responseUrl: string) {
+  constructor(initiative: Initiative, triggerId: string, responseUrl: string) {
     this.dialog = new InitiativeDialog(initiative, responseUrl);
     this.trigger_id = triggerId;
   }
@@ -16,7 +16,7 @@ export class InitiativeDialog implements Dialog {
   callback_id = InitiativeAction.EDIT_INITIATIVE;
   elements: (TextElement | SelectElement)[];
   state: string;
-  constructor(initiative: InitiativeResponse, responseUrl: string) {
+  constructor(initiative: Initiative, responseUrl: string) {
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
     const channel = new ChannelSelect(initiative);
@@ -32,7 +32,7 @@ class StatusSelect implements SelectElement {
   value: string;
   type: 'select' = 'select';
   options: SelectElementOption[];
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.value = initiative.status;
     this.options = Object.values(Status).map(status => new StatusOption(getStatusDisplay(status), status));
   }
@@ -55,7 +55,7 @@ class ChannelSelect implements SelectElement {
   type: 'select' = 'select';
   data_source: 'channels' = 'channels';
   optional = true;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.value = initiative.channel ? initiative.channel.id : null;
   }
 }
@@ -65,7 +65,7 @@ class NameInput implements TextElement {
   name = 'name';
   type: 'text' = 'text';
   value: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.value = initiative.name;
   }
 }
@@ -76,7 +76,7 @@ class DescriptionInput implements TextElement {
   type: 'textarea' = 'textarea';
   value: string;
   optional: boolean = true;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.value = initiative.description;
   }
 }

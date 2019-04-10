@@ -12,13 +12,13 @@ import {
 import { InitiativeInformation, CreatedBy } from './shared-messages';
 import { stringifyValue, MemberAction } from '../interactivity';
 import { MemberResponse } from '../members';
-import { InitiativeResponse } from '../initiatives';
+import { Initiative } from '../initiatives';
 
 export class ParticipationUpdateRequest implements Message {
   channel: string;
   text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: InitiativeResponse, member: MemberResponse) {
+  constructor(initiative: Initiative, member: MemberResponse) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new InitiativeInformation(initiative);
@@ -42,7 +42,7 @@ class RequestInfo implements Section {
 class UpdateParticipationActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
-  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+  constructor(member: MemberResponse, initiative: Initiative) {
     const yes = new MarkParticipatingButton(member, initiative);
     const no = new MarkLeftButton(member, initiative);
     this.elements = [yes, no];
@@ -54,7 +54,7 @@ class MarkParticipatingButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+  constructor(member: MemberResponse, initiative: Initiative) {
     this.action_id = MemberAction.REMAIN_MEMBER;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
@@ -69,7 +69,7 @@ class MarkLeftButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(member: MemberResponse, initiative: InitiativeResponse) {
+  constructor(member: MemberResponse, initiative: Initiative) {
     this.action_id = MemberAction.REMOVE_MEMBER;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
