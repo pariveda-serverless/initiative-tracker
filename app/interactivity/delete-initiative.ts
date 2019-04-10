@@ -2,8 +2,8 @@ import { ActionPayload, Message } from 'slack';
 import { DeleteResponse } from '../slack-messages';
 import { parseValue } from './id-helper';
 import { getTeamIdentifier } from '../members';
-import { initiativesTable } from '../shared';
-import { InitiativeRecord, InitiativeResponse, INITIATIVE_TYPE } from '../initiatives';
+import { table } from '../shared';
+import { InitiativeRecord, Initiative, INITIATIVE_TYPE } from '../initiatives';
 
 export async function deleteInitiativeAction(
   teamId: string,
@@ -23,11 +23,11 @@ async function deleteInitiative(teamId: string, initiativeId: string): Promise<s
     ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', queryParams);
-  const records = await initiativesTable
+  const records = await table
     .query(queryParams)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
-  const initiative = new InitiativeResponse(records.find(record => record.type === INITIATIVE_TYPE));
+  const initiative = new Initiative(records.find(record => record.type === INITIATIVE_TYPE));
   const deleteParams = { RequestItems: {} };
   deleteParams.RequestItems[process.env.INITIATIVES_TABLE] = records.map(record => {
     return {
@@ -35,6 +35,6 @@ async function deleteInitiative(teamId: string, initiativeId: string): Promise<s
     };
   });
   console.log('Deleting initiative with params', deleteParams);
-  await initiativesTable.batchWrite(deleteParams).promise();
+  await table.batchWrite(deleteParams).promise();
   return initiative ? initiative.name : '';
 }

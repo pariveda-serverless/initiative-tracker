@@ -11,14 +11,14 @@ import {
 } from 'slack';
 import { InitiativeInformation, CreatedBy } from './shared-messages';
 import { stringifyValue, InitiativeAction } from '../interactivity';
-import { MemberResponse } from '../members';
-import { InitiativeResponse, Status } from '../initiatives';
+import { Member } from '../members';
+import { Initiative, Status } from '../initiatives';
 
 export class StatusUpdateRequest implements Message {
   channel: string;
   text;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: InitiativeResponse, member: MemberResponse) {
+  constructor(initiative: Initiative, member: Member) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new InitiativeInformation(initiative);
@@ -31,7 +31,7 @@ export class StatusUpdateRequest implements Message {
 class RequestInfo implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
-  constructor(member: MemberResponse) {
+  constructor(member: Member) {
     this.text = {
       type: 'mrkdwn',
       text: `Hey ${member.name.split(' ')[0]}, what's the status of this initiative?`
@@ -42,7 +42,7 @@ class RequestInfo implements Section {
 class UpdateStatusActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     const active = new MarkActiveButton(initiative);
     const abandoned = new MarkAbandonedButton(initiative);
     const onHold = new MarkOnHoldButton(initiative);
@@ -56,7 +56,7 @@ class MarkActiveButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.MARK_ACTIVE;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
@@ -71,7 +71,7 @@ class MarkAbandonedButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.MARK_ABANDONED;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
@@ -86,7 +86,7 @@ class MarkOnHoldButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.MARK_ON_HOLD;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,
@@ -101,7 +101,7 @@ class MarkCompleteButton implements Button {
   text: PlainText;
   action_id: string;
   value?: string;
-  constructor(initiative: InitiativeResponse) {
+  constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.MARK_COMPLETE;
     this.value = stringifyValue({
       initiativeId: initiative.initiativeId,

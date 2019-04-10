@@ -1,1 +1,1 @@
-export * from './initiatives-table';
+export * from './tables';

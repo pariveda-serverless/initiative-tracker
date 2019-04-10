@@ -1,6 +1,6 @@
 import { SNS } from 'aws-sdk';
 import { StreamSignature, streamWrapper } from '@manwaring/lambda-wrapper';
-import { MEMBER_TYPE, MemberResponse } from '../members';
+import { MEMBER_TYPE, Member } from '../members';
 import { InitiativeRecord } from '../initiatives';
 
 const sns = new SNS({ apiVersion: '2010-03-31' });
@@ -12,7 +12,7 @@ export const handler = streamWrapper(async ({ versions, success, error }: Stream
         const record = <InitiativeRecord>version.newVersion;
         return record && record.identifiers.indexOf(MEMBER_TYPE) > -1 && !version.oldVersion;
       })
-      .map(version => new MemberResponse(version.newVersion));
+      .map(version => new Member(version.newVersion));
     await Promise.all(newMembers.map(member => publishNewMembersForNotifications(member)));
     success();
   } catch (err) {
@@ -20,7 +20,7 @@ export const handler = streamWrapper(async ({ versions, success, error }: Stream
   }
 });
 
-async function publishNewMembersForNotifications(member: MemberResponse): Promise<any> {
+async function publishNewMembersForNotifications(member: Member): Promise<any> {
   const params = {
     Message: JSON.stringify(member),
     TopicArn: process.env.NOTIFY_ON_JOIN_SNS

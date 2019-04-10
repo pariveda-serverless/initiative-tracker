@@ -1,28 +1,36 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
+import { label, metric } from '@iopipe/iopipe';
 import { Message, ActionPayload } from 'slack';
-import { InitiativeAction, MemberAction } from './interactions';
+import { InitiativeAction, MemberAction, ListAction } from './interactions';
 import { replyWithMessage } from '../slack-api';
-import { NotImplementedResponse, EditInitiativeDialog } from '../slack-messages';
+import { NotImplementedResponse } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
 import { getInitiativeDetailsAction } from './get-initiative-details';
 import { updateStatusAction } from './update-status';
 import { editInitiativeAction } from './edit-initiative';
 import { remainMemberAction } from './remain-member';
-import { parseValue } from './id-helper';
+import { parseValue, Value } from './id-helper';
 import { deleteInitiativeAction } from './delete-initiative';
 import { openEditDialogAction } from './open-edit-dialog';
 import { changeMembershipAction } from './change-membership';
 import { leaveInitiativeAction } from './leave-initiative';
 import { openAddMemberDialogAction } from './open-add-member-dialog';
 import { addMemberAction } from './add-member';
+import { getInitiativeListAction } from './get-initiative-list';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    let response: Message | EditInitiativeDialog;
-    const { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
+    let response: Message;
+    let { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
         response = await getInitiativeDetailsAction(teamId, channel, payload);
+        break;
+      }
+      case ListAction.FILTER_BY_OFFICE:
+      case ListAction.FILTER_BY_STATUS:
+      case InitiativeAction.VIEW_LIST: {
+        response = await getInitiativeListAction(teamId, channel, payload);
         break;
       }
       case InitiativeAction.DELETE: {
@@ -30,19 +38,19 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.OPEN_EDIT_DIALOG: {
-        await openEditDialogAction(teamId, channel, payload, triggerId);
+        await openEditDialogAction(teamId, channel, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.EDIT_INITIATIVE: {
-        response = await editInitiativeAction(teamId, channel, payload);
+        ({ response, responseUrl } = await editInitiativeAction(teamId, channel, payload));
         break;
       }
       case InitiativeAction.OPEN_ADD_MEMBER_DIALOG: {
-        await openAddMemberDialogAction(teamId, channel, payload, triggerId);
+        await openAddMemberDialogAction(teamId, channel, payload, triggerId, responseUrl);
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
-        response = await addMemberAction(teamId, channel, payload);
+        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -77,7 +85,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
-      console.log('Replying with response', JSON.stringify(response));
       await replyWithMessage(responseUrl, response as Message);
     }
     success();
@@ -96,15 +103,26 @@ function getFieldsFromBody(body: any) {
   return { payload, teamId, responseUrl, channel, action, triggerId };
 }
 
-function getAction(payload: ActionPayload): InitiativeAction | MemberAction {
+function getAction(payload: ActionPayload): InitiativeAction | MemberAction | ListAction {
   const callbackAction = payload.callback_id;
   const buttonAction = payload.actions && payload.actions.length > 0 && payload.actions[0].action_id;
-  const option =
-    payload.actions &&
-    payload.actions.length &&
-    payload.actions[0].selected_option &&
-    parseValue(payload.actions[0].selected_option.value);
+  const option = getOption(payload);
   const action = (option && option.action) || buttonAction || callbackAction;
   console.log('Action', action);
+  label(action);
+  metric('action', action);
   return action;
+}
+
+function getOption(payload: ActionPayload): Value {
+  let option: Value;
+  try {
+    option =
+      payload.actions &&
+      payload.actions.length &&
+      payload.actions[0].selected_option &&
+      payload.actions[0].selected_option.value &&
+      parseValue(payload.actions[0].selected_option.value);
+  } catch (err) {}
+  return option;
 }

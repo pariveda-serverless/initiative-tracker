@@ -7,8 +7,12 @@ const keyMappings = {
   slackUserId: 'suid',
   action: 'a',
   status: 's',
+  office: 'o',
   champion: 'c',
-  remove: 'r'
+  remove: 'r',
+  blockId: 'bid',
+  responseUrl: 'rurl',
+  queryId: 'qid'
 };
 
 let mappings = {};
@@ -36,11 +40,15 @@ export function parseValue(value: any): Value {
   return payload;
 }
 
-interface Value {
-  initiativeId?: any;
-  slackUserId?: any;
+export interface Value {
+  initiativeId?: string;
+  slackUserId?: string;
   action?: any;
   status?: any;
-  champion?: any;
-  remove?: any;
+  office?: string;
+  champion?: boolean;
+  remove?: boolean;
+  blockId?: string;
+  responseUrl?: string;
+  queryId?: string;
 }

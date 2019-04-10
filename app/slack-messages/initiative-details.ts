@@ -1,5 +1,5 @@
-import { Message, Section, DividerBlock, Action, ContextBlock } from 'slack';
-import { InitiativeResponse } from '../initiatives';
+import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button, PlainText } from 'slack';
+import { Initiative } from '../initiatives';
 import {
   Divider,
   CreatedBy,
@@ -7,15 +7,19 @@ import {
   InitiativeInformationAndUpdateActions,
   MemberSection
 } from './shared-messages';
+import { InitiativeAction } from '../interactivity';
 
 export class DetailResponse implements Message {
   channel: string;
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
-  constructor(initiative: InitiativeResponse, slackUserId: string, channel?: string) {
+  constructor({ initiative, slackUserId, isPublic, channel }: DetailResponseProperties) {
     this.channel = channel;
-    const divider = new Divider();
 
     let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [];
+
+    const header = new DetailsHeader(initiative);
+    blocks.push(header);
+
     const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
     blocks.push(nameAndStatus);
 
@@ -23,7 +27,7 @@ export class DetailResponse implements Message {
     blocks.push(metaInformation);
 
     // Only add the join buttons if the user isn't already a member
-    if (!initiative.members.find(member => member.slackUserId === slackUserId)) {
+    if (isPublic || !initiative.members.find(member => member.slackUserId === slackUserId)) {
       const initiativeActions = new InitiativeDetailActions(initiative);
       blocks.push(initiativeActions);
     }
@@ -32,10 +36,51 @@ export class DetailResponse implements Message {
       .sort(member => (member.champion ? -1 : 1))
       .map(member => {
         const memberSection = new MemberSection(member, initiative);
-        return [memberSection, divider];
+        return [memberSection, new Divider()];
       })
       .reduce((all, block) => all.concat(block), []);
-    // Remove the last divider block
-    this.blocks = [...blocks, divider, ...members].slice(0, -1);
+
+    const footer = new DetailsFooter();
+    this.blocks = [...blocks, new Divider(), ...members, footer];
   }
+}
+
+class DetailsHeader implements Section {
+  type: 'section' = 'section';
+  text: MarkdownText;
+  block_id: string;
+  constructor(initiative: Initiative) {
+    const text = `Here are the details for the ${
+      initiative.name
+    } initiative - if it looks interesting you should join! :muscle:`.replace(/  +/g, '');
+    this.text = { type: 'mrkdwn', text };
+  }
+}
+
+class DetailsFooter implements Section {
+  type: 'section' = 'section';
+  text: MarkdownText;
+  accessory: Button;
+  constructor() {
+    const text = `Click here to go back to the initiative search results :point_right:`.replace(/  +/g, '');
+    this.text = { type: 'mrkdwn', text };
+    this.accessory = new ViewListButton();
+  }
+}
+
+class ViewListButton implements Button {
+  type: 'button' = 'button';
+  text: PlainText;
+  action_id = InitiativeAction.VIEW_LIST;
+  constructor() {
+    const text = `View all initiatives`.replace(/  +/g, '');
+    this.text = { type: 'plain_text', text };
+  }
+}
+
+interface DetailResponseProperties {
+  initiative: Initiative;
+  slackUserId: string;
+  isPublic?: boolean;
+  channel?: string;
 }

@@ -4,15 +4,19 @@ import { getInitiativeDetails } from './get-initiative-details';
 import { DetailResponse } from '../slack-messages';
 import { getChannelInfo } from '../slack-api';
 import { getInitiativeIdentifiers } from '../initiatives';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 
-export async function editInitiativeAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
+export async function editInitiativeAction(
+  teamId: string,
+  channel: string,
+  payload: ActionPayload
+): Promise<{ response: Message; responseUrl: string }> {
   const slackUserId = payload.user.id;
   const { name, description, status, channelId } = payload.submission;
-  const { initiativeId } = parseValue(payload.state);
+  const { initiativeId, responseUrl } = parseValue(payload.state);
   await updateInitiative(teamId, initiativeId, name, description, status, channelId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return { response: new DetailResponse({ initiative, slackUserId, channel }), responseUrl };
 }
 
 async function updateInitiative(
@@ -37,5 +41,5 @@ async function updateInitiative(
     ExpressionAttributeValues: { ':name': name, ':description': description, ':status': status, ':channel': channel }
   };
   console.log('Updating initiative with params', params);
-  return initiativesTable.update(params).promise();
+  return table.update(params).promise();
 }

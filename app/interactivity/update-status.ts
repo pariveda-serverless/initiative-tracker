@@ -2,7 +2,7 @@ import { Message, ActionPayload } from 'slack';
 import { parseValue } from './id-helper';
 import { getInitiativeDetails } from './get-initiative-details';
 import { getInitiativeIdentifiers, Status } from '../initiatives';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 import { DetailResponse } from '../slack-messages';
 
 export async function updateStatusAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
@@ -11,7 +11,7 @@ export async function updateStatusAction(teamId: string, channel: string, payloa
   const slackUserId = payload.user.id;
   await updateInitiativeStatus(initiativeId, teamId, status);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function updateInitiativeStatus(initiativeId: string, teamId: string, status: Status): Promise<any> {
@@ -23,5 +23,5 @@ async function updateInitiativeStatus(initiativeId: string, teamId: string, stat
     ExpressionAttributeValues: { ':status': status }
   };
   console.log('Updating initiative status with params', params);
-  await initiativesTable.update(params).promise();
+  await table.update(params).promise();
 }

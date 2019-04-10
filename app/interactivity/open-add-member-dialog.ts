@@ -8,10 +8,11 @@ export async function openAddMemberDialogAction(
   teamId: string,
   channel: string,
   payload: ActionPayload,
-  triggerId: string
+  triggerId: string,
+  responseUrl: string
 ): Promise<any> {
   const { initiativeId } = parseValue(payload.actions[0].selected_option.value);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  const dialog = new AddMemberDialog(initiative, triggerId);
+  const dialog = new AddMemberDialog(initiative, triggerId, responseUrl);
   await sendDialogue(teamId, dialog);
 }

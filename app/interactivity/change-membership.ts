@@ -3,7 +3,7 @@ import { parseValue } from './id-helper';
 import { DetailResponse } from '../slack-messages';
 import { getInitiativeDetails } from './get-initiative-details';
 import { getMemberIdentifiers } from '../members';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 import { MemberAction } from './interactions';
 
 export async function changeMembershipAction(
@@ -14,7 +14,7 @@ export async function changeMembershipAction(
   const { initiativeId, slackUserId, action } = parseValue(payload.actions[0].selected_option.value);
   await changeMembership(initiativeId, teamId, slackUserId, action === MemberAction.MAKE_CHAMPION);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
-  return new DetailResponse(initiative, slackUserId, channel);
+  return new DetailResponse({ initiative, slackUserId, channel });
 }
 
 async function changeMembership(
@@ -31,5 +31,5 @@ async function changeMembership(
     ExpressionAttributeValues: { ':champion': champion }
   };
   console.log('Updating membership type with params', params);
-  await initiativesTable.update(params).promise();
+  await table.update(params).promise();
 }

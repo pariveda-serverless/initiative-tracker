@@ -14,6 +14,7 @@ provider:
   runtime: nodejs8.10
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
+    QUERIES_TABLE: { Ref: QueriesTable }
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_IDENTIFIERS_INDEX: ${self:custom.identifiersIndex}
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
@@ -51,6 +52,7 @@ provider:
         - dynamodb:DeleteItem
         - dynamodb:BatchWriteItem
       Resource:
+        - { Fn::GetAtt: [QueriesTable, Arn] }
         - { Fn::GetAtt: [InitiativesTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
     - Effect: Allow
@@ -163,6 +165,9 @@ resources:
           - AttributeName: identifiers
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: expiration
+          Enabled: true
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
         GlobalSecondaryIndexes:
@@ -190,3 +195,17 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+
+    QueriesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: queryId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: queryId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: expiration
+          Enabled: true

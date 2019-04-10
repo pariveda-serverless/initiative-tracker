@@ -1,18 +1,18 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateInitiativeRequest, InitiativeResponse, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
+import { CreateInitiativeRequest, Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
 import { getUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
-import { MemberResponse, MEMBER_TYPE, getTeamIdentifier } from '../members';
+import { Member, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
-import { initiativesTable } from '../shared';
+import { table } from '../shared';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
     const { team, createdBy, name, channel, description } = await getFieldsFromBody(body);
     const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
     await saveInitiative(initiativeRequest);
-    const initiativeDetails = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
-    const message = new DetailResponse(initiativeDetails, createdBy.slackUserId);
+    const initiative = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
+    const message = new DetailResponse({ initiative, slackUserId: createdBy.slackUserId });
     console.log(message);
     console.log(JSON.stringify(message));
     success(message);
@@ -73,10 +73,10 @@ export function getParsedChannel(id: string, name: string): string {
 function saveInitiative(Item: CreateInitiativeRequest): Promise<any> {
   const params = { TableName: process.env.INITIATIVES_TABLE, Item };
   console.log('Creating new initiative with params', params);
-  return initiativesTable.put(params).promise();
+  return table.put(params).promise();
 }
 
-async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<InitiativeResponse> {
+async function getInitiativeDetails(teamId: string, initiativeId: string): Promise<Initiative> {
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     KeyConditionExpression: '#initiativeId = :initiativeId and begins_with(#identifiers, :identifiers)',
@@ -84,16 +84,14 @@ async function getInitiativeDetails(teamId: string, initiativeId: string): Promi
     ExpressionAttributeValues: { ':initiativeId': initiativeId, ':identifiers': getTeamIdentifier(teamId) }
   };
   console.log('Getting initiative details with params', params);
-  const records = await initiativesTable
+  const records = await table
     .query(params)
     .promise()
     .then(res => <InitiativeRecord[]>res.Items);
   console.log('Received initiative records', records);
-  let initiative: InitiativeResponse = new InitiativeResponse(
-    records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1)
-  );
+  let initiative: Initiative = new Initiative(records.find(record => record.type.indexOf(INITIATIVE_TYPE) > -1));
   initiative.members = records
     .filter(record => record.type.indexOf(MEMBER_TYPE) > -1)
-    .map(record => new MemberResponse(record));
+    .map(record => new Member(record));
   return initiative;
 }
