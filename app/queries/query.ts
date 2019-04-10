@@ -46,13 +46,16 @@ export class Query {
     const officeChanged = this.office || (!status && !office);
     const statusChanged = this.status || (!status && !office);
     if (statusChanged) {
-      console.log('Status changed, updating');
+      console.log(`Status changed, updating from ${this.status}`);
       this.status = status;
+      console.log(`to ${this.status}`);
     }
     if (officeChanged) {
-      console.log('Office changed, updating');
+      console.log(`Office changed, updating from ${this.office}`);
       this.office = office;
+      console.log(`to ${this.office}`);
     }
+    console.log('Returning new query', this);
     return new CreateQueryRequest(this);
   }
 }
