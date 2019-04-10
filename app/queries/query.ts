@@ -41,10 +41,8 @@ export class Query {
     this.office = record.office;
   }
 
-  getUpdateRequest({ status, office }: QueryParams): CreateQueryRequest {
+  getUpdateRequest({ status, office, statusChanged, officeChanged }: QueryUpdateParams): CreateQueryRequest {
     console.log(`New status: ${status}, New office: ${office}`);
-    const officeChanged = office || (!status && !office);
-    const statusChanged = status || (!status && !office);
     console.log(`Status changed: ${statusChanged}, Office changed: ${officeChanged}`);
     if (statusChanged) {
       this.status = status;
@@ -54,6 +52,13 @@ export class Query {
     }
     return new CreateQueryRequest(this);
   }
+}
+
+interface QueryUpdateParams {
+  status: Status;
+  office: string;
+  statusChanged: boolean;
+  officeChanged: boolean;
 }
 
 interface QueryParams {

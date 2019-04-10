@@ -4,6 +4,8 @@ import { getInitiatives, saveQuery } from '../slash-commands/list-initiatives';
 import { Query, CreateQueryRequest } from '../queries';
 import { parseValue } from './id-helper';
 import { table } from '../shared';
+import { Status } from '../initiatives';
+import { ListAction } from './interactions';
 
 export async function getInitiativeListAction(
   teamId: string,
@@ -17,14 +19,17 @@ export async function getInitiativeListAction(
 }
 
 async function getOrCreateQuery(payload: ActionPayload): Promise<Query> {
-  let status, office, queryId;
+  let status: Status, office: string, statusChanged: boolean, officeChanged: boolean, queryId: string;
   if (payload.actions && payload.actions.length > 0 && payload.actions[0].selected_option) {
-    ({ status, office, queryId } = parseValue(payload.actions[0].selected_option.value));
+    const action = payload.actions[0];
+    statusChanged = action.action_id === ListAction.FILTER_BY_STATUS;
+    officeChanged = action.action_id === ListAction.FILTER_BY_OFFICE;
+    ({ status, office, queryId } = parseValue(action.selected_option.value));
   }
   let query;
   if (queryId) {
     const existing = await getQuery(queryId);
-    query = await saveQuery(existing.getUpdateRequest({ status, office }));
+    query = await saveQuery(existing.getUpdateRequest({ status, office, statusChanged, officeChanged }));
   } else {
     const queryRequest = new CreateQueryRequest({ status, office });
     query = await saveQuery(queryRequest);
