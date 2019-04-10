@@ -68,7 +68,7 @@ class Header implements Section {
     const office = query && query.office;
     const search = status ? `${getStatusDisplay(status).toLowerCase()}` : ' ';
     const boldStatus = status ? ` *${getStatusDisplay(status).toLowerCase()}* ` : ' ';
-    const boldOffice = office ? ` in *${office} ` : '';
+    const boldOffice = office ? ` in *${office}* ` : '';
     const searchCommand = status ? `*/show-initiatives public, ${search}*` : '*/show-initiatives public*';
     const publicNote = `, sharing <!here> because <@${slackUserId}> requested it with the ${searchCommand} slash command`;
     const text = `Here are all the${boldStatus}initiatives we could find${boldOffice} :bookmark_tabs:${
