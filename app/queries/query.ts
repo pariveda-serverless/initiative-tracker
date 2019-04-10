@@ -42,8 +42,8 @@ export class Query {
   }
 
   getUpdateRequest({ status, office }: QueryParams): CreateQueryRequest {
-    const officeChanged = this.office || (!status && !office);
-    const statusChanged = this.status || (!status && !office);
+    const officeChanged = office || (!status && !office);
+    const statusChanged = status || (!status && !office);
     if (statusChanged) {
       this.status = status;
     }
