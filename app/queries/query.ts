@@ -15,7 +15,7 @@ export class CreateQueryRequest {
     if (text && !status && !isPublic) {
       ({ status, isPublic } = getQueryProperties(text));
     }
-    this.text = text;
+    this.text = text ? text : null;
     this.isPublic = isPublic;
     this.status = status;
     this.office = office;
