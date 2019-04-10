@@ -1,8 +1,9 @@
 import { ActionPayload, Message } from 'slack';
 import { ListResponse } from '../slack-messages';
-import { getInitiatives } from '../slash-commands/list-initiatives';
-import { Query } from '../queries';
+import { getInitiatives, saveQuery } from '../slash-commands/list-initiatives';
+import { Query, CreateQueryRequest } from '../queries';
 import { parseValue } from './id-helper';
+import { table } from '../shared';
 
 export async function getInitiativeListAction(
   teamId: string,
@@ -10,11 +11,32 @@ export async function getInitiativeListAction(
   payload: ActionPayload
 ): Promise<Message> {
   const slackUserId = payload.user.id;
-  let status, office;
-  if (payload.actions && payload.actions.length > 0 && payload.actions[0].selected_option) {
-    ({ status, office } = parseValue(payload.actions[0].selected_option.value));
-  }
-  const query = new Query({ status, office });
+  const query = await getOrCreateQuery(payload);
   const initiatives = await getInitiatives(teamId);
   return new ListResponse({ initiatives, channelId, slackUserId, query });
+}
+
+async function getOrCreateQuery(payload: ActionPayload): Promise<Query> {
+  let status, office, queryId;
+  if (payload.actions && payload.actions.length > 0 && payload.actions[0].selected_option) {
+    ({ status, office, queryId } = parseValue(payload.actions[0].selected_option.value));
+  }
+  let query;
+  if (queryId) {
+    const existing = await getQuery(queryId);
+    query = await saveQuery(existing.getUpdateRequest({ status, office }));
+  } else {
+    const queryRequest = new CreateQueryRequest({ status, office });
+    query = await saveQuery(queryRequest);
+  }
+  return query;
+}
+
+async function getQuery(queryId: string): Promise<Query> {
+  const params = { TableName: process.env.QUERIES_TABLE, Key: { queryId } };
+  console.log('Getting query with params', params);
+  return await table
+    .get(params)
+    .promise()
+    .then(res => new Query(res.Item));
 }

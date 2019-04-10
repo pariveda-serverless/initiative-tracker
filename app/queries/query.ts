@@ -1,12 +1,17 @@
+import * as id from 'nanoid';
 import { Status } from '../initiatives';
 
-export class Query {
+export class CreateQueryRequest {
+  queryId: string;
+  expiration: number;
   text: string;
   isPublic: boolean;
   status: Status;
   office: string;
 
   constructor({ text, status, office, isPublic }: QueryParams) {
+    this.queryId = id();
+    this.expiration = getExpiration();
     if (text) {
       ({ status, isPublic } = getQueryProperties(text));
     }
@@ -14,6 +19,38 @@ export class Query {
     this.isPublic = isPublic;
     this.status = status;
     this.office = office;
+  }
+
+  getQuery(): Query {
+    return new Query(this);
+  }
+}
+
+export class Query {
+  queryId: string;
+  text: string;
+  isPublic: boolean;
+  status: Status;
+  office: string;
+
+  constructor(record: any) {
+    this.queryId = record.queryId;
+    this.text = record.text;
+    this.isPublic = record.isPublic;
+    this.status = record.status;
+    this.office = record.office;
+  }
+
+  getUpdateRequest({ status, office }: QueryParams): CreateQueryRequest {
+    const officeChanged = this.office !== office && this.status === status;
+    const statusChanged = this.status !== status && this.office === office;
+    if (statusChanged) {
+      this.status = status;
+    }
+    if (officeChanged) {
+      this.office = office;
+    }
+    return new CreateQueryRequest(this);
   }
 }
 
@@ -50,4 +87,11 @@ function getStatus(arg: string): Status {
 function getIsPublic(arg: string): boolean {
   const isPublic = arg.toUpperCase().trim() === 'PUBLIC';
   return isPublic || undefined;
+}
+
+function getExpiration(): number {
+  const hoursToExpire = 96;
+  const secondsInHour = 60 * 60;
+  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  return secondsSinceEpoch + hoursToExpire * secondsInHour;
 }

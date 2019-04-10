@@ -1,14 +1,14 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { InitiativeRecord, Initiative, getInitiativeIdentifiers, Status } from '../initiatives';
+import { InitiativeRecord, Initiative, getInitiativeIdentifiers } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
 import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
-import { Query } from '../queries';
+import { Query, CreateQueryRequest } from '../queries';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { teamId, office, channelId, slackUserId, query } = await getFieldsFromBody(body);
+    const { teamId, channelId, slackUserId, query } = await getFieldsFromBody(body);
     const initiatives = await getInitiatives(teamId);
     const message = new ListResponse({ initiatives, channelId, slackUserId, query });
     console.log(message);
@@ -28,12 +28,12 @@ async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
   const { office } = await getUserProfile(body.user_id, body.team_id);
   let fields: Fields = {
     teamId: body.team_id,
-    office,
     channelId: body.channel_id,
     slackUserId: body.user_id
   };
   if (body.text) {
-    const query = new Query({ text: body.text, office });
+    const queryRequest = new CreateQueryRequest({ text: body.text, office });
+    const query = await saveQuery(queryRequest);
     fields = { ...fields, query };
   }
   return fields;
@@ -41,10 +41,16 @@ async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
 
 interface Fields {
   teamId: string;
-  office: string;
   channelId: string;
   slackUserId: string;
   query?: Query;
+}
+
+export async function saveQuery(query: CreateQueryRequest): Promise<Query> {
+  const params = { TableName: process.env.QUERIES_TABLE, Item: query };
+  console.log('Saving query with params', params);
+  await table.put(params).promise();
+  return query.getQuery();
 }
 
 export async function getInitiatives(teamId: string): Promise<Initiative[]> {

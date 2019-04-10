@@ -83,13 +83,13 @@ class Filter implements Action {
   elements: StaticSelect[];
   constructor(initiatives: Initiative[], query: Query) {
     const statuses = [...new Set(initiatives.map(initiative => initiative.status))];
-    const statusFilter = new StatusFilter(statuses, query && query.status);
+    const statusFilter = new StatusFilter(statuses, query);
     this.elements = [statusFilter];
     const offices = [
       ...new Set(initiatives.filter(initiative => initiative.office).map(initiative => initiative.office))
     ];
     if (offices && offices.length) {
-      this.elements.push(new OfficeFilter(offices, query && query.office));
+      this.elements.push(new OfficeFilter(offices, query));
     }
   }
 }
@@ -100,27 +100,27 @@ class OfficeFilter implements StaticSelect {
   options: Option[];
   initial_option: Option;
   action_id = ListAction.FILTER_BY_OFFICE;
-  constructor(offices: string[], office: string) {
+  constructor(offices: string[], query: Query) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by office',
       emoji: true
     };
-    this.initial_option = office ? new OfficeOption(office) : new ViewAllOption();
-    const options = offices.map(office => new OfficeOption(office));
-    this.options = [new ViewAllOption(), ...options];
+    this.initial_option = query.office ? new OfficeOption(query.office, query) : new ViewAllOption(query);
+    const options = offices.map(office => new OfficeOption(office, query));
+    this.options = [new ViewAllOption(query), ...options];
   }
 }
 
 class OfficeOption implements Option {
   text: PlainText;
   value: string;
-  constructor(office: string) {
+  constructor(office: string, query: Query) {
     this.text = {
       type: 'plain_text',
       text: office
     };
-    this.value = stringifyValue({ office });
+    this.value = stringifyValue({ office, queryId: query && query.queryId });
   }
 }
 
@@ -130,15 +130,15 @@ class StatusFilter implements StaticSelect {
   options: Option[];
   initial_option: Option;
   action_id = ListAction.FILTER_BY_STATUS;
-  constructor(statuses: Status[], status: Status) {
+  constructor(statuses: Status[], query: Query) {
     this.placeholder = {
       type: 'plain_text',
       text: 'Filter by status',
       emoji: true
     };
-    const options = statuses.map(status => new StatusOption(Status[status]));
-    this.options = [new ViewAllOption(), ...options];
-    this.initial_option = status ? new StatusOption(Status[status]) : new ViewAllOption();
+    const options = statuses.map(status => new StatusOption(Status[status], query));
+    this.options = [new ViewAllOption(query), ...options];
+    this.initial_option = query.status ? new StatusOption(Status[query.status], query) : new ViewAllOption(query);
   }
 }
 
@@ -147,19 +147,21 @@ class ViewAllOption implements Option {
     type: 'plain_text',
     text: 'View all'
   };
-  value: string = stringifyValue({});
-  constructor() {}
+  value: string;
+  constructor(query: Query) {
+    this.value = stringifyValue({ queryId: query && query.queryId });
+  }
 }
 
 class StatusOption implements Option {
   text: PlainText;
   value: string;
-  constructor(status: Status) {
+  constructor(status: Status, query: Query) {
     this.text = {
       type: 'plain_text',
       text: getStatusDisplay(status)
     };
-    this.value = stringifyValue({ status });
+    this.value = stringifyValue({ status, queryId: query && query.queryId });
   }
 }
 
