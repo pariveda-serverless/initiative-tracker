@@ -106,9 +106,7 @@ class OfficeFilter implements StaticSelect {
       text: 'Filter by office',
       emoji: true
     };
-    if (office) {
-      this.initial_option = new OfficeOption(office);
-    }
+    this.initial_option = office ? new OfficeOption(office) : new ViewAllOption();
     const options = offices.map(office => new OfficeOption(office));
     this.options = [new ViewAllOption(), ...options];
   }
@@ -138,11 +136,9 @@ class StatusFilter implements StaticSelect {
       text: 'Filter by status',
       emoji: true
     };
-    if (status) {
-      this.initial_option = new StatusOption(Status[status]);
-    }
     const options = statuses.map(status => new StatusOption(Status[status]));
     this.options = [new ViewAllOption(), ...options];
+    this.initial_option = status ? new StatusOption(Status[status]) : new ViewAllOption();
   }
 }
 
