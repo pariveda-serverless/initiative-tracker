@@ -51,19 +51,8 @@ export async function getInitiatives(teamId: string, query: Query): Promise<Init
   let KeyConditionExpression = '#identifiers = :identifiers';
   let ExpressionAttributeNames = { '#identifiers': 'identifiers' };
   let ExpressionAttributeValues = { ':identifiers': getInitiativeIdentifiers(teamId) };
-  if (query && query.status) {
-    KeyConditionExpression += ' and #status = :status';
-    ExpressionAttributeNames['#status'] = 'status';
-    ExpressionAttributeValues[':status'] = query.status;
-  }
-  if (query && query.office) {
-    KeyConditionExpression += ' and #office = :office';
-    ExpressionAttributeNames['#office'] = 'office';
-    ExpressionAttributeValues[':office'] = query.office;
-  }
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
-    IndexName: process.env.INITIATIVES_TABLE_STATUS_INDEX,
     KeyConditionExpression,
     ExpressionAttributeNames,
     ExpressionAttributeValues

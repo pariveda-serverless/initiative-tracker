@@ -22,25 +22,35 @@ export class ListResponse implements Message {
     if (!initiatives || !initiatives.length) {
       this.blocks = [new NoResults(query)];
     } else {
-      const initiativeSections = initiatives
-        .map(initiative => {
-          const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
-          let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
-          const metaInformation = new CreatedBy(initiative);
-          blocks = [...blocks, metaInformation, new Divider()];
-          return blocks;
-        })
-        .reduce((all, block) => all.concat(block), [])
-        // Remove the last divider block
-        .slice(0, -1);
-      this.blocks = [
-        new ResultsHeader(slackUserId, query),
-        new Filter(initiatives, query),
-        ...initiativeSections,
-        new ResultsFooter()
-      ];
+      this.blocks = getInitiativeList(initiatives, slackUserId, query);
     }
   }
+}
+
+function getInitiativeList(
+  initiatives: InitiativeResponse[],
+  slackUserId: string,
+  query: Query
+): (Section | DividerBlock | Action | ContextBlock)[] {
+  const initiativeSections = initiatives
+    .filter(initiative => !query || !query.status || query.status === initiative.status)
+    .filter(initiative => !query || !query.office || query.office === initiative.office)
+    .map(initiative => {
+      const nameAndStatus = new InitiativeInformationAndViewDetails(initiative);
+      let blocks: (Section | DividerBlock | Action | ContextBlock)[] = [nameAndStatus];
+      const metaInformation = new CreatedBy(initiative);
+      blocks = [...blocks, metaInformation, new Divider()];
+      return blocks;
+    })
+    .reduce((all, block) => all.concat(block), [])
+    // Remove the last divider block
+    .slice(0, -1);
+  return [
+    new ResultsHeader(slackUserId, query),
+    new Filter(initiatives, query),
+    ...initiativeSections,
+    new ResultsFooter()
+  ];
 }
 
 interface ListResponseProperties {
