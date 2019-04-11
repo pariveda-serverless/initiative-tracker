@@ -15,6 +15,7 @@ provider:
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     QUERIES_TABLE: { Ref: QueriesTable }
+    USERS_TABLE: { Ref: UsersTable }
     INITIATIVES_TABLE: { Ref: InitiativesTable }
     INITIATIVES_TABLE_IDENTIFIERS_INDEX: ${self:custom.identifiersIndex}
     INITIATIVES_TABLE_TYPE_INDEX: ${self:custom.typeIndex}
