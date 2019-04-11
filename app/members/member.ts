@@ -1,3 +1,5 @@
+import { Profile } from '../slack-api';
+
 export const MEMBER_TYPE: string = 'MEMBER';
 export const TEAM: string = 'TEAM';
 
@@ -20,16 +22,16 @@ export class CreateMemberRequest {
   icon: string;
   joinedAt: string;
 
-  constructor({ teamId, initiativeId, name, slackUserId, champion = false, icon }: CreateMemberRequestProperties) {
+  constructor({ teamId, initiativeId, slackUserId, champion = false, profile }: CreateMemberRequestProperties) {
     this.initiativeId = `${initiativeId}`;
     this.identifiers = getMemberIdentifiers(teamId, slackUserId);
     this.type = MEMBER_TYPE;
     this.teamId = teamId;
     this.initiativeId = initiativeId;
-    this.name = name;
+    this.name = profile.name;
     this.slackUserId = slackUserId;
     this.champion = champion;
-    this.icon = icon;
+    this.icon = profile.icon;
     this.joinedAt = new Date().toDateString();
   }
 }
@@ -37,10 +39,9 @@ export class CreateMemberRequest {
 interface CreateMemberRequestProperties {
   teamId: string;
   initiativeId: string;
-  name: string;
   slackUserId: string;
   champion: boolean;
-  icon: string;
+  profile: Profile;
 }
 
 export class Member {

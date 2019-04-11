@@ -1,7 +1,15 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
 import { getToken } from '../app-authorization';
+import { CreateUserRequest } from '../users';
+import { table } from '../shared';
 
 const slack = new WebClient();
+
+export async function getAndSaveUserProfile(user: string, teamId: string): Promise<Profile> {
+  const profile = await getUserProfile(user, teamId);
+  await saveUserInformation(profile);
+  return profile;
+}
 
 export async function getUserProfile(user: string, teamId: string): Promise<Profile> {
   console.log('Getting user profile information', user);
@@ -19,12 +27,19 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
   };
 }
 
+async function saveUserInformation(profile: Profile): Promise<any> {
+  const user = new CreateUserRequest(profile);
+  const params = { TableName: process.env.USERS_TABLE, Item: user };
+  console.log('Saving user with params', params);
+  await table.put(params).promise();
+}
+
 function getOffice(profile: SlackProfile): string {
   const office = profile.fields && Object.values(profile.fields).find(field => field.label.toUpperCase() === 'OFFICE');
   return office && office.value;
 }
 
-interface Profile {
+export interface Profile {
   name: string;
   icon: string;
   slackUserId: string;

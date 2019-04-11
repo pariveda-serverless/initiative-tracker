@@ -1,7 +1,7 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { InitiativeRecord, Initiative, getInitiativeIdentifiers } from '../initiatives';
 import { ListResponse } from '../slack-messages/';
-import { getUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
+import { getAndSaveUserProfile, sendMessage, sendEphemeralMessage } from '../slack-api';
 import { SlashCommandBody } from 'slack';
 import { table } from '../shared';
 import { Query, CreateQueryRequest } from '../queries';
@@ -25,7 +25,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 });
 
 async function getFieldsFromBody(body: SlashCommandBody): Promise<Fields> {
-  const { office } = await getUserProfile(body.user_id, body.team_id);
+  const { office } = await getAndSaveUserProfile(body.user_id, body.team_id);
   const queryRequest = new CreateQueryRequest({ text: body.text, office });
   const query = await saveQuery(queryRequest);
   return {
