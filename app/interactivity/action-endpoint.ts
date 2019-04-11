@@ -51,7 +51,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
-        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
+        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload, profile));
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
