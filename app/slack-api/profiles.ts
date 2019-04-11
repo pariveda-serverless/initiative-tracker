@@ -23,7 +23,8 @@ export async function getUserProfile(user: string, teamId: string): Promise<Prof
     name: profile.real_name_normalized,
     icon: profile.image_original ? profile.image_original : profile.image_512,
     slackUserId: user,
-    office: getOffice(profile)
+    office: getOffice(profile),
+    teamId: teamId
   };
 }
 
@@ -44,6 +45,7 @@ export interface Profile {
   icon: string;
   slackUserId: string;
   office?: string;
+  teamId: string;
 }
 
 interface ProfileResult extends WebAPICallResult {
