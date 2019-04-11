@@ -33,6 +33,13 @@ provider:
           - Ref: AWS::Region
           - Ref: AWS::AccountId
           - ${self:custom.notifyWhenJoinTopic}
+    WELCOME_NEW_USER_SNS:
+      Fn::Join:
+        - ':'
+        - - arn:aws:sns
+          - Ref: AWS::Region
+          - Ref: AWS::AccountId
+          - ${self:custom.welcomeNewUserTopic}
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${self:provider.stage}
     SLACK_CLIENT_ID: ${env:${self:provider.stage}_SLACK_CLIENT_ID, env:SLACK_CLIENT_ID}
@@ -52,6 +59,7 @@ provider:
         - dynamodb:DeleteItem
         - dynamodb:BatchWriteItem
       Resource:
+        - { Fn::GetAtt: [UsersTable, Arn] }
         - { Fn::GetAtt: [QueriesTable, Arn] }
         - { Fn::GetAtt: [InitiativesTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [InitiativesTable, Arn] }, '/index/*']] }
@@ -81,6 +89,12 @@ provider:
               - Ref: AWS::Region
               - Ref: AWS::AccountId
               - ${self:custom.notifyWhenJoinTopic}
+        - Fn::Join:
+            - ':'
+            - - arn:aws:sns
+              - Ref: AWS::Region
+              - Ref: AWS::AccountId
+              - ${self:custom.welcomeNewUserTopic}
 
 custom:
   identifiersIndex: IDENTIFIERS_INDEX
@@ -88,6 +102,7 @@ custom:
   typeIndex: TYPE_INDEX
   requestUpdateTopic: request-update-${self:provider.stage}
   notifyWhenJoinTopic: notify-when-join-${self:provider.stage}
+  welcomeNewUserTopic: welcome-new-user-${self:provider.stage}
   customDomain:
     basePath: ${self:provider.stage}
     certificateName: initiative.ninja
@@ -126,17 +141,29 @@ functions:
           method: post
           path: actions
 
-  stream-updates:
-    handler: app/notifications/stream-updates.handler
+  stream-initiative-updates:
+    handler: app/notifications/stream-initiative-updates.handler
     events:
       - stream:
           type: dynamodb
           arn: { Fn::GetAtt: [InitiativesTable, StreamArn] }
 
+  stream-user-updates:
+    handler: app/notifications/stream-user-updates.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: { Fn::GetAtt: [UsersTable, StreamArn] }
+
   notify-when-join:
     handler: app/notifications/notify-when-join.handler
     events:
       - sns: ${self:custom.notifyWhenJoinTopic}
+
+  welcome-new-user:
+    handler: app/notifications/welcome-new-user.handler
+    events:
+      - sns: ${self:custom.welcomeNewUserTopic}
 
   auth-redirect:
     handler: app/app-authorization/auth-redirect.handler
@@ -209,3 +236,14 @@ resources:
         TimeToLiveSpecification:
           AttributeName: expiration
           Enabled: true
+
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: slackUserId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: slackUserId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
