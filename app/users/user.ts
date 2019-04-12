@@ -11,7 +11,7 @@ export class CreateUserRequest {
     this.icon = icon;
     this.office = office;
     this.teamId = teamId;
-    this.timestamp = new Date().toDateString();
+    this.timestamp = new Date().toUTCString();
   }
 }
 
