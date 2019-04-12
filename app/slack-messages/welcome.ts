@@ -34,7 +34,7 @@ class Welcome implements Section {
     
 
     
-    Made with :black_heart: by Pariveda New York :city_sunset:
+    Made with :black_heart: by Pariveda New York
     `.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }

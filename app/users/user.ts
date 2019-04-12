@@ -4,12 +4,14 @@ export class CreateUserRequest {
   icon: string;
   office?: string;
   teamId: string;
+  timestamp: string;
   constructor({ slackUserId, name, icon, office, teamId }: CreateUserRequestParams) {
     this.slackUserId = slackUserId;
     this.name = name;
     this.icon = icon;
     this.office = office;
     this.teamId = teamId;
+    this.timestamp = new Date().toDateString();
   }
 }
 
