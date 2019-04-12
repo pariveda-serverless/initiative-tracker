@@ -5,7 +5,7 @@ import { User } from '../users';
 export const handler = streamWrapper(async ({ versions, success, error }: StreamSignature) => {
   try {
     const newUsers = versions
-      .filter(version => version.newVersion && !version.oldVersion)
+      // .filter(version => version.newVersion && !version.oldVersion)
       .map(version => new User(version.newVersion));
     await Promise.all(newUsers.map(member => publishWelcomeNewUserNotification(member)));
     success();
