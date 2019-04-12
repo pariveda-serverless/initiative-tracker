@@ -19,36 +19,41 @@ export class ListResponse implements Message {
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor({ initiatives, channelId, slackUserId, query }: ListResponseProperties) {
     this.channel = channelId;
-    if (!initiatives || !initiatives.length) {
+    const filteredInitiatives = getFilteredInitiatives(initiatives, slackUserId, query);
+    if (!filteredInitiatives || !filteredInitiatives.length) {
       this.blocks = [new NoResults(query)];
     } else {
-      this.blocks = getInitiativeList(initiatives, slackUserId, query);
+      const initiativeSections = getInitiativeSections(filteredInitiatives);
+      this.blocks = [
+        new Header(slackUserId, query),
+        new Filter(initiatives, query),
+        new Divider(),
+        ...initiativeSections,
+        new Footer()
+      ];
     }
   }
 }
 
-function getInitiativeList(
-  initiatives: Initiative[],
-  slackUserId: string,
-  query: Query
-): (Section | DividerBlock | Action | ContextBlock)[] {
-  const initiativeSections = initiatives
-    // if a status was specified in query, filter to initiatives with that status
-    .filter(initiative => !query || !query.status || query.status === initiative.status)
-    // if an office was specified in query, filter to initiatives in that office
-    .filter(initiative => !query || !query.office || query.office === initiative.office)
-    .map(initiative => {
-      return [new InitiativeInformationAndViewDetails(initiative), new CreatedBy(initiative), new Divider()];
-    })
-    // flatten the array of arrays into a single array
-    .reduce((all, block) => all.concat(block), []);
-  return [
-    new Header(slackUserId, query),
-    new Filter(initiatives, query),
-    new Divider(),
-    ...initiativeSections,
-    new Footer()
-  ];
+function getFilteredInitiatives(initiatives: Initiative[], slackUserId: string, query: Query): Initiative[] {
+  return (
+    initiatives
+      // if a status was specified in query, filter to initiatives with that status
+      .filter(initiative => !query || !query.status || query.status === initiative.status)
+      // if an office was specified in query, filter to initiatives in that office
+      .filter(initiative => !query || !query.office || query.office === initiative.office)
+  );
+}
+
+function getInitiativeSections(initiatives: Initiative[]): (Section | DividerBlock | Action | ContextBlock)[] {
+  return (
+    initiatives
+      .map(initiative => {
+        return [new InitiativeInformationAndViewDetails(initiative), new CreatedBy(initiative), new Divider()];
+      })
+      // flatten the array of arrays into a single array
+      .reduce((all, block) => all.concat(block), [])
+  );
 }
 
 interface ListResponseProperties {
