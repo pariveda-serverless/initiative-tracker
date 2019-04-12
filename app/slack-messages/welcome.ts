@@ -17,7 +17,7 @@ class Welcome implements Section {
   constructor(user: User) {
     const text = `Welcome to Initiative Tracker, ${getFirstName(
       user
-    )}! Here's some tips and tricks to help you get started
+    )} - here's some tips and tricks to help you get started!
 
 
     :female-teacher:
