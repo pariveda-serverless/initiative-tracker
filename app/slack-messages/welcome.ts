@@ -15,8 +15,9 @@ class Welcome implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(user: User) {
-    const text = `Welcome to Initiative Tracker, ${getFirstName(user)}!
-    Here's some tips and tricks to help you get started
+    const text = `Welcome to Initiative Tracker, ${getFirstName(
+      user
+    )}! Here's some tips and tricks to help you get started
 
 
     :female-teacher:
@@ -28,11 +29,10 @@ class Welcome implements Section {
     Want to see all of the initiatives? Use the */show-initiatives* command:
     */show-initiatives [optional filter: 'public'], [optional filter: 'active' | 'abandoned' | 'on hold' | 'complete']*
     
+    :female_mage: :male_mage:
+    From the list view you'll be able to filter further by status and office. You'll also be able to view an initiative's details including who the champions and members are and what Slack channel the group uses for communicating. You can also edit initiative information in case you made a mistake or something changes.
+
     
-    From the list view you'll be able to filter further by status and office.
-    You'll also be able to view an initiative's details including who the champions and members are and what Slack channel the group uses for communicating. You can also edit initiative information in case you made a mistake or something changes.
-
-
     That's all for now - best of luck and thanks for getting involved with internal initiatives!
     
 
