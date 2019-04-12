@@ -2,7 +2,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { label, metric } from '@iopipe/iopipe';
 import { Message, ActionPayload } from 'slack';
 import { InitiativeAction, MemberAction, ListAction } from './interactions';
-import { replyWithMessage } from '../slack-api';
+import { replyWithMessage, getUserProfile, Profile, getAndSaveUserProfile } from '../slack-api';
 import { NotImplementedResponse } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
 import { getInitiativeDetailsAction } from './get-initiative-details';
@@ -22,6 +22,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   try {
     let response: Message;
     let { payload, teamId, responseUrl, channel, action, triggerId } = getFieldsFromBody(body);
+    const profile = await getAndSaveUserProfile(payload.user.id, teamId);
     switch (action) {
       case InitiativeAction.VIEW_DETAILS: {
         response = await getInitiativeDetailsAction(teamId, channel, payload);
@@ -50,7 +51,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
       case InitiativeAction.ADD_MEMBER: {
-        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload));
+        ({ response, responseUrl } = await addMemberAction(teamId, channel, payload, profile));
         break;
       }
       case InitiativeAction.UPDATE_STATUS:
@@ -63,7 +64,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
       case InitiativeAction.JOIN_AS_MEMBER:
       case InitiativeAction.JOIN_AS_CHAMPION: {
-        response = await joinInitiativeAction(teamId, channel, payload);
+        response = await joinInitiativeAction(teamId, channel, payload, profile);
         break;
       }
       case MemberAction.REMOVE_MEMBER: {

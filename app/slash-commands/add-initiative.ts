@@ -1,6 +1,6 @@
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateInitiativeRequest, Initiative, InitiativeRecord, INITIATIVE_TYPE } from '../initiatives';
-import { getUserProfile } from '../slack-api';
+import { getAndSaveUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
 import { Member, MEMBER_TYPE, getTeamIdentifier } from '../members';
 import { SlashCommandBody } from 'slack';
@@ -24,7 +24,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
 async function getFieldsFromBody(body: SlashCommandBody) {
   const slackUserId = body.user_id;
   const team = { id: body.team_id, domain: body.team_domain };
-  const createdBy = await getUserProfile(slackUserId, team.id);
+  const createdBy = await getAndSaveUserProfile(slackUserId, team.id);
   const [name, ...remaining] = body.text.split(',');
   const { channel, description } = getChannelAndDescription(remaining);
   return { team, createdBy, name, channel, description };
