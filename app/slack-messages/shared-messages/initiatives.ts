@@ -162,20 +162,19 @@ class InitiativeNameStatusAndChannel implements MarkdownText {
     const channel = initiative.channel ? `*Channel*: ${initiative.channel ? initiative.channel.parsed : ''}` : '';
     const description = initiative.shortDescription ? `*Description*: ${initiative.shortDescription}` : '';
 
-    const nameAndStatus = getSingleLineOrEmpty(name, status);
-    const officeAndChannel = getSingleLineOrEmpty(office, channel);
-    this.text = nameAndStatus + officeAndChannel + description;
+    const nameAndStatusLine = getSingleLineOrEmpty(name, status);
+    const officeAndChannelLine = getSingleLineOrEmpty(office, channel);
+    const descriptionLine = getSingleLineOrEmpty(description);
+    this.text = nameAndStatusLine + officeAndChannelLine + descriptionLine;
   }
 }
 
-function getSingleLineOrEmpty(first: string, second: string): string {
-  let singleLine = '';
-  if (first && second) {
-    singleLine = `\n${first}    ${second}`;
-  } else if (first && !second) {
-    singleLine = `\n${first}`;
-  } else if (!first && second) {
-    singleLine = `\n${second}`;
-  }
-  return singleLine;
+function getSingleLineOrEmpty(...fields): string {
+  return fields.reduce((line, field) => {
+    if (field && line) {
+      return `${line}    ${field}`;
+    } else if (field && !line) {
+      return `\n${field}`;
+    }
+  });
 }
