@@ -1,17 +1,30 @@
 import { WebClient, WebAPICallResult } from '@slack/client';
 import { getToken } from '../app-authorization';
-import { CreateUserRequest } from '../users';
+import { CreateUserRequest, User } from '../users';
 import { table } from '../shared';
 
 const slack = new WebClient();
 
-export async function getAndSaveUserProfile(user: string, teamId: string): Promise<Profile> {
-  const profile = await getUserProfile(user, teamId);
-  await saveUserInformation(profile);
-  return profile;
+export async function getAndSaveUserProfile(slackUserId: string, teamId: string): Promise<User> {
+  try {
+    return await getCachedUserProfile(slackUserId);
+  } catch (err) {
+    const profile = await getUserProfile(slackUserId, teamId);
+    await saveUserInformation(profile);
+    return profile;
+  }
 }
 
-export async function getUserProfile(user: string, teamId: string): Promise<Profile> {
+async function getCachedUserProfile(slackUserId: string): Promise<User> {
+  const params = { TableName: process.env.USERS_TABLE, Key: { slackUserId } };
+  console.log('Getting user with params', params);
+  return table
+    .get(params)
+    .promise()
+    .then(res => new User(res.Item));
+}
+
+async function getUserProfile(user: string, teamId: string): Promise<Profile> {
   console.log('Getting user profile information', user);
   const token = await getToken(teamId);
   const profile = await slack.users.profile
