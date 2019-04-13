@@ -166,18 +166,16 @@ class InitiativeNameStatusAndChannel implements MarkdownText {
     const officeAndChannelLine = getSingleLineOrEmpty(office, channel);
     const descriptionLine = getSingleLineOrEmpty(description);
     this.text = nameAndStatusLine + officeAndChannelLine + descriptionLine;
-    console.log(this.text);
   }
 }
 
 function getSingleLineOrEmpty(...fields): string {
   const singleLine = fields.reduce((line, field) => {
     if (field && line) {
-      return `${line}    ${field}`;
+      return `\n${line}    ${field}`;
     } else if (field && !line) {
       return `\n${field}`;
     }
   });
-  console.log(singleLine);
   return singleLine;
 }
