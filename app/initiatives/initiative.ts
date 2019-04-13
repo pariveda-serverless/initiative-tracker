@@ -85,6 +85,7 @@ export class Initiative {
   initiativeId: string;
   name: string;
   description: string;
+  shortDescription: string;
   channel: {
     id: string;
     name: string;
@@ -114,6 +115,7 @@ export class Initiative {
     this.status = record.status;
     this.office = record.office;
     this.statusDisplay = getStatusDisplay(record.status);
+    this.shortDescription = getShortDescription(record.description);
     this.team = record.team;
     this.createdAt = record.createdAt;
     this.createdBy = record.createdBy;
@@ -123,4 +125,8 @@ export class Initiative {
 export function getStatusDisplay(status: Status): string {
   const display = status.toLowerCase().replace('_', ' ');
   return display.charAt(0).toUpperCase() + display.slice(1);
+}
+
+function getShortDescription(description: string, length: number = 130): string {
+  return description && description.length > length ? `${description.substring(0, length)}...` : description;
 }

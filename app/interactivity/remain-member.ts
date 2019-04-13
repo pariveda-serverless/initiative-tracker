@@ -1,6 +1,6 @@
 import { ActionPayload, Message } from 'slack';
-import { RemainMemberResponse } from '../slack-messages/remain-member';
+import { ThankYouResponse } from '../slack-messages/thank-you';
 
 export async function remainMemberAction(teamId: string, channel: string, payload: ActionPayload): Promise<Message> {
-  return new RemainMemberResponse(channel);
+  return new ThankYouResponse(channel);
 }

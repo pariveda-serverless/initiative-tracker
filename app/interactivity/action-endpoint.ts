@@ -17,6 +17,7 @@ import { leaveInitiativeAction } from './leave-initiative';
 import { openAddMemberDialogAction } from './open-add-member-dialog';
 import { addMemberAction } from './add-member';
 import { getInitiativeListAction } from './get-initiative-list';
+import { ThankYouResponse } from '../slack-messages/thank-you';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
@@ -54,12 +55,16 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         ({ response, responseUrl } = await addMemberAction(teamId, channel, payload, profile));
         break;
       }
-      case InitiativeAction.UPDATE_STATUS:
+      case InitiativeAction.UPDATE_STATUS: {
+        response = await updateStatusAction(teamId, channel, payload);
+        break;
+      }
       case InitiativeAction.MARK_ON_HOLD:
       case InitiativeAction.MARK_ABANDONED:
       case InitiativeAction.MARK_COMPLETE:
       case InitiativeAction.MARK_ACTIVE: {
-        response = await updateStatusAction(teamId, channel, payload);
+        await updateStatusAction(teamId, channel, payload);
+        response = new ThankYouResponse(channel);
         break;
       }
       case InitiativeAction.JOIN_AS_MEMBER:
