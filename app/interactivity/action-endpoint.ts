@@ -2,7 +2,7 @@ import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { label, metric } from '@iopipe/iopipe';
 import { Message, ActionPayload } from 'slack';
 import { InitiativeAction, MemberAction, ListAction } from './interactions';
-import { replyWithMessage, getUserProfile, Profile, getAndSaveUserProfile } from '../slack-api';
+import { replyWithMessage, getAndSaveUserProfile } from '../slack-api';
 import { NotImplementedResponse } from '../slack-messages';
 import { joinInitiativeAction } from './join-initiative';
 import { getInitiativeDetailsAction } from './get-initiative-details';
@@ -85,13 +85,10 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    success(response);
-    // if (response) {
-    //   // await replyWithMessage(responseUrl, response as Message);
-    //   success(response);
-    // } else {
-    //   success();
-    // }
+    if (response) {
+      await replyWithMessage(responseUrl, response as Message);
+    }
+    success();
   } catch (err) {
     error(err);
   }
