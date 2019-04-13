@@ -174,7 +174,7 @@ function getSingleLineOrEmpty(...fields): string {
     if (!line && !field) {
       return '';
     } else {
-      return `\n${line || ''}${field ? `${line ? `    ` : ''}${field}` : ''}`;
+      return `${line ? line : '\n'}${field ? `${line ? `    ` : ''}${field}` : ''}`;
     }
   }, '');
 }
