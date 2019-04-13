@@ -170,12 +170,6 @@ class InitiativeNameStatusAndChannel implements MarkdownText {
 }
 
 function getSingleLineOrEmpty(...fields): string {
-  const singleLine = fields.reduce((line, field) => {
-    if (field && line) {
-      return `\n${line}    ${field}`;
-    } else if (field && !line) {
-      return `\n${field}`;
-    }
-  });
+  const singleLine = fields.reduce((line, field) => `\n${line || ''}${field ? `    ${field}` : ''}`);
   return singleLine;
 }
