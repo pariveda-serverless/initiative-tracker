@@ -85,12 +85,13 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
         break;
       }
     }
-    if (response) {
-      // await replyWithMessage(responseUrl, response as Message);
-      success(response);
-    } else {
-      success();
-    }
+    success(response);
+    // if (response) {
+    //   // await replyWithMessage(responseUrl, response as Message);
+    //   success(response);
+    // } else {
+    //   success();
+    // }
   } catch (err) {
     error(err);
   }
