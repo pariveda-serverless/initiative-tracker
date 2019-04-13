@@ -12,9 +12,9 @@ export async function editInitiativeAction(
   payload: ActionPayload
 ): Promise<{ response: Message; responseUrl: string }> {
   const slackUserId = payload.user.id;
-  const { name, description, status, channelId } = payload.submission;
+  const { name, description, status, office, channelId } = payload.submission;
   const { initiativeId, responseUrl } = parseValue(payload.state);
-  await updateInitiative(teamId, initiativeId, name, description, status, channelId);
+  await updateInitiative(teamId, initiativeId, name, description, status, office, channelId);
   const initiative = await getInitiativeDetails(teamId, initiativeId);
   return { response: new DetailResponse({ initiative, slackUserId, channel }), responseUrl };
 }
@@ -25,20 +25,29 @@ async function updateInitiative(
   name: string,
   description: string,
   status: string,
+  office: string,
   channelId: string
 ): Promise<any> {
   const channel = channelId ? await getChannelInfo(channelId, teamId) : null;
   const params = {
     TableName: process.env.INITIATIVES_TABLE,
     Key: { initiativeId, identifiers: getInitiativeIdentifiers(teamId) },
-    UpdateExpression: 'set #name = :name, #description = :description, #status = :status, #channel = :channel',
+    UpdateExpression:
+      'set #name = :name, #description = :description, #status = :status, #channel = :channel, #office = :office',
     ExpressionAttributeNames: {
       '#name': 'name',
       '#description': 'description',
       '#status': 'status',
-      '#channel': 'channel'
+      '#channel': 'channel',
+      '#office': 'office'
     },
-    ExpressionAttributeValues: { ':name': name, ':description': description, ':status': status, ':channel': channel }
+    ExpressionAttributeValues: {
+      ':name': name,
+      ':description': description,
+      ':status': status,
+      ':channel': channel,
+      ':office': office
+    }
   };
   console.log('Updating initiative with params', params);
   return table.update(params).promise();

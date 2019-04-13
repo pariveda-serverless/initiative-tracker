@@ -84,7 +84,7 @@ class DescriptionInput implements TextElement {
 
 class OfficeInput implements TextElement {
   label = 'Office';
-  name = 'description';
+  name = 'office';
   type: 'textarea' = 'textarea';
   value: string;
   optional = true;
