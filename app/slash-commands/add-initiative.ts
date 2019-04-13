@@ -3,17 +3,23 @@ import { CreateInitiativeRequest, Initiative, InitiativeRecord, INITIATIVE_TYPE 
 import { getAndSaveUserProfile } from '../slack-api';
 import { DetailResponse } from '../slack-messages';
 import { Member, MEMBER_TYPE, getTeamIdentifier } from '../members';
-import { SlashCommandBody } from 'slack';
+import { SlashCommandBody, Message } from 'slack';
 import { table } from '../shared';
+import { InvalidAddResponse } from '../slack-messages/validation';
 
 export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const { team, createdBy, name, channel, description } = await getFieldsFromBody(body);
-    const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
-    await saveInitiative(initiativeRequest);
-    const initiative = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
-    const message = new DetailResponse({ initiative, slackUserId: createdBy.slackUserId });
-    console.log(message);
+    let message: Message;
+    const { team, createdBy, text, name, channel, description } = await getFieldsFromBody(body);
+    if (name) {
+      const initiativeRequest = new CreateInitiativeRequest({ name, team, description, channel, createdBy });
+      await saveInitiative(initiativeRequest);
+      const initiative = await getInitiativeDetails(team.id, initiativeRequest.initiativeId);
+      message = new DetailResponse({ initiative, slackUserId: createdBy.slackUserId });
+    } else {
+      message = new InvalidAddResponse(text, createdBy);
+    }
+
     console.log(JSON.stringify(message));
     success(message);
   } catch (err) {
@@ -27,7 +33,7 @@ async function getFieldsFromBody(body: SlashCommandBody) {
   const createdBy = await getAndSaveUserProfile(slackUserId, team.id);
   const [name, ...remaining] = body.text.split(',');
   const { channel, description } = getChannelAndDescription(remaining);
-  return { team, createdBy, name, channel, description };
+  return { team, createdBy, name, text: body.text, channel, description };
 }
 
 function getChannelAndDescription(
