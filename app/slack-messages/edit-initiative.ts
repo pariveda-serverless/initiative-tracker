@@ -85,7 +85,7 @@ class DescriptionInput implements TextElement {
 class OfficeInput implements TextElement {
   label = 'Office';
   name = 'office';
-  type: 'textarea' = 'textarea';
+  type: 'text' = 'text';
   value: string;
   optional = true;
   constructor(initiative: Initiative) {
