@@ -176,5 +176,5 @@ function getSingleLineOrEmpty(...fields): string {
     } else {
       return `\n${line || ''}${field ? `    ${field}` : ''}`;
     }
-  });
+  }, '');
 }
