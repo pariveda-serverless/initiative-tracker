@@ -19,9 +19,10 @@ export class InitiativeDialog implements Dialog {
   constructor(initiative: Initiative, responseUrl: string) {
     const name = new NameInput(initiative);
     const description = new DescriptionInput(initiative);
+    const office = new OfficeInput(initiative);
     const channel = new ChannelSelect(initiative);
     const status = new StatusSelect(initiative);
-    this.elements = [name, description, channel, status];
+    this.elements = [name, description, office, channel, status];
     this.state = stringifyValue({ initiativeId: initiative.initiativeId, responseUrl });
   }
 }
@@ -75,8 +76,19 @@ class DescriptionInput implements TextElement {
   name = 'description';
   type: 'textarea' = 'textarea';
   value: string;
-  optional: boolean = true;
+  optional = true;
   constructor(initiative: Initiative) {
     this.value = initiative.description;
+  }
+}
+
+class OfficeInput implements TextElement {
+  label = 'Office';
+  name = 'description';
+  type: 'textarea' = 'textarea';
+  value: string;
+  optional = true;
+  constructor(initiative: Initiative) {
+    this.value = initiative.office;
   }
 }
