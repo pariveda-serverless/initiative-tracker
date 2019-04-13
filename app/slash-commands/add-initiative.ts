@@ -19,7 +19,6 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
     } else {
       message = new InvalidAddResponse(text, createdBy);
     }
-
     console.log(JSON.stringify(message));
     success(message);
   } catch (err) {
