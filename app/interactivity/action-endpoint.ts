@@ -86,9 +86,11 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       }
     }
     if (response) {
-      await replyWithMessage(responseUrl, response as Message);
+      // await replyWithMessage(responseUrl, response as Message);
+      success(response);
+    } else {
+      success();
     }
-    success();
   } catch (err) {
     error(err);
   }

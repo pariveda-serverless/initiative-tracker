@@ -20,17 +20,15 @@ class Welcome implements Section {
     )} - here's some tips and tricks to help you get started!
 
 
-    :female-teacher:
-    To add a new initiative you can use the */add-initiative* command like this:
+    :female-teacher: To add a new initiative you can use the */add-initiative* command like this:
     */add-initiative [name], [optional description], [optional #channel]*
 
 
-    :male-teacher:
-    Want to see all of the initiatives? Use the */show-initiatives* command:
+    :male-teacher: Want to see all of the initiatives? Use the */show-initiatives* command:
     */show-initiatives [optional filter: 'public'], [optional filter: 'active' | 'abandoned' | 'on hold' | 'complete']*
     
-    :female_mage: :male_mage:
-    From the list view you'll be able to filter further by status and office. You'll also be able to view an initiative's details including who the champions and members are and what Slack channel the group uses for communicating. You can also edit initiative information in case you made a mistake or something changes.
+    
+    :octopus: From the list view you'll be able to filter further by status and office. You'll also be able to view an initiative's details including who the champions and members are and what Slack channel the group uses for communicating. You can also edit initiative information in case you made a mistake or something changes.
 
     
     That's all for now - best of luck and thanks for getting involved with internal initiatives!
@@ -43,7 +41,7 @@ class Welcome implements Section {
   }
 }
 
-function getFirstName(user: User): string {
+export function getFirstName(user: User): string {
   if (user.name) {
     return user.name.indexOf(' ') >= 0 ? user.name.split(' ')[0] : user.name;
   } else {
