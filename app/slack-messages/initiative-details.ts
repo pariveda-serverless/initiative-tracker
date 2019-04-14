@@ -1,12 +1,6 @@
 import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button, PlainText } from 'slack';
 import { Initiative } from '../initiatives';
-import {
-  Divider,
-  CreatedBy,
-  InitiativeDetailActions,
-  InitiativeInformationAndUpdateActions,
-  MemberSection
-} from './shared-messages';
+import { Divider, CreatedBy, InitiativeDetailActions, InitiativeDetails, MemberSection } from './shared-messages';
 import { InitiativeAction } from '../interactivity';
 
 export class DetailResponse implements Message {
@@ -20,7 +14,7 @@ export class DetailResponse implements Message {
     const header = new DetailsHeader(initiative);
     blocks.push(header);
 
-    const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
+    const nameAndStatus = new InitiativeDetails(initiative);
     blocks.push(nameAndStatus);
 
     const metaInformation = new CreatedBy(initiative);

@@ -10,7 +10,7 @@ import {
   PlainText
 } from 'slack';
 import { Initiative, Status, getStatusDisplay } from '../initiatives';
-import { InitiativeInformationAndViewDetails, CreatedBy, Divider } from './shared-messages';
+import { BasicInitiative, CreatedBy, Divider, OfficeAndChannel } from './shared-messages';
 import { Query } from '../queries';
 import { ListAction, stringifyValue } from '../interactivity';
 
@@ -49,7 +49,12 @@ function getInitiativeSections(initiatives: Initiative[]): (Section | DividerBlo
   return (
     initiatives
       .map(initiative => {
-        return [new InitiativeInformationAndViewDetails(initiative), new CreatedBy(initiative), new Divider()];
+        return [
+          new BasicInitiative(initiative),
+          new OfficeAndChannel(initiative),
+          new CreatedBy(initiative),
+          new Divider()
+        ];
       })
       // flatten the array of arrays into a single array
       .reduce((all, block) => all.concat(block), [])

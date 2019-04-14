@@ -14,38 +14,38 @@ import {
 import { Initiative } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
-export class InitiativeInformation implements Section {
+export class ReadOnlyInitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new InitiativeOverview(initiative);
   }
 }
 
-export class InitiativeInformationAndViewDetails implements Section {
+export class BasicInitiative implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Button;
   block_id: string;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new InitiativeOverview(initiative);
     this.accessory = new ViewDetailsButton(initiative);
   }
 }
 
-export class InitiativeInformationAndUpdateActions implements Section {
+export class InitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new InitiativeOverview(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
 
 export class CreatedBy implements ContextBlock {
   type: 'context' = 'context';
-  elements: (ImageContext | PlainText | MarkdownText)[];
+  elements: (ImageContext | MarkdownText)[];
   constructor(initiative: Initiative) {
     const createdByIcon: ImageContext = {
       type: 'image',
@@ -59,6 +59,23 @@ export class CreatedBy implements ContextBlock {
     this.elements = [createdByIcon, createdBy];
   }
 }
+
+export class OfficeAndChannel implements ContextBlock {
+  type: 'context' = 'context';
+  elements: MarkdownText[];
+  constructor(initiative: Initiative) {
+    const office: MarkdownText = {
+      type: 'mrkdwn',
+      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
+    };
+    const channel: MarkdownText = {
+      type: 'mrkdwn',
+      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
+    };
+    this.elements = [office, channel];
+  }
+}
+
 export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
@@ -152,12 +169,12 @@ export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
 }
 
-class InitiativeNameStatusAndChannel implements MarkdownText {
+class InitiativeOverview implements MarkdownText {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
   constructor(initiative: Initiative) {
-    const name = initiative.name ? `*Name*: ${initiative.name}` : '';
-    const status = initiative.statusDisplay ? `*Status*: ${initiative.statusDisplay}` : '';
+    const name = initiative.name ? `*${initiative.name}*` : '';
+    const status = initiative.statusDisplay ? `(${initiative.statusDisplay})` : '';
     const office = initiative.office ? `*Office*: ${initiative.office}` : '';
     const channel = initiative.channel && initiative.channel.parsed ? `*Channel*: ${initiative.channel.parsed}` : '';
     const description = initiative.shortDescription ? `*Description*: ${initiative.shortDescription}` : '';
@@ -174,7 +191,7 @@ function getSingleLineOrEmpty(...fields): string {
     if (!line && !field) {
       return '';
     } else {
-      return `${line ? line : '\n'}${field ? `${line ? `    ` : ''}${field}` : ''}`;
+      return `${line ? line : '\n'}${field ? `${line ? `  ` : ''}${field}` : ''}`;
     }
   }, '');
 }
