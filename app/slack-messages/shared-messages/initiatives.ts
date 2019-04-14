@@ -64,17 +64,15 @@ export class OfficeAndChannel implements ContextBlock {
   type: 'context' = 'context';
   elements: MarkdownText[];
   constructor(initiative: Initiative) {
-    const office: MarkdownText = {
-      type: 'mrkdwn',
-      text: `This initiative is part of the ${initiative.office}, more information can be found @ ${
-        initiative.channel.parsed
-      }`
-    };
-    // const channel: MarkdownText = {
-    //   type: 'mrkdwn',
-    //   text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
-    // };
-    this.elements = [office];
+    let text: string;
+    if (initiative.status && initiative.office) {
+      text = `This *${initiative.statusDisplay}* initiative is part of the *${initiative.office}* office`;
+    } else if (initiative.status) {
+      text = `This initiative is *${initiative.statusDisplay}*`;
+    } else if (initiative.office) {
+      text = `This initiative is a part of the *${initiative.office}* office`;
+    }
+    this.elements = [{ type: 'mrkdwn', text }];
   }
 }
 
