@@ -66,13 +66,15 @@ export class OfficeAndChannel implements ContextBlock {
   constructor(initiative: Initiative) {
     const office: MarkdownText = {
       type: 'mrkdwn',
-      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
+      text: `This initiative is part of the ${initiative.office}, more information can be found @ ${
+        initiative.channel.parsed
+      }`
     };
-    const channel: MarkdownText = {
-      type: 'mrkdwn',
-      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
-    };
-    this.elements = [office, channel];
+    // const channel: MarkdownText = {
+    //   type: 'mrkdwn',
+    //   text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
+    // };
+    this.elements = [office];
   }
 }
 
