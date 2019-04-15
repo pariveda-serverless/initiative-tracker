@@ -47,22 +47,27 @@ export class CreatedBy implements ContextBlock {
   type: 'context' = 'context';
   elements: (ImageContext | MarkdownText)[];
   constructor(initiative: Initiative) {
-    const createdByIcon: ImageContext = {
-      type: 'image',
-      image_url: initiative.createdBy.icon,
-      alt_text: initiative.createdBy.name
-    };
     const createdBy: MarkdownText = {
       type: 'mrkdwn',
       text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
     };
-    this.elements = [createdByIcon, createdBy];
+    this.elements = [new CreatedByIcon(initiative), createdBy];
+  }
+}
+
+class CreatedByIcon implements ImageContext {
+  type: 'image' = 'image';
+  image_url: string;
+  alt_text: string;
+  constructor(initiative: Initiative) {
+    this.image_url = initiative.createdBy.icon;
+    this.alt_text = initiative.createdBy.name;
   }
 }
 
 export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
-  elements: MarkdownText[];
+  elements: (ImageContext | MarkdownText)[];
   constructor(initiative: Initiative) {
     let text: string;
     if (initiative.status && initiative.office) {
@@ -72,7 +77,7 @@ export class MetaInformation implements ContextBlock {
     } else if (initiative.office) {
       text = `This initiative is part of the *${initiative.office}* office`;
     }
-    this.elements = [{ type: 'mrkdwn', text }];
+    this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
   }
 }
 
