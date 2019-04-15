@@ -57,7 +57,7 @@ export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
   elements: (ImageContext | MarkdownText)[];
   constructor(initiative: Initiative) {
-    const status = initiative.status ? ` *${initiative.statusDisplay}*` : '';
+    const status = initiative.status ? ` *${initiative.statusDisplay.toLowerCase()}*` : '';
     const office = initiative.office ? ` in *${initiative.office}*` : '';
     const createdBy = `was created by <@${initiative.createdBy.slackUserId}>`;
     const text = `This${status} initiative${office} ${createdBy}`;
