@@ -72,9 +72,6 @@ export class MetaInformation implements ContextBlock {
     } else if (initiative.office) {
       text = `This initiative is a part of the *${initiative.office}* office`;
     }
-    if (initiative.channel && initiative.channel.parsed) {
-      text = `${text} - more information @ ${initiative.channel.parsed}`;
-    }
     this.elements = [{ type: 'mrkdwn', text }];
   }
 }

@@ -48,14 +48,7 @@ function getFilteredInitiatives(initiatives: Initiative[], slackUserId: string, 
 function getInitiativeSections(initiatives: Initiative[]): (Section | DividerBlock | Action | ContextBlock)[] {
   return (
     initiatives
-      .map(initiative => {
-        return [
-          new BasicInitiative(initiative),
-          new MetaInformation(initiative),
-          new CreatedBy(initiative),
-          new Divider()
-        ];
-      })
+      .map(initiative => [new BasicInitiative(initiative), new MetaInformation(initiative), new Divider()])
       // flatten the array of arrays into a single array
       .reduce((all, block) => all.concat(block), [])
   );
