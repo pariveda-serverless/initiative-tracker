@@ -163,7 +163,7 @@ class BasicInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
+    const description = initiative.shortDescription ? `\n_${initiative.shortDescription}_` : '';
     this.text = name + description;
   }
 }
@@ -173,7 +173,7 @@ class DetailedInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.description ? `\n${initiative.description}` : '';
+    const description = initiative.description ? `\n_${initiative.description}_` : '';
     this.text = name + description;
   }
 }
