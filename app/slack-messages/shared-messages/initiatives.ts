@@ -18,7 +18,7 @@ export class ReadOnlyInitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: Initiative) {
-    this.text = new FullInitiativeOverview(initiative);
+    this.text = new BasicInitiativeOverview(initiative);
   }
 }
 
@@ -38,7 +38,7 @@ export class InitiativeDetails implements Section {
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: Initiative) {
-    this.text = new FullInitiativeOverview(initiative);
+    this.text = new BasicInitiativeOverview(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
@@ -49,7 +49,7 @@ export class CreatedBy implements ContextBlock {
   constructor(initiative: Initiative) {
     const createdBy: MarkdownText = {
       type: 'mrkdwn',
-      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
+      text: `This Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
     };
     this.elements = [new CreatedByIcon(initiative), createdBy];
   }
@@ -69,16 +69,10 @@ export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
   elements: (ImageContext | MarkdownText)[];
   constructor(initiative: Initiative) {
-    let text: string;
-    if (initiative.status && initiative.office) {
-      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${
-        initiative.statusDisplay
-      }* initiative in the *${initiative.office}* office`;
-    } else if (initiative.status) {
-      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${initiative.statusDisplay}* initiative`;
-    } else if (initiative.office) {
-      text = `This initiative is part of the *${initiative.office}* office`;
-    }
+    const status = initiative.status ? ` *${initiative.statusDisplay}*` : '';
+    const office = initiative.office ? ` in *${initiative.office}*` : '';
+    const createdBy = `was created by <@${initiative.createdBy.slackUserId}>`;
+    const text = `This${status} initiative${office} ${createdBy}`;
     this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
   }
 }
@@ -174,20 +168,6 @@ class RemoveOption implements Option {
 
 export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
-}
-
-class FullInitiativeOverview implements MarkdownText {
-  type: 'mrkdwn' = 'mrkdwn';
-  text: string;
-  constructor(initiative: Initiative) {
-    const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.description ? `\n${initiative.description}` : '';
-    const status = initiative.statusDisplay ? `\n*Status*: ${initiative.statusDisplay}` : '';
-    const office = initiative.office ? `\n*Office*: ${initiative.office}` : '';
-    const channel = initiative.channel && initiative.channel.parsed ? `\n*Channel*: ${initiative.channel.parsed}` : '';
-    const spacer = status || office || channel ? '\n' : '';
-    this.text = name + status + office + channel + spacer + description;
-  }
 }
 
 class BasicInitiativeOverview implements MarkdownText {
