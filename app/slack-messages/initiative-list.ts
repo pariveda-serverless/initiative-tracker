@@ -10,7 +10,7 @@ import {
   PlainText
 } from 'slack';
 import { Initiative, Status, getStatusDisplay } from '../initiatives';
-import { BasicInitiative, CreatedBy, Divider, OfficeAndChannel } from './shared-messages';
+import { BasicInitiative, CreatedBy, Divider, MetaInformation } from './shared-messages';
 import { Query } from '../queries';
 import { ListAction, stringifyValue } from '../interactivity';
 
@@ -51,7 +51,7 @@ function getInitiativeSections(initiatives: Initiative[]): (Section | DividerBlo
       .map(initiative => {
         return [
           new BasicInitiative(initiative),
-          new OfficeAndChannel(initiative),
+          new MetaInformation(initiative),
           new CreatedBy(initiative),
           new Divider()
         ];

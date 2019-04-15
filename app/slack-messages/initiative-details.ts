@@ -17,8 +17,8 @@ export class DetailResponse implements Message {
     const nameAndStatus = new InitiativeDetails(initiative);
     blocks.push(nameAndStatus);
 
-    const metaInformation = new CreatedBy(initiative);
-    blocks.push(metaInformation);
+    const createdBy = new CreatedBy(initiative);
+    blocks.push(createdBy);
 
     // Only add the join buttons if the user isn't already a member
     if (isPublic || !initiative.members.find(member => member.slackUserId === slackUserId)) {

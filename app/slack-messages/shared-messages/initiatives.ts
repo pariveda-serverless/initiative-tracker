@@ -18,7 +18,7 @@ export class ReadOnlyInitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeOverview(initiative);
+    this.text = new FullInitiativeOverview(initiative);
   }
 }
 
@@ -28,7 +28,7 @@ export class BasicInitiative implements Section {
   accessory: Button;
   block_id: string;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeOverview(initiative);
+    this.text = new BasicInitiativeOverview(initiative);
     this.accessory = new ViewDetailsButton(initiative);
   }
 }
@@ -38,7 +38,7 @@ export class InitiativeDetails implements Section {
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeOverview(initiative);
+    this.text = new FullInitiativeOverview(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
@@ -60,7 +60,7 @@ export class CreatedBy implements ContextBlock {
   }
 }
 
-export class OfficeAndChannel implements ContextBlock {
+export class MetaInformation implements ContextBlock {
   type: 'context' = 'context';
   elements: MarkdownText[];
   constructor(initiative: Initiative) {
@@ -71,6 +71,9 @@ export class OfficeAndChannel implements ContextBlock {
       text = `This initiative is *${initiative.statusDisplay}*`;
     } else if (initiative.office) {
       text = `This initiative is a part of the *${initiative.office}* office`;
+    }
+    if (initiative.channel && initiative.channel.parsed) {
+      text = `${text} - more information @ ${initiative.channel.parsed}`;
     }
     this.elements = [{ type: 'mrkdwn', text }];
   }
@@ -169,7 +172,7 @@ export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
 }
 
-class InitiativeOverview implements MarkdownText {
+class FullInitiativeOverview implements MarkdownText {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
   constructor(initiative: Initiative) {
@@ -183,6 +186,16 @@ class InitiativeOverview implements MarkdownText {
     const officeAndChannelLine = getSingleLineOrEmpty(office, channel);
     const descriptionLine = getSingleLineOrEmpty(description);
     this.text = nameAndStatusLine + officeAndChannelLine + descriptionLine;
+  }
+}
+
+class BasicInitiativeOverview implements MarkdownText {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  constructor(initiative: Initiative) {
+    const name = initiative.name ? `*${initiative.name}*` : '';
+    const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
+    this.text = name + description;
   }
 }
 

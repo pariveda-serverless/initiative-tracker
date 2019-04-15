@@ -22,9 +22,9 @@ export class StatusUpdateRequest implements Message {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const nameAndStatus = new ReadOnlyInitiativeDetails(initiative);
-    const metaInformation = new CreatedBy(initiative);
+    const createdBy = new CreatedBy(initiative);
     const updateActions = new UpdateStatusActions(initiative);
-    this.blocks = [requestInfo, nameAndStatus, metaInformation, updateActions];
+    this.blocks = [requestInfo, nameAndStatus, createdBy, updateActions];
   }
 }
 

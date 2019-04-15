@@ -21,10 +21,10 @@ export class ParticipationUpdateRequest implements Message {
   constructor(initiative: Initiative, member: Member) {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
-    const nameAndStatus = new ReadOnlyInitiativeDetails(initiative);
-    const metaInformation = new CreatedBy(initiative);
+    const initiativeDetails = new ReadOnlyInitiativeDetails(initiative);
+    const createdBy = new CreatedBy(initiative);
     const participationActions = new UpdateParticipationActions(member, initiative);
-    this.blocks = [requestInfo, nameAndStatus, metaInformation, participationActions];
+    this.blocks = [requestInfo, initiativeDetails, createdBy, participationActions];
   }
 }
 
