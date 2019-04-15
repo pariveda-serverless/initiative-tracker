@@ -165,7 +165,7 @@ class BasicInitiativeOverview implements MarkdownText {
     const channel = initiative.channel && initiative.channel.parsed ? ` @ ${initiative.channel.parsed}` : '';
     const name = initiative.name ? `*${initiative.name}${channel}*` : '';
     const description = initiative.shortDescription ? `\n>_${initiative.shortDescription}_` : '';
-    this.text = name + channel + description;
+    this.text = name + description;
   }
 }
 
@@ -173,9 +173,9 @@ class DetailedInitiativeOverview implements MarkdownText {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
   constructor(initiative: Initiative) {
-    const name = initiative.name ? `*${initiative.name}*` : '';
-    const channel = initiative.channel && initiative.channel.parsed ? `* @ ${initiative.channel.parsed}*` : '';
+    const channel = initiative.channel && initiative.channel.parsed ? ` @ ${initiative.channel.parsed}` : '';
+    const name = initiative.name ? `*${initiative.name}${channel}*` : '';
     const description = initiative.description ? `\n>_${initiative.description}_` : '';
-    this.text = name + channel + description;
+    this.text = name + description;
   }
 }
