@@ -11,7 +11,7 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { Initiative, Status } from '../../initiatives/';
+import { Initiative } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
 export class ReadOnlyInitiativeDetails implements Section {
@@ -59,7 +59,7 @@ export class MetaInformation implements ContextBlock {
   constructor(initiative: Initiative) {
     const status = initiative.status ? ` *${initiative.statusDisplay.toLowerCase()}*` : '';
     const office = initiative.office ? ` in *${initiative.office}*` : '';
-    const createdBy = `was created by <@${initiative.createdBy.slackUserId}>`;
+    const createdBy = `was added by <@${initiative.createdBy.slackUserId}>`;
     const text = `This${status} initiative${office} ${createdBy}`;
     this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
   }
@@ -163,8 +163,9 @@ class BasicInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.shortDescription ? `\n_${initiative.shortDescription}_` : '';
-    this.text = name + description;
+    const channel = initiative.channel && initiative.channel.parsed ? `* @ ${initiative.channel.parsed}*` : '';
+    const description = initiative.shortDescription ? `\n>_${initiative.shortDescription}_` : '';
+    this.text = name + channel + description;
   }
 }
 
@@ -173,20 +174,8 @@ class DetailedInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.description ? `\n_${initiative.description}_` : '';
-    this.text = name + description;
-  }
-}
-
-function getIndefiniteArticleForStatus(status: Status): 'a' | 'an' {
-  switch (status) {
-    case Status.ABANDONED:
-    case Status.ACTIVE:
-    case Status.ON_HOLD: {
-      return 'an';
-    }
-    case Status.COMPLETE: {
-      return 'a';
-    }
+    const channel = initiative.channel && initiative.channel.parsed ? `* @ ${initiative.channel.parsed}*` : '';
+    const description = initiative.description ? `\n>_${initiative.description}_` : '';
+    this.text = name + channel + description;
   }
 }
