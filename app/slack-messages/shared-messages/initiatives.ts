@@ -60,7 +60,6 @@ export class MetaInformation implements ContextBlock {
     const status = initiative.status ? ` *${initiative.statusDisplay.toLowerCase()}*` : '';
     const office = initiative.office ? ` in *${initiative.office}*` : '';
     const createdBy = `was added by <@${initiative.createdBy.slackUserId}>`;
-    const channel = initiative.channel && initiative.channel.parsed ? ` - more @ ${initiative.channel.parsed}` : '';
     const text = `This${status} initiative${office} ${createdBy}`;
     this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
   }
@@ -164,8 +163,9 @@ class BasicInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
+    const channel = initiative.channel && initiative.channel.parsed ? ` @ ${initiative.channel.parsed}` : '';
     const description = initiative.shortDescription ? `\n>_${initiative.shortDescription}_` : '';
-    this.text = name + description;
+    this.text = name + channel + description;
   }
 }
 
@@ -174,8 +174,9 @@ class DetailedInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
+    const channel = initiative.channel && initiative.channel.parsed ? ` @ ${initiative.channel.parsed}` : '';
     const description = initiative.description ? `\n>_${initiative.description}_` : '';
-    this.text = name + description;
+    this.text = name + channel + description;
   }
 }
 
