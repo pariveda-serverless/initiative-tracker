@@ -9,7 +9,7 @@ import {
   StaticSelect,
   Button
 } from 'slack';
-import { ReadOnlyInitiativeDetails, CreatedBy } from './shared-messages';
+import { ReadOnlyInitiativeDetails, MetaInformation } from './shared-messages';
 import { stringifyValue, MemberAction } from '../interactivity';
 import { Member } from '../members';
 import { Initiative } from '../initiatives';
@@ -22,9 +22,9 @@ export class ParticipationUpdateRequest implements Message {
     this.channel = member.slackUserId;
     const requestInfo = new RequestInfo(member);
     const initiativeDetails = new ReadOnlyInitiativeDetails(initiative);
-    const createdBy = new CreatedBy(initiative);
+    const metaInformation = new MetaInformation(initiative);
     const participationActions = new UpdateParticipationActions(member, initiative);
-    this.blocks = [requestInfo, initiativeDetails, createdBy, participationActions];
+    this.blocks = [requestInfo, initiativeDetails, metaInformation, participationActions];
   }
 }
 

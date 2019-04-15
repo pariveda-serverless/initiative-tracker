@@ -10,7 +10,7 @@ import {
   PlainText
 } from 'slack';
 import { Initiative, Status, getStatusDisplay } from '../initiatives';
-import { BasicInitiative, CreatedBy, Divider, MetaInformation } from './shared-messages';
+import { BasicInitiative, Divider, MetaInformation } from './shared-messages';
 import { Query } from '../queries';
 import { ListAction, stringifyValue } from '../interactivity';
 

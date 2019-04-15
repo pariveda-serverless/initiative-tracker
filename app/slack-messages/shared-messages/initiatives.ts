@@ -43,18 +43,6 @@ export class InitiativeDetails implements Section {
   }
 }
 
-export class CreatedBy implements ContextBlock {
-  type: 'context' = 'context';
-  elements: (ImageContext | MarkdownText)[];
-  constructor(initiative: Initiative) {
-    const createdBy: MarkdownText = {
-      type: 'mrkdwn',
-      text: `This Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
-    };
-    this.elements = [new CreatedByIcon(initiative), createdBy];
-  }
-}
-
 class CreatedByIcon implements ImageContext {
   type: 'image' = 'image';
   image_url: string;
