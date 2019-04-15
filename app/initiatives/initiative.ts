@@ -127,6 +127,6 @@ export function getStatusDisplay(status: Status): string {
   return display.charAt(0).toUpperCase() + display.slice(1);
 }
 
-function getShortDescription(description: string, length: number = 152): string {
+function getShortDescription(description: string, length: number = 160): string {
   return description && description.length > length ? `${description.substring(0, length)}...` : description;
 }

@@ -11,7 +11,7 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { Initiative, Status } from '../../initiatives/';
+import { Initiative } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
 export class ReadOnlyInitiativeDetails implements Section {
@@ -177,18 +177,5 @@ class DetailedInitiativeOverview implements MarkdownText {
     const channel = initiative.channel && initiative.channel.parsed ? ` @ ${initiative.channel.parsed}` : '';
     const description = initiative.description ? `\n>_${initiative.description}_` : '';
     this.text = name + channel + description;
-  }
-}
-
-function getIndefiniteArticleForStatus(status: Status): 'a' | 'an' {
-  switch (status) {
-    case Status.ABANDONED:
-    case Status.ACTIVE:
-    case Status.ON_HOLD: {
-      return 'an';
-    }
-    case Status.COMPLETE: {
-      return 'a';
-    }
   }
 }
