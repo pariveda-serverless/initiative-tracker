@@ -11,7 +11,7 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { Initiative } from '../../initiatives/';
+import { Initiative, Status } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
 export class ReadOnlyInitiativeDetails implements Section {
@@ -68,9 +68,9 @@ export class MetaInformation implements ContextBlock {
     if (initiative.status && initiative.office) {
       text = `This *${initiative.statusDisplay}* initiative is part of the *${initiative.office}* office`;
     } else if (initiative.status) {
-      text = `This initiative is *${initiative.statusDisplay}*`;
+      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${initiative.statusDisplay}* initiative `;
     } else if (initiative.office) {
-      text = `This initiative is a part of the *${initiative.office}* office`;
+      text = `This initiative is part of the *${initiative.office}* office`;
     }
     this.elements = [{ type: 'mrkdwn', text }];
   }
@@ -204,4 +204,17 @@ function getSingleLineOrEmpty(...fields): string {
       return `${line ? line : '\n'}${field ? `${line ? `  ` : ''}${field}` : ''}`;
     }
   }, '');
+}
+
+function getIndefiniteArticleForStatus(status: Status): 'a' | 'an' {
+  switch (status) {
+    case Status.ABANDONED:
+    case Status.ACTIVE:
+    case Status.ON_HOLD: {
+      return 'an';
+    }
+    case Status.COMPLETE: {
+      return 'a';
+    }
+  }
 }
