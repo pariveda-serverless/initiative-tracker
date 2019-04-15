@@ -61,7 +61,7 @@ export class MetaInformation implements ContextBlock {
     const office = initiative.office ? ` in *${initiative.office}*` : '';
     const createdBy = `was added by <@${initiative.createdBy.slackUserId}>`;
     const channel = initiative.channel && initiative.channel.parsed ? ` - more @ ${initiative.channel.parsed}` : '';
-    const text = `This${status} initiative${office} ${createdBy}${channel}`;
+    const text = `This${status} initiative${office} ${createdBy}`;
     this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
   }
 }
