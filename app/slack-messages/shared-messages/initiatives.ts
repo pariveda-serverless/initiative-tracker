@@ -101,7 +101,7 @@ export class ViewDetailsButton implements Button {
   constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = { type: 'plain_text', text: 'View details' };
+    this.text = { type: 'plain_text', text: 'Details' };
   }
 }
 
@@ -186,7 +186,7 @@ class FullInitiativeOverview implements MarkdownText {
     const office = initiative.office ? `\n*Office*: ${initiative.office}` : '';
     const channel = initiative.channel && initiative.channel.parsed ? `\n*Channel*: ${initiative.channel.parsed}` : '';
     const spacer = status || office || channel ? '\n' : '';
-    this.text = name + description + spacer + status + office + channel;
+    this.text = name + status + office + channel + spacer + description;
   }
 }
 
