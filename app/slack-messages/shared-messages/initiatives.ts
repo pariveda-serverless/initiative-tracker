@@ -71,9 +71,11 @@ export class MetaInformation implements ContextBlock {
   constructor(initiative: Initiative) {
     let text: string;
     if (initiative.status && initiative.office) {
-      text = `This *${initiative.statusDisplay}* initiative is part of the *${initiative.office}* office`;
+      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${
+        initiative.statusDisplay
+      }* initiative in the *${initiative.office}* office`;
     } else if (initiative.status) {
-      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${initiative.statusDisplay}* initiative `;
+      text = `This is ${getIndefiniteArticleForStatus(initiative.status)} *${initiative.statusDisplay}* initiative`;
     } else if (initiative.office) {
       text = `This initiative is part of the *${initiative.office}* office`;
     }
@@ -196,16 +198,6 @@ class BasicInitiativeOverview implements MarkdownText {
     const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
     this.text = name + description;
   }
-}
-
-function getSingleLineOrEmpty(...fields): string {
-  return fields.reduce((line, field) => {
-    if (!line && !field) {
-      return '';
-    } else {
-      return `${line ? line : '\n'}${field ? `${line ? `  ` : ''}${field}` : ''}`;
-    }
-  }, '');
 }
 
 function getIndefiniteArticleForStatus(status: Status): 'a' | 'an' {
