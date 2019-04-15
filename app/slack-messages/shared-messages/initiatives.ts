@@ -174,7 +174,7 @@ class DetailedInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
-    const description = initiative.description ? `\n_${initiative.description}_` : '';
+    const description = initiative.description ? `\n>_${initiative.description}_` : '';
     this.text = name + description;
   }
 }
