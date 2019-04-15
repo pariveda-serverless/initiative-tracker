@@ -179,15 +179,12 @@ class FullInitiativeOverview implements MarkdownText {
   text: string;
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
+    const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
+
     const status = initiative.statusDisplay ? `(${initiative.statusDisplay})` : '';
     const office = initiative.office ? `*Office*: ${initiative.office}` : '';
     const channel = initiative.channel && initiative.channel.parsed ? `*Channel*: ${initiative.channel.parsed}` : '';
-    const description = initiative.shortDescription ? `*Description*: ${initiative.shortDescription}` : '';
-
-    const nameAndStatusLine = getSingleLineOrEmpty(name, status);
-    const officeAndChannelLine = getSingleLineOrEmpty(office, channel);
-    const descriptionLine = getSingleLineOrEmpty(description);
-    this.text = nameAndStatusLine + officeAndChannelLine + descriptionLine;
+    this.text = name + description;
   }
 }
 
