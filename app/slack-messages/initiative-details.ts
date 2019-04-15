@@ -67,7 +67,7 @@ class ViewListButton implements Button {
   text: PlainText;
   action_id = InitiativeAction.VIEW_LIST;
   constructor() {
-    const text = `View all initiatives`.replace(/  +/g, '');
+    const text = `List`.replace(/  +/g, '');
     this.text = { type: 'plain_text', text };
   }
 }

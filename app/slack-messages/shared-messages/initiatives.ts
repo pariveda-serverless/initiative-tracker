@@ -18,7 +18,7 @@ export class ReadOnlyInitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: Initiative) {
-    this.text = new BasicInitiativeOverview(initiative);
+    this.text = new DetailedInitiativeOverview(initiative);
   }
 }
 
@@ -38,7 +38,7 @@ export class InitiativeDetails implements Section {
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: Initiative) {
-    this.text = new BasicInitiativeOverview(initiative);
+    this.text = new DetailedInitiativeOverview(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
@@ -164,6 +164,16 @@ class BasicInitiativeOverview implements MarkdownText {
   constructor(initiative: Initiative) {
     const name = initiative.name ? `*${initiative.name}*` : '';
     const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
+    this.text = name + description;
+  }
+}
+
+class DetailedInitiativeOverview implements MarkdownText {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  constructor(initiative: Initiative) {
+    const name = initiative.name ? `*${initiative.name}*` : '';
+    const description = initiative.description ? `\n${initiative.description}` : '';
     this.text = name + description;
   }
 }
