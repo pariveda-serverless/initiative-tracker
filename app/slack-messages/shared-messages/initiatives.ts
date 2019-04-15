@@ -11,54 +11,60 @@ import {
   ContextBlock,
   Overflow
 } from 'slack';
-import { Initiative } from '../../initiatives/';
+import { Initiative, Status } from '../../initiatives/';
 import { InitiativeAction, stringifyValue } from '../../interactivity';
 
-export class InitiativeInformation implements Section {
+export class ReadOnlyInitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new DetailedInitiativeOverview(initiative);
   }
 }
 
-export class InitiativeInformationAndViewDetails implements Section {
+export class BasicInitiative implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Button;
   block_id: string;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new BasicInitiativeOverview(initiative);
     this.accessory = new ViewDetailsButton(initiative);
   }
 }
 
-export class InitiativeInformationAndUpdateActions implements Section {
+export class InitiativeDetails implements Section {
   type: 'section' = 'section';
   text: MarkdownText;
   accessory: Overflow;
   constructor(initiative: Initiative) {
-    this.text = new InitiativeNameStatusAndChannel(initiative);
+    this.text = new DetailedInitiativeOverview(initiative);
     this.accessory = new InitiativeActions(initiative);
   }
 }
 
-export class CreatedBy implements ContextBlock {
-  type: 'context' = 'context';
-  elements: (ImageContext | PlainText | MarkdownText)[];
+class CreatedByIcon implements ImageContext {
+  type: 'image' = 'image';
+  image_url: string;
+  alt_text: string;
   constructor(initiative: Initiative) {
-    const createdByIcon: ImageContext = {
-      type: 'image',
-      image_url: initiative.createdBy.icon,
-      alt_text: initiative.createdBy.name
-    };
-    const createdBy: MarkdownText = {
-      type: 'mrkdwn',
-      text: `Added by <@${initiative.createdBy.slackUserId}> on ${initiative.createdAt}`
-    };
-    this.elements = [createdByIcon, createdBy];
+    this.image_url = initiative.createdBy.icon;
+    this.alt_text = initiative.createdBy.name;
   }
 }
+
+export class MetaInformation implements ContextBlock {
+  type: 'context' = 'context';
+  elements: (ImageContext | MarkdownText)[];
+  constructor(initiative: Initiative) {
+    const status = initiative.status ? ` *${initiative.statusDisplay.toLowerCase()}*` : '';
+    const office = initiative.office ? ` in *${initiative.office}*` : '';
+    const createdBy = `was created by <@${initiative.createdBy.slackUserId}>`;
+    const text = `This${status} initiative${office} ${createdBy}`;
+    this.elements = [new CreatedByIcon(initiative), { type: 'mrkdwn', text }];
+  }
+}
+
 export class InitiativeDetailActions implements Action {
   type: 'actions' = 'actions';
   elements: (StaticSelect | Button)[];
@@ -77,7 +83,7 @@ export class ViewDetailsButton implements Button {
   constructor(initiative: Initiative) {
     this.action_id = InitiativeAction.VIEW_DETAILS;
     this.value = stringifyValue({ initiativeId: initiative.initiativeId });
-    this.text = { type: 'plain_text', text: 'View details' };
+    this.text = { type: 'plain_text', text: 'Details' };
   }
 }
 
@@ -152,29 +158,35 @@ export class Divider implements DividerBlock {
   type: 'divider' = 'divider';
 }
 
-class InitiativeNameStatusAndChannel implements MarkdownText {
+class BasicInitiativeOverview implements MarkdownText {
   type: 'mrkdwn' = 'mrkdwn';
   text: string;
   constructor(initiative: Initiative) {
-    const name = initiative.name ? `*Name*: ${initiative.name}` : '';
-    const status = initiative.statusDisplay ? `*Status*: ${initiative.statusDisplay}` : '';
-    const office = initiative.office ? `*Office*: ${initiative.office}` : '';
-    const channel = initiative.channel && initiative.channel.parsed ? `*Channel*: ${initiative.channel.parsed}` : '';
-    const description = initiative.shortDescription ? `*Description*: ${initiative.shortDescription}` : '';
-
-    const nameAndStatusLine = getSingleLineOrEmpty(name, status);
-    const officeAndChannelLine = getSingleLineOrEmpty(office, channel);
-    const descriptionLine = getSingleLineOrEmpty(description);
-    this.text = nameAndStatusLine + officeAndChannelLine + descriptionLine;
+    const name = initiative.name ? `*${initiative.name}*` : '';
+    const description = initiative.shortDescription ? `\n${initiative.shortDescription}` : '';
+    this.text = name + description;
   }
 }
 
-function getSingleLineOrEmpty(...fields): string {
-  return fields.reduce((line, field) => {
-    if (!line && !field) {
-      return '';
-    } else {
-      return `${line ? line : '\n'}${field ? `${line ? `    ` : ''}${field}` : ''}`;
+class DetailedInitiativeOverview implements MarkdownText {
+  type: 'mrkdwn' = 'mrkdwn';
+  text: string;
+  constructor(initiative: Initiative) {
+    const name = initiative.name ? `*${initiative.name}*` : '';
+    const description = initiative.description ? `\n${initiative.description}` : '';
+    this.text = name + description;
+  }
+}
+
+function getIndefiniteArticleForStatus(status: Status): 'a' | 'an' {
+  switch (status) {
+    case Status.ABANDONED:
+    case Status.ACTIVE:
+    case Status.ON_HOLD: {
+      return 'an';
     }
-  }, '');
+    case Status.COMPLETE: {
+      return 'a';
+    }
+  }
 }

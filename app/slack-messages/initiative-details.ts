@@ -1,12 +1,6 @@
 import { Message, Section, DividerBlock, Action, ContextBlock, MarkdownText, Button, PlainText } from 'slack';
 import { Initiative } from '../initiatives';
-import {
-  Divider,
-  CreatedBy,
-  InitiativeDetailActions,
-  InitiativeInformationAndUpdateActions,
-  MemberSection
-} from './shared-messages';
+import { Divider, InitiativeDetailActions, InitiativeDetails, MemberSection, MetaInformation } from './shared-messages';
 import { InitiativeAction } from '../interactivity';
 
 export class DetailResponse implements Message {
@@ -20,10 +14,10 @@ export class DetailResponse implements Message {
     const header = new DetailsHeader(initiative);
     blocks.push(header);
 
-    const nameAndStatus = new InitiativeInformationAndUpdateActions(initiative);
-    blocks.push(nameAndStatus);
+    const initiativeDetails = new InitiativeDetails(initiative);
+    blocks.push(initiativeDetails);
 
-    const metaInformation = new CreatedBy(initiative);
+    const metaInformation = new MetaInformation(initiative);
     blocks.push(metaInformation);
 
     // Only add the join buttons if the user isn't already a member
@@ -73,7 +67,7 @@ class ViewListButton implements Button {
   text: PlainText;
   action_id = InitiativeAction.VIEW_LIST;
   constructor() {
-    const text = `View all initiatives`.replace(/  +/g, '');
+    const text = `List`.replace(/  +/g, '');
     this.text = { type: 'plain_text', text };
   }
 }
