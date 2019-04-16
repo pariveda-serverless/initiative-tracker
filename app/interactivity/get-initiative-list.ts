@@ -34,6 +34,7 @@ async function getOrCreateQuery(payload: ActionPayload, profile: Profile): Promi
     query = await saveQuery(existing.getUpdateRequest({ status, office, statusChanged, officeChanged }));
   } else {
     office = office || profile.office;
+    status = status || Status.ACTIVE;
     const queryRequest = new CreateQueryRequest({ status, office });
     query = await saveQuery(queryRequest);
   }
