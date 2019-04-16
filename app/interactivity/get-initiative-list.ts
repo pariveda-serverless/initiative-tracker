@@ -6,19 +6,21 @@ import { parseValue } from './id-helper';
 import { table } from '../shared';
 import { Status } from '../initiatives';
 import { ListAction } from './interactions';
+import { Profile, getAndSaveUserProfile } from '../slack-api';
 
 export async function getInitiativeListAction(
   teamId: string,
   channelId: string,
-  payload: ActionPayload
+  payload: ActionPayload,
+  profile: Profile
 ): Promise<Message> {
   const slackUserId = payload.user.id;
-  const query = await getOrCreateQuery(payload);
+  const query = await getOrCreateQuery(payload, profile);
   const initiatives = await getInitiatives(teamId);
   return new ListResponse({ initiatives, channelId, slackUserId, query });
 }
 
-async function getOrCreateQuery(payload: ActionPayload): Promise<Query> {
+async function getOrCreateQuery(payload: ActionPayload, profile: Profile): Promise<Query> {
   let status: Status, office: string, statusChanged: boolean, officeChanged: boolean, queryId: string;
   if (payload.actions && payload.actions.length > 0 && payload.actions[0].selected_option) {
     const action = payload.actions[0];
@@ -31,6 +33,7 @@ async function getOrCreateQuery(payload: ActionPayload): Promise<Query> {
     const existing = await getQuery(queryId);
     query = await saveQuery(existing.getUpdateRequest({ status, office, statusChanged, officeChanged }));
   } else {
+    office = office || profile.office;
     const queryRequest = new CreateQueryRequest({ status, office });
     query = await saveQuery(queryRequest);
   }
