@@ -19,19 +19,20 @@ export class ListResponse implements Message {
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor({ initiatives, channelId, slackUserId, query }: ListResponseProperties) {
     this.channel = channelId;
+    // Add main header content
+    this.blocks = [new Header(slackUserId, query), new Filter(initiatives, query), new Divider()];
+
+    // Either add initiative results or no results found
     const filteredInitiatives = getFilteredInitiatives(initiatives, slackUserId, query);
-    if (!filteredInitiatives || !filteredInitiatives.length) {
-      this.blocks = [new NoResults(query)];
-    } else {
+    if (filteredInitiatives && filteredInitiatives.length) {
       const initiativeSections = getInitiativeSections(filteredInitiatives);
-      this.blocks = [
-        new Header(slackUserId, query),
-        new Filter(initiatives, query),
-        new Divider(),
-        ...initiativeSections,
-        new Footer()
-      ];
+      this.blocks.push(...initiativeSections);
+    } else {
+      this.blocks.push(new NoResults(query), new Divider());
     }
+
+    // Add footer
+    this.blocks.push(new Footer());
   }
 }
 
