@@ -22,17 +22,14 @@ export class ListResponse implements Message {
     // Add main header content
     this.blocks = [new Header(slackUserId, query), new Filter(initiatives, query), new Divider()];
 
-    // Either add initiative results or no results found
+    // If there are results to show then add them as well as footer, otherwise show no initiatives found
     const filteredInitiatives = getFilteredInitiatives(initiatives, slackUserId, query);
     if (filteredInitiatives && filteredInitiatives.length) {
       const initiativeSections = getInitiativeSections(filteredInitiatives);
-      this.blocks.push(...initiativeSections);
+      this.blocks.push(...initiativeSections, new Footer());
     } else {
       this.blocks.push(new NoResults(query), new Divider());
     }
-
-    // Add footer
-    this.blocks.push(new Footer());
   }
 }
 
@@ -147,17 +144,6 @@ class StatusFilter implements StaticSelect {
     if (queryStatusInResults) {
       this.initial_option = new StatusOption(Status[query.status], query);
     }
-  }
-}
-
-class ViewAllOption implements Option {
-  text: PlainText = {
-    type: 'plain_text',
-    text: 'View all'
-  };
-  value: string;
-  constructor(query: Query) {
-    this.value = stringifyValue({ queryId: query && query.queryId });
   }
 }
 
