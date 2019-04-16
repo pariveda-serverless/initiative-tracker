@@ -28,7 +28,7 @@ export class ListResponse implements Message {
       const initiativeSections = getInitiativeSections(filteredInitiatives);
       this.blocks.push(...initiativeSections, new Footer());
     } else {
-      this.blocks.push(new NoResults(query), new Divider());
+      this.blocks.push(new NoResults(query));
     }
   }
 }
