@@ -13,7 +13,10 @@ export async function replyWithMessage(url: string, message: Message) {
     body: JSON.stringify(message)
   };
   console.log('Replying to message with params', JSON.stringify(params));
-  const response = await post(params);
+  const response = JSON.parse(await post(params));
+  if (!response.ok) {
+    throw new Error(response.error);
+  }
   console.log('Received response', JSON.stringify(response));
 }
 
@@ -21,6 +24,9 @@ export async function sendMessage(message: any, teamId: string): Promise<any> {
   message.token = await getToken(teamId);
   console.log('Sending slack message', JSON.stringify(message));
   const response = await slack.chat.postMessage(message);
+  if (!response.ok) {
+    throw new Error(response.error);
+  }
   console.log('Received response', JSON.stringify(response));
   return response;
 }
@@ -30,6 +36,9 @@ export async function sendEphemeralMessage(message: any, teamId: string, userId:
   message.user = userId;
   console.log('Sending slack message', JSON.stringify(message));
   const response = await slack.chat.postEphemeral(message);
+  if (!response.ok) {
+    throw new Error(response.error);
+  }
   console.log('Received response', JSON.stringify(response));
   return response;
 }

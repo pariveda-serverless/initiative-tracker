@@ -32,7 +32,7 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
       case ListAction.FILTER_BY_OFFICE:
       case ListAction.FILTER_BY_STATUS:
       case InitiativeAction.VIEW_LIST: {
-        response = await getInitiativeListAction(teamId, channel, payload);
+        response = await getInitiativeListAction(teamId, channel, payload, profile);
         break;
       }
       case InitiativeAction.DELETE: {

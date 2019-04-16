@@ -109,9 +109,8 @@ class OfficeFilter implements StaticSelect {
       text: 'Filter by office',
       emoji: true
     };
-    const options = offices.map(office => new OfficeOption(office, query));
-    this.options = [new ViewAllOption(query), ...options];
-    this.initial_option = query && query.office ? new OfficeOption(query.office, query) : new ViewAllOption(query);
+    this.options = offices.map(office => new OfficeOption(office, query));
+    this.initial_option = query && query.office && new OfficeOption(query.office, query);
   }
 }
 
@@ -139,10 +138,8 @@ class StatusFilter implements StaticSelect {
       text: 'Filter by status',
       emoji: true
     };
-    const options = statuses.map(status => new StatusOption(Status[status], query));
-    this.options = [new ViewAllOption(query), ...options];
-    this.initial_option =
-      query && query.status ? new StatusOption(Status[query.status], query) : new ViewAllOption(query);
+    this.options = statuses.map(status => new StatusOption(Status[status], query));
+    this.initial_option = query && query.status && new StatusOption(Status[query.status], query);
   }
 }
 
