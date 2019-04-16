@@ -174,8 +174,10 @@ class NoResults implements Section {
   text: MarkdownText;
   constructor(query: Query) {
     const status = query && query.status;
-    const search = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
-    const text = `Darn, we couldn't find any ${search}initiatives :thinking_face: ...  maybe you should add one! :muscle:
+    const statusSearch = status ? `*${getStatusDisplay(status).toLowerCase()}* ` : '';
+    const office = query && query.office;
+    const officeSearch = office ? ` in *${office}*` : '';
+    const text = `Darn, we couldn't find any ${statusSearch}initiatives${officeSearch} :thinking_face: ...  maybe you should add one! :muscle:
     :tada: */add-initiative [name], [optional description], [optional #channel]* :confetti_ball:`.replace(/  +/g, '');
     this.text = { type: 'mrkdwn', text };
   }
