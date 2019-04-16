@@ -19,18 +19,16 @@ export class ListResponse implements Message {
   blocks: (Section | DividerBlock | Action | ContextBlock)[];
   constructor({ initiatives, channelId, slackUserId, query }: ListResponseProperties) {
     this.channel = channelId;
+    // Add main header content
+    this.blocks = [new Header(slackUserId, query), new Filter(initiatives, query), new Divider()];
+
+    // If there are results to show then add them as well as footer, otherwise show no initiatives found
     const filteredInitiatives = getFilteredInitiatives(initiatives, slackUserId, query);
-    if (!filteredInitiatives || !filteredInitiatives.length) {
-      this.blocks = [new NoResults(query)];
-    } else {
+    if (filteredInitiatives && filteredInitiatives.length) {
       const initiativeSections = getInitiativeSections(filteredInitiatives);
-      this.blocks = [
-        new Header(slackUserId, query),
-        new Filter(initiatives, query),
-        new Divider(),
-        ...initiativeSections,
-        new Footer()
-      ];
+      this.blocks.push(...initiativeSections, new Footer());
+    } else {
+      this.blocks.push(new NoResults(query));
     }
   }
 }
@@ -110,7 +108,10 @@ class OfficeFilter implements StaticSelect {
       emoji: true
     };
     this.options = offices.map(office => new OfficeOption(office, query));
-    this.initial_option = query && query.office && new OfficeOption(query.office, query);
+    const queryOfficeInResults = offices.find(office => query && query.office && office === query.office);
+    if (queryOfficeInResults) {
+      this.initial_option = new OfficeOption(query.office, query);
+    }
   }
 }
 
@@ -139,18 +140,10 @@ class StatusFilter implements StaticSelect {
       emoji: true
     };
     this.options = statuses.map(status => new StatusOption(Status[status], query));
-    this.initial_option = query && query.status && new StatusOption(Status[query.status], query);
-  }
-}
-
-class ViewAllOption implements Option {
-  text: PlainText = {
-    type: 'plain_text',
-    text: 'View all'
-  };
-  value: string;
-  constructor(query: Query) {
-    this.value = stringifyValue({ queryId: query && query.queryId });
+    const queryStatusInResults = statuses.find(status => query && query.status && status === query.status);
+    if (queryStatusInResults) {
+      this.initial_option = new StatusOption(Status[query.status], query);
+    }
   }
 }
 
