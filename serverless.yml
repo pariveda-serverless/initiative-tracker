@@ -113,7 +113,7 @@ functions:
   initiate-update-request:
     handler: app/status-updates/initiate-update-request.handler
     events:
-      - schedule: cron(0 15 ? * MON *) # 3PM UTC (10 AM EST) every Monday
+      - schedule: cron(0 15 ? * 2#1 *) # 3PM UTC (10 AM EST) the first Monday of every month
       # - schedule: cron(0/5 * * * ? *) # every 5 minutes for testing
 
   request-update:
