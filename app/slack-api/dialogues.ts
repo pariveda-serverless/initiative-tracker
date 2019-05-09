@@ -1,4 +1,4 @@
-import { WebClient } from '@slack/client';
+import { WebClient } from '@slack/web-api';
 import { getToken } from '../app-authorization';
 
 const slack = new WebClient();

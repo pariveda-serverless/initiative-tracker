@@ -1,4 +1,4 @@
-import { WebClient, WebAPICallResult } from '@slack/client';
+import { WebClient, WebAPICallResult } from '@slack/web-api';
 import { getParsedChannel } from '../slash-commands/add-initiative';
 import { getToken } from '../app-authorization';
 

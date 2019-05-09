@@ -1,4 +1,4 @@
-import { WebClient, WebAPICallResult } from '@slack/client';
+import { WebClient, WebAPICallResult } from '@slack/web-api';
 import { getToken } from '../app-authorization';
 import { CreateUserRequest, User } from '../users';
 import { table } from '../shared';

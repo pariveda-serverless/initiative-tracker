@@ -1,5 +1,5 @@
 import { post } from 'request-promise';
-import { WebClient } from '@slack/client';
+import { WebClient } from '@slack/web-api';
 import { Message } from 'slack';
 import { getToken } from '../app-authorization';
 
