@@ -13,7 +13,7 @@
     "@iopipe/iopipe": "1.12.8",
     "@iopipe/logger": "^1.2.0",
     "@manwaring/lambda-wrapper": "^0.3.7",
-    "@slack/client": "^4.12.0",
+    "@slack/client": "^5.0.0",
     "nanoid": "^2.0.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
